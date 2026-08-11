@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — льняная мастерская украшений</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --linen:#f1ece2; --thread:#8a7a5e; --sage:#9aa48b; --ink:#3d372e; --berry:#8a5a63;
+  }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Inter',sans-serif; font-weight:300; color:var(--ink); line-height:1.75;
+    background-color:var(--linen);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M0 0h6M0 3h6' stroke='%23e0d8c7' stroke-width='1'/%3E%3C/svg%3E");
+  }
+  h1,h2,h3 { font-family:'Cormorant Infant',serif; font-weight:500; color:var(--ink); }
+
+  .wrap { max-width:1120px; margin:0 auto; padding:0 5vw; }
+
+  header {
+    display:flex; justify-content:space-between; align-items:center; padding:26px 5vw;
+  }
+  .logo { font-family:'Cormorant Infant',serif; font-size:1.7rem; font-weight:600; color:var(--ink); text-decoration:none; }
+  .logo em { color:var(--berry); font-style:italic; }
+  nav a {
+    margin-left:30px; color:#6b6255; text-decoration:none; font-size:.85rem;
+    letter-spacing:.14em; text-transform:uppercase; border-bottom:1px solid transparent; transition:.25s;
+  }
+  nav a:hover { color:var(--berry); border-color:var(--berry); }
+
+  /* ------ герой: вышитая рамка ------ */
+  .hero { padding:5vh 5vw 8vh; text-align:center; }
+  .stitched {
+    display:inline-block; padding:8px 30px; border:1.5px dashed var(--thread); border-radius:999px;
+    font-size:.75rem; letter-spacing:.3em; text-transform:uppercase; color:var(--thread); margin-bottom:30px;
+  }
+  .hero h1 { font-size:clamp(2.8rem,7vw,5.2rem); line-height:1.1; margin-bottom:22px; }
+  .hero h1 em { font-style:italic; color:var(--sage); }
+  .hero p { max-width:52ch; margin:0 auto 38px; color:#7a7060; font-size:1.02rem; }
+  .hero-photos { display:flex; justify-content:center; align-items:center; gap:0; margin-top:20px; }
+  .hero-photos img { height:300px; width:200px; object-fit:cover; box-shadow:0 14px 34px rgba(61,55,46,.16); }
+  .hero-photos img:nth-child(1){ transform:rotate(-4deg); border-radius:12px; }
+  .hero-photos img:nth-child(2){ z-index:2; height:360px; width:250px; border-radius:14px; }
+  .hero-photos img:nth-child(3){ transform:rotate(4deg); border-radius:12px; }
+
+  /* ленточка-разделитель */
+  .ribbon {
+    height:22px; margin:10px 0;
+    background:repeating-linear-gradient(90deg, transparent 0 12px, rgba(138,90,99,.18) 12px 14px);
+  }
+
+  section { padding:80px 0; }
+  .sec-title { text-align:center; margin-bottom:50px; }
+  .sec-title h2 { font-size:clamp(2rem,4.6vw,3rem); }
+  .sec-title p { color:var(--thread); font-style:italic; font-family:'Cormorant Infant',serif; font-size:1.15rem; margin-top:6px; }
+
+  /* ------ галерея: карточки с вышивкой ------ */
+  .gallery { display:grid; grid-template-columns:repeat(4,1fr); gap:30px; }
+  .piece {
+    background:#faf7f0; border-radius:14px; padding:16px; box-shadow:0 8px 24px rgba(61,55,46,.08);
+    border:1px solid #e6dfd0; transition:transform .3s, box-shadow .3s;
+  }
+  .piece:hover { transform:translateY(-6px); box-shadow:0 16px 34px rgba(61,55,46,.15); }
+  .piece img { width:100%; height:210px; object-fit:cover; border-radius:10px; display:block; }
+  .piece .stitch-v {
+    height:10px; margin:14px 2px 8px;
+    background:repeating-linear-gradient(90deg, var(--berry) 0 5px, transparent 5px 10px);
+    opacity:.5; border-radius:5px;
+  }
+  .piece h3 { font-size:1.15rem; }
+  .piece .d { font-size:.8rem; color:#8a8274; margin:4px 0 10px; min-height:36px; }
+  .piece .pr { display:flex; justify-content:space-between; align-items:baseline; }
+  .piece .pr b { font-family:'Cormorant Infant',serif; font-size:1.1rem; font-weight:600; color:var(--berry); }
+  .piece .pr span { font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--sage); }
+
+  /* ------ о себе: мягкая беседа ------ */
+  .about { display:grid; grid-template-columns:.9fr 1.1fr; gap:70px; align-items:center; }
+  .about-photo { position:relative; }
+  .about-photo img { width:100%; height:480px; object-fit:cover; border-radius:150px 150px 16px 16px; display:block; }
+  .about-photo .doily {
+    position:absolute; inset:-22px; border:1.5px dashed var(--thread); border-radius:170px 170px 22px 22px;
+    pointer-events:none;
+  }
+  .about h2 { font-size:clamp(1.9rem,3.8vw,2.7rem); margin-bottom:20px; }
+  .about p { color:#5f574a; margin-bottom:16px; }
+  .about .quote {
+    font-family:'Cormorant Infant',serif; font-style:italic; font-size:1.25rem; color:var(--berry);
+    border-left:3px solid var(--sage); padding-left:20px; margin:26px 0;
+  }
+  .sign { font-family:'Cormorant Infant',serif; font-size:1.4rem; color:var(--thread); font-style:italic; }
+
+  /* cta */
+  .cta { text-align:center; padding:80px 0 90px; }
+  .cta .handmade {
+    display:inline-block; background:var(--ink); color:var(--linen); padding:16px 44px;
+    border-radius:999px; text-decoration:none; font-size:.9rem; letter-spacing:.16em; text-transform:uppercase;
+    transition:.3s; box-shadow:0 10px 26px rgba(61,55,46,.25);
+  }
+  .cta .handmade:hover { background:var(--berry); transform:translateY(-2px); }
+
+  footer {
+    border-top:1px solid #ddd5c4; padding:30px 5vw; display:flex; justify-content:space-between;
+    flex-wrap:wrap; gap:12px; font-size:.82rem; color:#8a8274;
+  }
+
+  @media (max-width:860px){
+    .gallery { grid-template-columns:repeat(2,1fr); }
+    .about { grid-template-columns:1fr; }
+    nav a { margin-left:14px; font-size:.72rem; }
+  }
+  @media (max-width:520px){ .gallery { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">Jul<em>Craft</em></a>
+  <nav>
+    <a href="#collection">Коллекция</a>
+    <a href="#about">О Юле</a>
+    <a href="#write">Написать</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="stitched">✂ льняная мастерская · сшито вручную</span>
+    <h1>Украшения из <em>ткани, ниток</em><br>и хорошего воскресенья</h1>
+    <p>
+      Мягкие броши, вышитые кулоны и серьги на льняных шнурочках.
+      Всё лёгкое, тёплое и непоседливое — как воскресенье у бабушки,
+      только носить.
+    </p>
+    <div class="hero-photos">
+      <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&q=80" alt="Украшения">
+      <img src="https://images.unsplash.com/photo-1610694955371-d4a3e0ce4b52?w=700&q=80" alt="Колье">
+      <img src="https://images.unsplash.com/photo-1620656798579-1984d9e87df7?w=600&q=80" alt="Серьги">
+    </div>
+  </div>
+</div>
+
+<div class="ribbon"></div>
+
+<section id="collection">
+  <div class="wrap">
+    <div class="sec-title">
+      <h2>Льняная коллекция</h2>
+      <p>— всё, что сейчас на грифельной планке</p>
+    </div>
+    <div class="gallery">
+      <div class="piece">
+        <img src="https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?w=600&q=80" alt="Брошь">
+        <div class="stitch-v"></div>
+        <h3>Брошь «Одуванчик»</h3>
+        <p class="d">вышивка гладью на льне, застёжка-буйабез</p>
+        <div class="pr"><b>1 300 ₽</b><span>есть</span></div>
+      </div>
+      <div class="piece">
+        <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=600&q=80" alt="Браслет">
+        <div class="stitch-v"></div>
+        <h3>Браслет «Коса»</h3>
+        <p class="d">сплетённые нити мулине, серебряный замок</p>
+        <div class="pr"><b>1 800 ₽</b><span>есть</span></div>
+      </div>
+      <div class="piece">
+        <img src="https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=600&q=80" alt="Подвеска">
+        <div class="stitch-v"></div>
+        <h3>Подвеска «Тепло»</h3>
+        <p class="d">тканевый медальон с сухой лавандой внутри</p>
+        <div class="pr"><b>2 100 ₽</b><span>2 шт.</span></div>
+      </div>
+      <div class="piece">
+        <img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&q=80" alt="Серьги">
+        <div class="stitch-v"></div>
+        <h3>Серьги «Молоко»</h3>
+        <p class="d">вязаный кружевной узор, гипоаллергенные швензы</p>
+        <div class="pr"><b>1 600 ₽</b><span>есть</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ribbon"></div>
+
+<section id="about">
+  <div class="wrap about">
+    <div class="about-photo">
+      <div class="doily"></div>
+      <img src="https://images.unsplash.com/photo-1459262838948-3e2de6c1ec80?w=900&q=80" alt="Юля с нитками">
+    </div>
+    <div>
+      <h2>Я — Юля, и у меня всегда иголка за ухом</h2>
+      <p>
+        Бабушка вышивала полотенца, мама — салфетки, а я в детстве обшивала
+        своих кукол и случайно обнаружила, что ткань может быть не одеждой,
+        а украшением. Десять лет спустя это стало профессией.
+      </p>
+      <p class="quote">
+        «Бижутерия из ткани — не временная. Настоящий лён переживёт любые тренды
+        — проверено на полотенцах бабушки 1958 года».
+      </p>
+      <p>
+        Работаю одна: заказы собираю раз в неделю, отшиваю по вечерам,
+        отправляю по средам. Если вещь потерялась в стирке — пришлите фото:
+        починю или сошью заново, даром.
+      </p>
+      <p class="sign">— Юля</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="write">
+  <div class="wrap">
+    <h2 style="font-size:clamp(1.8rem,4vw,2.6rem); margin-bottom:14px">Хочу себе такое</h2>
+    <p style="color:#8a8274; margin-bottom:30px">Напишите, что любите — носить, трогать, вспоминать. Примерим на ваш образ жизни.</p>
+    <a class="handmade" href="mailto:linen@julcraft.ru">Написать Юле</a>
+  </div>
+</section>
+
+<footer>
+  <span>JulCraft · льняная мастерская</span>
+  <span>linen@julcraft.ru · @julcraft.linen</span>
+  <span>© 2026 · сшито вручную</span>
+</footer>
+
+</body>
+</html>

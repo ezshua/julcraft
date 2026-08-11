@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — гербарий в украшениях</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Spectral+SC:wght@500&family=PT+Sans:wght@400;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --green:#3f5940; --green-deep:#2c4030; --paper:#f8f5ec; --moss:#7d8c6f; --rust:#a05c3b;
+  }
+  body {
+    font-family:'EB Garamond',serif; background:var(--paper); color:#34372c; line-height:1.7;
+    background-image:radial-gradient(#e5e0ce 1px, transparent 1px); background-size:22px 22px;
+  }
+  h1,h2,h3 { font-family:'Spectral SC',serif; font-weight:500; color:var(--green-deep); }
+
+  /* декоративная рамка вокруг всей страницы, как лист альбома */
+  body::before {
+    content:''; position:fixed; inset:10px; border:1px solid var(--green);
+    pointer-events:none; z-index:50;
+  }
+
+  .page { max-width:1060px; margin:0 auto; padding:0 5vw; }
+
+  header {
+    text-align:center; padding:70px 5vw 40px; border-bottom:1px dashed var(--moss);
+  }
+  .latin { font-style:italic; color:var(--rust); font-size:1.05rem; letter-spacing:.06em; }
+  header h1 { font-size:clamp(2.6rem,7vw,4.8rem); margin:8px 0 6px; }
+  .subtitle { font-family:'PT Sans',sans-serif; font-size:.82rem; letter-spacing:.32em; text-transform:uppercase; color:var(--moss); }
+  .ornament { color:var(--rust); margin-top:14px; font-size:1.2rem; letter-spacing:.5em; }
+
+  section { padding:80px 0; }
+  .plate-no {
+    font-family:'PT Sans',sans-serif; font-size:.75rem; letter-spacing:.3em;
+    text-transform:uppercase; color:var(--rust); margin-bottom:10px;
+  }
+  h2 { font-size:clamp(1.7rem,3.4vw,2.5rem); margin-bottom:14px; }
+  .intro { max-width:62ch; font-size:1.1rem; color:#4b4f40; }
+
+  /* ------ вводная ------ */
+  .intro-grid { display:grid; grid-template-columns:1.2fr .8fr; gap:50px; align-items:center; }
+  .intro-fig { text-align:center; }
+  .intro-fig img {
+    width:100%; max-width:340px; height:420px; object-fit:cover;
+    border:1px solid var(--green); padding:10px; background:#fff;
+    box-shadow:6px 6px 0 rgba(63,89,64,.15);
+  }
+  .intro-fig figcaption { font-style:italic; font-size:.95rem; color:var(--moss); margin-top:12px; }
+  .tape {
+    width:90px; height:24px; background:rgba(160,92,59,.25); margin:0 auto -14px;
+    display:block; transform:rotate(-2deg); position:relative; z-index:2;
+  }
+
+  /* ------ галерея таблиц ------ */
+  .plates { display:grid; grid-template-columns:repeat(2,1fr); gap:44px; margin-top:44px; }
+  .plate {
+    background:#fff; border:1px solid var(--green); padding:16px 16px 22px;
+    box-shadow:5px 5px 0 rgba(63,89,64,.12); transition:transform .3s;
+  }
+  .plate:hover { transform:translateY(-6px) rotate(-.4deg); }
+  .plate img { width:100%; height:300px; object-fit:cover; display:block; border:1px solid var(--moss); }
+  .plate .meta { display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; }
+  .plate h3 { font-size:1.15rem; }
+  .plate .lat { font-style:italic; color:var(--rust); font-size:.92rem; }
+  .plate p { font-size:.95rem; color:#565a48; margin-top:6px; }
+  .plate .price { font-family:'PT Sans',sans-serif; font-weight:700; color:var(--green-deep); font-size:.95rem; }
+
+  /* ------ о себе ------ */
+  .about { border-top:1px dashed var(--moss); border-bottom:1px dashed var(--moss); }
+  .about-grid { display:grid; grid-template-columns:.85fr 1.15fr; gap:56px; align-items:start; }
+  .about-portrait { position:relative; text-align:center; }
+  .about-portrait img {
+    width:100%; height:440px; object-fit:cover; border:1px solid var(--green);
+    padding:10px; background:#fff;
+  }
+  .about-portrait .stitch {
+    position:absolute; top:-12px; left:50%; transform:translateX(-50%) rotate(1.5deg);
+    width:100px; height:26px; background:rgba(125,140,111,.3);
+  }
+  .about-text p { margin-bottom:16px; font-size:1.05rem; color:#454938; }
+  .about-text p:first-of-type::first-letter {
+    font-family:'Spectral SC',serif; font-size:3rem; float:left; line-height:.85;
+    padding:4px 8px 0 0; color:var(--rust);
+  }
+  .field-notes {
+    margin-top:26px; background:#fff; border:1px solid var(--moss); padding:22px 26px;
+    font-style:italic; color:var(--green-deep); font-size:1rem;
+    box-shadow:4px 4px 0 rgba(63,89,64,.1);
+  }
+  .field-notes b { font-style:normal; font-family:'Spectral SC',serif; }
+
+  .fin { text-align:center; padding:70px 0 90px; }
+  .fin h2 { margin-bottom:10px; }
+  .fin p { color:#565a48; margin-bottom:26px; }
+  .write-btn {
+    display:inline-block; font-family:'PT Sans',sans-serif; text-transform:uppercase;
+    letter-spacing:.18em; font-size:.8rem; color:#fff; background:var(--green);
+    padding:15px 40px; text-decoration:none; border:1px solid var(--green);
+    transition:.25s;
+  }
+  .write-btn:hover { background:transparent; color:var(--green-deep); }
+
+  footer { text-align:center; padding:0 0 40px; font-family:'PT Sans',sans-serif; font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; color:var(--moss); }
+
+  @media (min-width:768px) and (max-width:1023px){
+    .intro-grid { gap:36px; }
+    .intro-fig img { max-width:300px; height:380px; }
+    .plates { gap:32px; }
+    .plate img { height:260px; }
+    .about-grid { gap:40px; }
+    .about-portrait img { height:380px; }
+  }
+  @media (max-width:800px){
+    .intro-grid,.about-grid,.plates { grid-template-columns:1fr; }
+    .intro-fig img { max-width:100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="latin">Ornamenta manualia · Florae collectae</p>
+  <h1>JulCraft</h1>
+  <p class="subtitle">Гербарий · украшения с настоящими растениями</p>
+  <p class="ornament">❦ ❦ ❦</p>
+</header>
+
+<div class="page">
+
+<section>
+  <div class="intro-grid">
+    <div>
+      <p class="plate-no">Предисловие</p>
+      <h2>Цветы, которые не завянут</h2>
+      <p class="intro">
+        Мы собираем полевые растения в короткую северную лето-неделю их цветения,
+        сушим по всем правилам гербарной науки и запечатываем в ювелирной смоле
+        и стекле. Получается маленький мемориал лугу — носимый, неувядающий и
+        абсолютно честный.
+      </p>
+      <p class="intro" style="margin-top:16px">
+        Каждая работа подписана: вид растения, место и дата сбора. Как в настоящем
+        гербарии — только на цепочке.
+      </p>
+    </div>
+    <figure class="intro-fig">
+      <span class="tape"></span>
+      <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80" alt="Подвеска с сухоцветом" loading="lazy" decoding="async" width="800" height="1000">
+      <figcaption>Табл. I — Anemone sylvestris, собрано 14.VI.2025</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="collection">
+  <p class="plate-no">Каталог · Часть первая</p>
+  <h2>Таблицы гербария</h2>
+  <div class="plates">
+    <div class="plate">
+      <img src="https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=900&q=80" alt="Кулон" loading="lazy" decoding="async" width="900" height="600">
+      <div class="meta">
+        <div>
+          <h3>Кулон «Папоротник»</h3>
+          <span class="lat">Athyrium filix-femina</span>
+        </div>
+        <span class="price">2 900 ₽</span>
+      </div>
+      <p>Лесной папоротник в оптическом стекле, оправа — латунь. Цепочка 45 см.</p>
+    </div>
+    <div class="plate">
+      <img src="https://images.unsplash.com/photo-1629224316810-9d8805b95e76?w=900&q=80" alt="Серьги" loading="lazy" decoding="async" width="900" height="600">
+      <div class="meta">
+        <div>
+          <h3>Серьги «Луг в июле»</h3>
+          <span class="lat">Achillea millefolium</span>
+        </div>
+        <span class="price">2 400 ₽</span>
+      </div>
+      <p>Тысячелистник в смоле, швензы — хирургическая сталь.</p>
+    </div>
+    <div class="plate">
+      <img src="https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?w=900&q=80" alt="Брошь" loading="lazy" decoding="async" width="900" height="600">
+      <div class="meta">
+        <div>
+          <h3>Брошь «Мох»</h3>
+          <span class="lat">Hypnum cupressiforme</span>
+        </div>
+        <span class="price">2 100 ₽</span>
+      </div>
+      <p>Настоящий лесной мох, стабилизирован. Игла с фиксатором.</p>
+    </div>
+    <div class="plate">
+      <img src="https://images.unsplash.com/photo-1601821765780-754fa98637c1?w=900&q=80" alt="Кольцо" loading="lazy" decoding="async" width="900" height="600">
+      <div class="meta">
+        <div>
+          <h3>Кольцо «Вереск»</h3>
+          <span class="lat">Calluna vulgaris</span>
+        </div>
+        <span class="price">1 900 ₽</span>
+      </div>
+      <p>Вересковые соцветия в прозрачной линзе, безразмерная основа.</p>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="about-grid">
+    <figure class="about-portrait">
+      <span class="stitch"></span>
+      <img src="https://images.unsplash.com/photo-1521146764736-56c929d59c83?w=800&q=80" alt="Юля собирает травы" loading="lazy" decoding="async" width="800" height="1000">
+    </figure>
+    <div class="about-text">
+      <p class="plate-no">Заметки коллекционера</p>
+      <h2>О мастере</h2>
+      <p>
+        Юлю спросили бы на ботаническом факультете, откуда у украшения латынь.
+        Дело в том, что гербарий она ведёт с семи лет: сначала — в школьной
+        тетради, потом — в альбомах, а теперь — в смоле и стекле. Учителя были
+        строгие: растение нельзя просто «залить», его надо правильно высушить,
+        иначе цвет уйдёт в осень.
+      </p>
+      <p>
+        Сбор кажется романтикой, пока не вспомнишь про комаров и факт, что
+        тысячелистник сушится ровно столько, сколько ты готова его не трогать.
+        Но когда линза ложится ровно и июнь оказывается навсегда запечатан
+        в кулоне — терпение окупается.
+      </p>
+      <div class="field-notes">
+        <b>Полевая заметка № 214.</b> «Сегодня нашла чистейший экземпляр
+        нивяника у старой дороги. Сохнуть будет до вторника. Кулон — к среде.
+        Комары довольны, я — тоже».
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="fin">
+  <p class="plate-no">Заказ</p>
+  <h2>Хотите свой лист гербария?</h2>
+  <p>Можно прислать своё растение — из свадебного букета, с дачи, из детства.</p>
+  <a class="write-btn" href="mailto:hello@julcraft.ru">Написать мастеру</a>
+</section>
+
+</div>
+
+<footer>JulCraft · гербарий носибельный · © 2026</footer>
+
+</body>
+</html>

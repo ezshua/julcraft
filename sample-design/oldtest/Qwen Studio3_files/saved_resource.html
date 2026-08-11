@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="zh"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+      <style>
+        html,body {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          /* 移除 height: 100% 限制，允许内容自然扩展 */
+          min-height: 100%;
+          /* 确保内容不被截断 */
+          overflow: visible;
+        }
+        /* 确保外层 body 不会限制内层内容 */
+        body {
+          position: relative;
+        }
+        * {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        *::-webkit-scrollbar {
+          display: none;
+        }
+      </style>
+  </head>
+  <body>
+      <script nonce="">
+        window.onerror = function(e) {
+          // 检查是否有DOM被渲染（排除script标签）
+          const hasDom = function() {
+            // 检查body是否有子元素（排除script标签）
+            const children = Array.from(document.body.children || []);
+            const nonScriptChildren = children.filter(child => child.tagName !== 'SCRIPT');
+            if (nonScriptChildren.length > 0) {
+              return true;
+            }
+            // 检查是否有文本内容（排除空白）
+            const textContent = document.body.textContent || '';
+            const hasText = textContent.trim().length > 0;
+            // 检查是否有可见元素（通过计算样式）
+            const allElements = document.body.querySelectorAll('*');
+            for (let i = 0; i < allElements.length; i++) {
+              const el = allElements[i];
+              if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') continue;
+              const style = window.getComputedStyle(el);
+              if (style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0') {
+                return true;
+              }
+            }
+            return hasText;
+          };
+          
+          // 如果页面已经渲染出DOM，则不发送错误信息
+          if (!hasDom()) {
+            window.parent.postMessage({
+              type: 'error',
+              error: e
+            }, '*')
+          }
+        }
+        window.alert = (s) => console.log(s);
+        window.confirm = (s) => console.log(s);
+        console.log('window html', window.innerHeight, Date.now())
+        
+        function handleOnload() {
+          console.log('window.onload 触发', window.innerHeight, Date.now());
+          // 检查是否有defer脚本
+          const hasDeferScripts = document.querySelectorAll('script[defer]').length > 0;
+
+          console.log('hasDeferScripts33', hasDeferScripts);
+          
+          if (hasDeferScripts) {
+            // 如果有defer脚本，等待它们执行完成
+            console.log('hasDeferScripts11', hasDeferScripts);
+            setTimeout(function() {
+              window.parent.postMessage({
+                type: 'onload',
+              }, '*');
+            }, 1000);
+          } else {
+            console.log('hasDeferScripts22', hasDeferScripts);
+            // 没有defer脚本，直接发送
+            window.parent.postMessage({
+              type: 'onload',
+            }, '*');
+          }
+        }
+        
+        // 检查文档是否已经加载完成
+        console.log('document.readyState:', document.readyState, 'Date.now():', Date.now());
+        
+        // 立即检查，如果已经加载完成则立即执行
+        if (document.readyState === 'complete') {
+          console.log('document already loaded, executing immediately');
+          handleOnload();
+        } else {
+          // 否则等待 window.onload 事件
+          console.log('waiting for window.onload, current readyState:', document.readyState);
+          // 同时监听 load 事件（更可靠）
+          window.addEventListener('load', handleOnload);
+          // 也设置 window.onload 作为备用（兼容性）
+          if (!window.onload) {
+            window.onload = handleOnload;
+          } else {
+            // 如果已经有 onload，合并执行
+            const oldOnload = window.onload;
+            window.onload = function() {
+              if (oldOnload) oldOnload();
+              handleOnload();
+            };
+          }
+        }
+      </script>
+      
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тихое золото · 12 вариантов оформления витрины</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5/500-italic.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/playfair-display@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/playfair-display@5/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/playfair-display@5/800.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@5/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@5/800.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@5/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unbounded@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unbounded@5/800.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/spectral@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/spectral@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/forum@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/caveat@5/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/caveat@5/700.css">
+<style>
+/* ============ БАЗА ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+img{display:block;max-width:100%}
+body{font-family:'Manrope',system-ui,sans-serif;background:#141210;color:#ece7dd}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.prods{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.card figure{margin:0}
+@media(max-width:960px){.prods{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.prods{grid-template-columns:1fr}.steps{grid-template-columns:1fr}}
+
+/* ============ ПЕРЕКЛЮЧАТЕЛЬ ДИЗАЙНОВ ============ */
+#bar{position:fixed;inset:0 0 auto 0;z-index:60;display:flex;align-items:center;gap:10px;
+  padding:10px 14px;background:rgba(16,14,12,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.14)}
+#bar .logo{font:600 11px 'IBM Plex Mono',monospace;color:#8f887b;letter-spacing:.14em;white-space:nowrap}
+.chips{display:flex;gap:6px;overflow-x:auto;flex:1;scrollbar-width:none;padding:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:flex;gap:7px;align-items:center;border:1px solid rgba(255,255,255,.2);background:transparent;
+  color:#cfc8bd;font:600 11px/1 'Manrope';letter-spacing:.06em;padding:8px 13px;border-radius:999px;transition:.25s}
+.chip b{color:#847d70;font-weight:800}
+.chip:hover{border-color:rgba(255,255,255,.5)}
+.chip.active{background:#eae3d4;color:#181510;border-color:#eae3d4}
+.chip.active b{color:#96702c}
+#cnt{font:600 12px 'IBM Plex Mono';color:#9a9287;white-space:nowrap}
+.navbtn{width:32px;height:32px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:none;color:#eae3d4;transition:.2s}
+.navbtn:hover{background:rgba(255,255,255,.12)}
+main{padding-top:56px}
+.design{display:none}
+.design.active{display:block}
+.design .anim{opacity:0;transform:translateY(26px);transition:opacity .8s ease var(--d,0s),transform .8s cubic-bezier(.2,.7,.2,1) var(--d,0s)}
+.design.in .anim{opacity:1;transform:none}
+
+/* ============ ТЕХБЛОК (общий каркас) ============ */
+.tech{margin-top:90px;padding:46px 0 90px;border-top:1px solid var(--tline,rgba(0,0,0,.25))}
+.tech .tlabel{font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.55;margin-bottom:10px}
+.tech h4{margin-bottom:26px;font-size:20px}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:30px}
+.tg h5{font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.6;margin-bottom:10px}
+.tg p{font-size:13px;line-height:1.7;opacity:.85}
+.sw{display:inline-flex;align-items:center;gap:7px;margin:0 12px 8px 0;font:500 11px 'IBM Plex Mono',monospace}
+.sw i{width:20px;height:20px;border-radius:5px;background:var(--c);border:1px solid rgba(120,120,120,.45)}
+
+/* ================================================================
+   01 · ГАЛЕРЕЯ — тихий минимализм
+================================================================ */
+.d1{background:#F4F1EC;color:#1B1815;font-family:'Manrope';--tline:#DCD5C9}
+.d1 .top{display:flex;justify-content:space-between;align-items:baseline;padding:28px 0;border-bottom:1px solid #DCD5C9}
+.d1 .brand{font-family:'Cormorant Garamond';font-size:23px;font-weight:600}
+.d1 .topnav{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#797168}
+.d1 .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:end;padding:72px 0 44px}
+.d1 h1{font-family:'Cormorant Garamond';font-weight:500;font-size:clamp(46px,6.5vw,92px);line-height:1.0;letter-spacing:-.01em}
+.d1 h1 em{color:#A98A57}
+.d1 .hero p{color:#797168;font-size:14px;line-height:1.75;max-width:36ch;justify-self:end}
+.d1 .heroimg img{width:100%;height:520px;object-fit:cover}
+.d1 .cap{display:flex;justify-content:space-between;gap:20px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#797168;border-top:1px solid #DCD5C9;margin-top:12px;padding-top:10px}
+.d1 .seclab{display:flex;align-items:center;gap:16px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#A98A57;margin:70px 0 24px}
+.d1 .seclab::after{content:"";height:1px;flex:1;background:#DCD5C9}
+.d1 .card{border:1px solid #DCD5C9;background:#FBF9F5;transition:transform .35s,box-shadow .35s}
+.d1 .card:hover{transform:translateY(-5px);box-shadow:0 30px 50px -32px rgba(27,24,21,.4)}
+.d1 .im{overflow:hidden}
+.d1 .card img{width:100%;height:280px;object-fit:cover;transition:transform .9s ease}
+.d1 .card:hover img{transform:scale(1.06)}
+.d1 .tx{padding:18px 20px 22px;border-top:1px solid #DCD5C9}
+.d1 .num{font:500 11px 'IBM Plex Mono';color:#A98A57}
+.d1 .card h3{font-family:'Cormorant Garamond';font-size:23px;font-weight:600;margin:6px 0}
+.d1 .card p{font-size:12.5px;line-height:1.65;color:#797168;margin-bottom:12px}
+.d1 .price{font-weight:800;font-size:13px}
+.d1 .mats{display:flex;flex-wrap:wrap;gap:14px 34px;padding:56px 0 0;margin-top:70px;border-top:1px solid #DCD5C9}
+.d1 .mats span{font-family:'Cormorant Garamond';font-size:20px;font-style:italic;color:#4d463d}
+.d1 .mats span::before{content:"—";color:#A98A57;margin-right:10px}
+.d1 .steps{margin-top:56px}
+.d1 .step b{font:500 11px 'IBM Plex Mono';color:#A98A57}
+.d1 .step h4{font-family:'Cormorant Garamond';font-size:22px;margin:8px 0 6px}
+.d1 .step p{font-size:12.5px;color:#797168;line-height:1.65}
+@media(max-width:900px){.d1 .hero{grid-template-columns:1fr}.d1 .hero p{justify-self:start}}
+
+/* ================================================================
+   02 · НУАР — тёмная высокая ювелирка
+================================================================ */
+.d2{background:#0E0C0A;color:#EDE6D8;font-family:'Manrope';--tline:rgba(201,162,39,.35)}
+.d2 .top{display:flex;justify-content:center;padding:30px 0;letter-spacing:.42em;font-size:12px;text-transform:uppercase;color:#C9A227;border-bottom:1px solid rgba(201,162,39,.3)}
+.d2 .hero{text-align:center;padding:80px 0 60px}
+.d2 .over{font-size:10px;letter-spacing:.5em;text-transform:uppercase;color:#8D857A}
+.d2 h1{font-family:'Playfair Display';font-weight:700;font-size:clamp(40px,6vw,84px);line-height:1.08;margin:22px auto;max-width:18ch}
+.d2 h1 em{font-style:italic;color:#C9A227}
+.d2 .hero p{color:#8D857A;max-width:52ch;margin:0 auto 34px;font-size:14px;line-height:1.8}
+.d2 .lnk{display:inline-block;border:1px solid #C9A227;color:#C9A227;padding:14px 34px;font-size:11px;letter-spacing:.32em;text-transform:uppercase;transition:.3s}
+.d2 .lnk:hover{background:#C9A227;color:#0E0C0A}
+.d2 .frame{max-width:760px;margin:0 auto;padding:14px;border:1px solid rgba(201,162,39,.5);outline:1px solid rgba(201,162,39,.25);outline-offset:8px}
+.d2 .frame img{width:100%;height:520px;object-fit:cover;filter:saturate(1.05)}
+.d2 .seclab{text-align:center;letter-spacing:.4em;text-transform:uppercase;font-size:11px;color:#C9A227;margin:80px 0 34px}
+.d2 .seclab::before,.d2 .seclab::after{content:"———";color:rgba(201,162,39,.4);margin:0 16px;letter-spacing:0}
+.d2 .card{border:1px solid rgba(201,162,39,.25);background:#141110;transition:border-color .3s}
+.d2 .card:hover{border-color:#C9A227}
+.d2 .card img{width:100%;height:260px;object-fit:cover;filter:grayscale(.15) contrast(1.05)}
+.d2 .tx{padding:20px;text-align:center}
+.d2 .card h3{font-family:'Playfair Display';font-size:20px;font-weight:500;margin-bottom:6px}
+.d2 .card p{font-size:12px;color:#8D857A;line-height:1.6;margin-bottom:12px}
+.d2 .price{color:#C9A227;font-size:13px;letter-spacing:.14em}
+.d2 .quote{margin:80px auto 0;max-width:700px;text-align:center;font-family:'Playfair Display';font-style:italic;font-size:clamp(22px,3vw,32px);line-height:1.5;color:#cfc5b2}
+.d2 .quote small{display:block;margin-top:16px;font-family:'Manrope';font-style:normal;font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:#8D857A}
+
+/* ================================================================
+   03 · ГРАВЮРА — страница старого каталога
+================================================================ */
+.d3{background:#EFE3C8;color:#3A2E22;font-family:'Spectral';--tline:#8a7a5c}
+.d3 .page{position:relative;margin:34px auto;border:1px solid #6b5a41;padding:44px 46px 60px}
+.d3 .page::before{content:"";position:absolute;inset:7px;border:1px solid #6b5a41;pointer-events:none}
+.d3 .phead{text-align:center;border-bottom:3px double #6b5a41;padding-bottom:20px;margin-bottom:30px}
+.d3 .phead .small{font-size:11px;letter-spacing:.34em;text-transform:uppercase}
+.d3 .phead h1{font-family:'Forum';font-weight:400;font-size:clamp(30px,4.6vw,56px);letter-spacing:.06em;margin:12px 0 6px}
+.d3 .phead .chp{font-size:12px;font-style:italic;color:#7C2D2A}
+.d3 .cols{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:start}
+.d3 .dropcap::first-letter{font-family:'Forum';font-size:64px;float:left;line-height:.85;padding:6px 10px 0 0;color:#7C2D2A}
+.d3 .cols p{font-size:14.5px;line-height:1.85;text-align:justify;margin-bottom:14px}
+.d3 .fig{border:1px solid #6b5a41;padding:10px;background:#f4ead2;transform:rotate(.6deg)}
+.d3 .fig img{width:100%;height:380px;object-fit:cover;filter:sepia(.45) contrast(.95)}
+.d3 .figcap{font-size:11.5px;font-style:italic;text-align:center;margin-top:8px;color:#5c4c36}
+.d3 .orn{text-align:center;font-size:20px;color:#7C2D2A;margin:30px 0 20px}
+.d3 .tbl h3{font-family:'Forum';font-size:22px;letter-spacing:.1em;text-align:center;margin-bottom:18px}
+.d3 .entry{display:flex;gap:14px;align-items:baseline;padding:12px 0;border-top:1px solid #b3a184}
+.d3 .entry .eno{font-family:'Forum';color:#7C2D2A;min-width:44px}
+.d3 .entry h4{font-family:'Forum';font-size:17px;font-weight:400}
+.d3 .entry p{font-size:12.5px;font-style:italic;color:#5c4c36;margin-top:3px}
+.d3 .entry .dots{flex:1;border-bottom:2px dotted #8a7a5c;transform:translateY(-4px)}
+.d3 .epr{font-family:'Forum';white-space:nowrap}
+.d3 .matsline{margin-top:26px;font-size:12.5px;text-align:center;font-style:italic;color:#5c4c36}
+.d3 .pageno{text-align:center;margin-top:34px;font-family:'Forum';letter-spacing:.5em}
+.d3 .tech{padding-left:8px;padding-right:8px}
+@media(max-width:900px){.d3 .cols{grid-template-columns:1fr}.d3 .page{margin:16px;padding:28px 22px 40px}}
+
+/* ================================================================
+   04 · БАУХАУС — геометрия и основные цвета
+================================================================ */
+.d4{background:#F2EEE3;color:#141414;font-family:'Manrope';--tline:#141414}
+.d4 .top{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:3px solid #141414}
+.d4 .brand{font-family:'Unbounded';font-weight:800;font-size:18px}
+.d4 .brand i{font-style:normal;color:#D5432E}
+.d4 .topnav{font:600 11px 'IBM Plex Mono';letter-spacing:.1em}
+.d4 .hero{position:relative;overflow:hidden;padding:70px 0 90px;border-bottom:3px solid #141414}
+.d4 h1{font-family:'Unbounded';font-weight:800;font-size:clamp(38px,6.4vw,86px);line-height:1.02;text-transform:uppercase;max-width:12ch}
+.d4 h1 .r{color:#D5432E}.d4 h1 .b{color:#2B4C9B}.d4 h1 .y{background:#E8B93B;padding:0 12px}
+.d4 .hero p{max-width:44ch;margin-top:26px;font-size:14.5px;line-height:1.7;font-weight:600}
+.d4 .shp{position:absolute;z-index:-0}
+.d4 .shp.c{width:360px;height:360px;border-radius:50%;background:#D5432E;right:-90px;top:-70px}
+.d4 .shp.s{width:230px;height:230px;border-radius:50%;background:#E8B93B;left:-80px;bottom:-60px}
+.d4 .shp.q{width:150px;height:150px;background:#2B4C9B;right:16%;bottom:14%}
+.d4 .seclab{font-family:'Unbounded';font-size:14px;text-transform:uppercase;margin:64px 0 26px;display:flex;gap:14px;align-items:center}
+.d4 .seclab::before{content:"";width:14px;height:14px;background:#D5432E}
+.d4 .card{border:3px solid #141414;background:#FBF8F0;box-shadow:8px 8px 0 #141414;transition:.25s}
+.d4 .card:hover{transform:translate(-4px,-4px);box-shadow:12px 12px 0 #D5432E}
+.d4 .card .bar{height:12px;border-bottom:3px solid #141414}
+.d4 .card:nth-child(1) .bar{background:#D5432E}.d4 .card:nth-child(2) .bar{background:#E8B93B}.d4 .card:nth-child(3) .bar{background:#2B4C9B}
+.d4 .card img{width:100%;height:250px;object-fit:cover;border-bottom:3px solid #141414;filter:saturate(.9) contrast(1.05)}
+.d4 .tx{padding:18px}
+.d4 .card h3{font-family:'Unbounded';font-size:16px;text-transform:uppercase;margin-bottom:8px}
+.d4 .card p{font-size:12.5px;line-height:1.6;margin-bottom:12px}
+.d4 .price{display:inline-block;background:#141414;color:#F2EEE3;font:600 12px 'IBM Plex Mono';padding:6px 10px}
+.d4 .mats{display:flex;flex-wrap:wrap;gap:12px;margin-top:60px}
+.d4 .mats span{border:3px solid #141414;padding:10px 16px;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.08em;background:#fff}
+.d4 .mats span:nth-child(odd){transform:rotate(-1.2deg)}.d4 .mats span:nth-child(even){transform:rotate(1.2deg)}
+.d4 .steps{margin-top:50px}
+.d4 .step{border:3px solid #141414;padding:18px;background:#fff}
+.d4 .step b{font:800 26px 'Unbounded';color:#D5432E}
+.d4 .step h4{font-family:'Unbounded';font-size:14px;text-transform:uppercase;margin:10px 0 8px}
+.d4 .step p{font-size:12.5px;line-height:1.6}
+
+/* ================================================================
+   05 · МОДЕРН — ар-нуво, линии и арки
+================================================================ */
+.d5{background:#EEF0E4;color:#39413A;font-family:'Manrope';--tline:#B9C2AC}
+.d5 .top{text-align:center;padding:30px 0 10px}
+.d5 .brand{font-family:'Playfair Display';font-style:italic;font-size:26px;color:#6d7a63}
+.d5 .topnav{font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:#8b967f;margin-top:8px}
+.d5 .stem{display:block;margin:10px auto 0}
+.d5 .hero{text-align:center;padding:40px 0 20px}
+.d5 h1{font-family:'Playfair Display';font-weight:500;font-size:clamp(38px,5.6vw,72px);line-height:1.12;max-width:20ch;margin:0 auto}
+.d5 h1 em{color:#B08D3F}
+.d5 .hero p{max-width:52ch;margin:22px auto 40px;font-size:14px;line-height:1.85;color:#68745f}
+.d5 .arch{width:min(460px,80%);margin:0 auto;border-radius:999px 999px 12px 12px;overflow:hidden;border:6px solid #fff;outline:1px solid #B08D3F;box-shadow:0 40px 70px -40px rgba(57,65,58,.5)}
+.d5 .arch img{width:100%;height:480px;object-fit:cover}
+.d5 .seclab{text-align:center;font-family:'Playfair Display';font-style:italic;font-size:24px;color:#6d7a63;margin:70px 0 30px}
+.d5 .seclab::before,.d5 .seclab::after{content:" ✦ ";color:#B08D3F;font-style:normal;font-size:14px;vertical-align:middle}
+.d5 .card{background:#F7F8EF;border:1px solid #C9D0BA;border-radius:999px 999px 14px 14px;overflow:hidden;transition:.35s}
+.d5 .card:hover{transform:translateY(-6px);box-shadow:0 30px 50px -30px rgba(57,65,58,.45)}
+.d5 .card img{width:100%;height:250px;object-fit:cover}
+.d5 .tx{padding:20px 22px 26px;text-align:center}
+.d5 .card h3{font-family:'Playfair Display';font-size:21px;font-weight:700}
+.d5 .card p{font-size:12.5px;line-height:1.65;color:#68745f;margin:8px 0 12px}
+.d5 .price{font-family:'Playfair Display';font-style:italic;color:#B08D3F;font-size:16px}
+.d5 .mats{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 26px;margin-top:60px;font-family:'Playfair Display';font-style:italic;font-size:17px;color:#6d7a63}
+.d5 .steps{margin-top:50px}
+.d5 .step{text-align:center;padding:0 8px}
+.d5 .step b{font-family:'Playfair Display';font-style:italic;font-size:30px;color:#B08D3F}
+.d5 .step h4{font-family:'Playfair Display';font-size:19px;margin:8px 0 6px}
+.d5 .step p{font-size:12.5px;line-height:1.65;color:#68745f}
+
+/* ================================================================
+   06 · РЕМЕСЛО — крафт, терракота и рукописные пометки
+================================================================ */
+.d6{background:#E9DECC;color:#41352B;font-family:'Manrope';--tline:#c9b795}
+.d6 .top{display:flex;justify-content:space-between;align-items:center;padding:26px 0}
+.d6 .brand{font-weight:800;font-size:20px}
+.d6 .brand i{font-style:normal;color:#BC5B32}
+.d6 .stamp{border:2px dashed #BC5B32;color:#BC5B32;font:700 10px 'IBM Plex Mono';letter-spacing:.2em;padding:8px 12px;transform:rotate(3deg)}
+.d6 .hero{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;padding:30px 0 60px}
+.d6 h1{font-weight:800;font-size:clamp(34px,4.8vw,62px);line-height:1.06}
+.d6 h1 mark{background:none;color:#BC5B32;font-family:'Caveat';font-weight:700;font-size:1.15em}
+.d6 .hero p{margin-top:18px;font-size:14.5px;line-height:1.75;color:#6b5c4c;max-width:44ch}
+.d6 .hand{font-family:'Caveat';font-size:20px;color:#BC5B32;margin-top:16px;transform:rotate(-1.5deg);display:inline-block}
+.d6 .heroimg{position:relative}
+.d6 .heroimg img{border:10px solid #F6EFE2;box-shadow:0 30px 60px -30px rgba(65,53,43,.5);transform:rotate(1.6deg)}
+.d6 .seclab{font-family:'Caveat';font-size:26px;color:#BC5B32;margin:0 0 24px;transform:rotate(-1deg)}
+.d6 .card{background:#F6EFE2;border:1px solid #d8c8ab;transition:.3s}
+.d6 .card:nth-child(1){transform:rotate(-1deg)}.d6 .card:nth-child(2){transform:rotate(.8deg)}.d6 .card:nth-child(3){transform:rotate(-.6deg)}
+.d6 .card:hover{transform:rotate(0) translateY(-6px);box-shadow:0 26px 46px -28px rgba(65,53,43,.55)}
+.d6 .card img{width:100%;height:250px;object-fit:cover}
+.d6 .tx{padding:18px}
+.d6 .card h3{font-size:16px;font-weight:800}
+.d6 .card p{font-size:12.5px;line-height:1.65;color:#6b5c4c;margin:8px 0 10px}
+.d6 .price{font-family:'Caveat';font-size:20px;color:#BC5B32}
+.d6 .mats{margin-top:60px;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
+.d6 .mats img{border:8px solid #F6EFE2;transform:rotate(-1.4deg);box-shadow:0 24px 44px -26px rgba(65,53,43,.5)}
+.d6 .mats ul{list-style:none}
+.d6 .mats li{padding:10px 0;border-bottom:2px dashed #c9b795;font-weight:600;font-size:14px}
+.d6 .mats li::before{content:"✂";color:#BC5B32;margin-right:10px}
+.d6 .steps{margin-top:50px}
+.d6 .step{border:2px dashed #c9b795;padding:18px;background:#F1E7D4}
+.d6 .step b{font-family:'Caveat';font-size:24px;color:#BC5B32}
+.d6 .step h4{font-size:15px;font-weight:800;margin:6px 0}
+.d6 .step p{font-size:12.5px;line-height:1.6;color:#6b5c4c}
+@media(max-width:900px){.d6 .hero,.d6 .mats{grid-template-columns:1fr}}
+
+/* ================================================================
+   07 · БРУТ — редакционный брутализм
+================================================================ */
+.d7{background:#F6F5F1;color:#0A0A0A;font-family:'Manrope';--tline:#0A0A0A}
+.d7 .top{display:flex;justify-content:space-between;padding:18px 0;border-bottom:2px solid #0A0A0A;font:600 12px 'IBM Plex Mono'}
+.d7 .top b{color:#FF4D00}
+.d7 .hero{padding:60px 0 40px;border-bottom:2px solid #0A0A0A}
+.d7 h1{font-family:'Unbounded';font-weight:800;text-transform:uppercase;font-size:clamp(40px,8vw,120px);line-height:.98;letter-spacing:-.01em}
+.d7 h1 span{color:#FF4D00}
+.d7 .hero .meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:26px;font:600 12px 'IBM Plex Mono'}
+.d7 .hero .meta i{font-style:normal;background:#0A0A0A;color:#F6F5F1;padding:6px 10px}
+.d7 .ticker{border-bottom:2px solid #0A0A0A;background:#FF4D00;color:#0A0A0A;overflow:hidden}
+.d7 .trow{display:flex;white-space:nowrap;animation:tick 22s linear infinite;font:800 14px 'Manrope';letter-spacing:.14em}
+.d7 .trow span{padding:12px 0}
+@keyframes tick{to{transform:translateX(-50%)}}
+.d7 .seclab{font:600 12px 'IBM Plex Mono';margin:56px 0 22px}
+.d7 .seclab::before{content:"[ "}.d7 .seclab::after{content:" ]"}
+.d7 .card{border:2px solid #0A0A0A;background:#fff;transition:.2s}
+.d7 .card:hover{background:#0A0A0A;color:#F6F5F1}
+.d7 .card img{width:100%;height:260px;object-fit:cover;filter:grayscale(1) contrast(1.15);border-bottom:2px solid #0A0A0A}
+.d7 .tx{padding:16px}
+.d7 .num{font:600 11px 'IBM Plex Mono';color:#FF4D00}
+.d7 .card h3{font-family:'Unbounded';font-size:15px;text-transform:uppercase;margin:8px 0}
+.d7 .card p{font-size:12px;line-height:1.6;opacity:.75;margin-bottom:10px}
+.d7 .price{font:600 13px 'IBM Plex Mono'}
+.d7 .mats{display:flex;flex-wrap:wrap;gap:0;border:2px solid #0A0A0A;margin-top:60px}
+.d7 .mats span{flex:1 1 auto;padding:14px 20px;border-right:2px solid #0A0A0A;font:800 13px 'Manrope';text-transform:uppercase;letter-spacing:.06em}
+.d7 .mats span:last-child{border-right:0}
+.d7 .mats span:hover{background:#FF4D00}
+.d7 .steps{margin-top:50px}
+.d7 .step{border:2px solid #0A0A0A;padding:16px;background:#fff}
+.d7 .step b{font:600 12px 'IBM Plex Mono';color:#FF4D00}
+.d7 .step h4{font-family:'Unbounded';font-size:14px;text-transform:uppercase;margin:8px 0}
+.d7 .step p{font-size:12px;line-height:1.6}
+
+/* ================================================================
+   08 · ПУДРА — мягкая пастель
+================================================================ */
+.d8{background:linear-gradient(160deg,#F7EFF3 0%,#EFEAF8 55%,#EAF1F2 100%);color:#4A3F55;font-family:'Manrope';--tline:#dccde2}
+.d8 .top{display:flex;justify-content:space-between;align-items:center;padding:26px 0}
+.d8 .brand{font-weight:800;font-size:19px;color:#7b5f92}
+.d8 .pill{background:#fff;border-radius:999px;padding:10px 18px;font-size:12px;font-weight:600;color:#a06a8c;box-shadow:0 8px 20px -10px rgba(122,95,146,.4)}
+.d8 .hero{text-align:center;padding:40px 0 30px;position:relative}
+.d8 .blob{position:absolute;border-radius:50%;filter:blur(50px);opacity:.55;z-index:0}
+.d8 .blob.a{width:340px;height:340px;background:#F3C9DA;left:-60px;top:0}
+.d8 .blob.b{width:300px;height:300px;background:#C9C2F0;right:-40px;top:120px}
+.d8 .hero>*{position:relative;z-index:1}
+.d8 h1{font-weight:800;font-size:clamp(36px,5.4vw,68px);line-height:1.08;max-width:16ch;margin:0 auto}
+.d8 h1 em{font-style:normal;color:#C47A9A}
+.d8 .hero p{max-width:46ch;margin:20px auto 30px;font-size:14.5px;line-height:1.75;color:#7d7191}
+.d8 .btn{display:inline-block;background:#4A3F55;color:#fff;border-radius:999px;padding:15px 34px;font-weight:800;font-size:13px;transition:.3s;box-shadow:0 16px 30px -14px rgba(74,63,85,.6)}
+.d8 .btn:hover{transform:translateY(-3px);background:#C47A9A}
+.d8 .heroimg{width:min(560px,88%);margin:36px auto 0;border-radius:36px;overflow:hidden;box-shadow:0 40px 70px -35px rgba(74,63,85,.55);border:8px solid #fff}
+.d8 .heroimg img{width:100%;height:420px;object-fit:cover}
+.d8 .seclab{text-align:center;font-weight:800;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#a06a8c;margin:70px 0 28px}
+.d8 .card{background:#fff;border-radius:28px;overflow:hidden;box-shadow:0 24px 50px -28px rgba(74,63,85,.4);transition:.3s}
+.d8 .card:hover{transform:translateY(-8px) rotate(-.5deg)}
+.d8 .card img{width:100%;height:250px;object-fit:cover}
+.d8 .tx{padding:20px 22px 24px}
+.d8 .card h3{font-size:17px;font-weight:800}
+.d8 .card p{font-size:12.5px;line-height:1.65;color:#7d7191;margin:8px 0 12px}
+.d8 .price{background:#F3E4EE;color:#a06a8c;border-radius:999px;padding:6px 14px;font-weight:800;font-size:12px}
+.d8 .mats{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:56px}
+.d8 .mats span{background:#fff;border-radius:999px;padding:10px 20px;font-size:12.5px;font-weight:600;color:#7d7191}
+.d8 .steps{margin-top:50px}
+.d8 .step{background:rgba(255,255,255,.75);border-radius:24px;padding:22px;backdrop-filter:blur(4px)}
+.d8 .step b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#C47A9A;color:#fff;font-weight:800}
+.d8 .step h4{font-size:15px;font-weight:800;margin:12px 0 6px}
+.d8 .step p{font-size:12.5px;line-height:1.65;color:#7d7191}
+
+/* ================================================================
+   09 · ХВОЯ — наследие, тёмная зелень и золото
+================================================================ */
+.d9{background:#0F2A20;color:#EFE7D6;font-family:'Manrope';--tline:rgba(210,172,108,.4)}
+.d9 .top{text-align:center;padding:28px 0;border-bottom:1px solid rgba(210,172,108,.35)}
+.d9 .brand{font-family:'Playfair Display';font-weight:700;font-size:24px;letter-spacing:.14em;color:#D2AC6C}
+.d9 .topnav{font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:#9db3a4;margin-top:8px}
+.d9 .hero{text-align:center;padding:70px 0 40px}
+.d9 .over{font-size:10px;letter-spacing:.5em;text-transform:uppercase;color:#9db3a4}
+.d9 h1{font-family:'Playfair Display';font-weight:700;font-size:clamp(38px,5.6vw,76px);line-height:1.1;margin:20px auto;max-width:18ch}
+.d9 h1 em{color:#D2AC6C}
+.d9 .hero p{color:#9db3a4;max-width:54ch;margin:0 auto 40px;font-size:14px;line-height:1.85}
+.d9 .arch{width:min(480px,86%);margin:0 auto;border-radius:999px 999px 10px 10px;overflow:hidden;border:1px solid #D2AC6C;padding:10px}
+.d9 .arch img{width:100%;height:460px;object-fit:cover;border-radius:999px 999px 6px 6px}
+.d9 .leaf{display:block;margin:36px auto 0}
+.d9 .seclab{text-align:center;font-family:'Playfair Display';font-size:24px;color:#D2AC6C;margin:70px 0 30px}
+.d9 .card{border:1px solid rgba(210,172,108,.4);background:#123528;transition:.3s}
+.d9 .card:hover{border-color:#D2AC6C;transform:translateY(-5px)}
+.d9 .card img{width:100%;height:250px;object-fit:cover}
+.d9 .tx{padding:20px;text-align:center}
+.d9 .card h3{font-family:'Playfair Display';font-size:20px}
+.d9 .card p{font-size:12.5px;line-height:1.65;color:#9db3a4;margin:8px 0 12px}
+.d9 .price{color:#D2AC6C;letter-spacing:.14em;font-size:13px}
+.d9 .mats{display:flex;justify-content:center;flex-wrap:wrap;gap:12px 30px;margin-top:60px;font-family:'Playfair Display';font-size:17px;color:#cfe0d3}
+.d9 .steps{margin-top:50px}
+.d9 .step{text-align:center;border-top:1px solid rgba(210,172,108,.4);padding-top:20px}
+.d9 .step b{font-family:'Playfair Display';color:#D2AC6C;font-size:26px}
+.d9 .step h4{font-size:15px;font-weight:800;margin:8px 0 6px;letter-spacing:.1em;text-transform:uppercase}
+.d9 .step p{font-size:12.5px;line-height:1.65;color:#9db3a4}
+
+/* ================================================================
+   10 · ВАБИ-САБИ — асимметрия и пустота
+================================================================ */
+.d10{background:#ECE7DE;color:#2E2B27;font-family:'Spectral';--tline:#c9c1b2;position:relative}
+.d10 .vert{position:absolute;right:22px;top:110px;writing-mode:vertical-rl;letter-spacing:.5em;font-size:12px;color:#9a9284}
+.d10 .top{display:flex;justify-content:space-between;align-items:center;padding:34px 0}
+.d10 .brand{font-size:15px;letter-spacing:.3em;text-transform:uppercase}
+.d10 .sq{width:12px;height:12px;background:#B5442C}
+.d10 .hero{display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;padding:50px 0 70px;align-items:center}
+.d10 h1{font-weight:500;font-size:clamp(34px,4.6vw,60px);line-height:1.25}
+.d10 .hero p{color:#77705f;font-size:14.5px;line-height:2;margin-top:24px;max-width:40ch}
+.d10 .heroimg{justify-self:end;width:min(420px,100%)}
+.d10 .heroimg img{width:100%;height:440px;object-fit:cover;filter:saturate(.75) contrast(.95)}
+.d10 .heroimg figcaption{font-size:11px;letter-spacing:.24em;color:#9a9284;margin-top:10px;text-transform:uppercase}
+.d10 .seclab{font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:#B5442C;margin:0 0 30px}
+.d10 .rows{border-top:1px solid #c9c1b2}
+.d10 .row{display:grid;grid-template-columns:60px 1.1fr 1fr auto;gap:22px;align-items:baseline;padding:22px 0;border-bottom:1px solid #c9c1b2;transition:.25s}
+.d10 .row:hover{background:#e4ddcf;padding-left:12px}
+.d10 .row .n{font-size:12px;color:#B5442C}
+.d10 .row h3{font-size:21px;font-weight:500}
+.d10 .row p{font-size:13px;color:#77705f;line-height:1.7}
+.d10 .row .pr{font-size:14px}
+.d10 .mats{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:60px;font-size:14px;color:#77705f}
+.d10 .mats span::before{content:"·";color:#B5442C;margin-right:10px}
+.d10 .steps{margin-top:56px;grid-template-columns:repeat(4,1fr)}
+.d10 .step b{font-size:12px;color:#B5442C}
+.d10 .step h4{font-size:18px;font-weight:500;margin:8px 0 6px}
+.d10 .step p{font-size:12.5px;color:#77705f;line-height:1.7}
+@media(max-width:900px){.d10 .hero{grid-template-columns:1fr}.d10 .row{grid-template-columns:40px 1fr auto}.d10 .row p{grid-column:2/-1}}
+
+/* ================================================================
+   11 · ДЕКО — золото на чёрном, веера и арки
+================================================================ */
+.d11{background:#101010;color:#EFE7D2;font-family:'Manrope';--tline:rgba(217,180,91,.45);
+  background-image:repeating-radial-gradient(circle at 50% -30%,transparent 0 46px,rgba(217,180,91,.06) 46px 48px)}
+.d11 .top{display:flex;justify-content:center;gap:18px;align-items:center;padding:28px 0;border-bottom:1px solid rgba(217,180,91,.4)}
+.d11 .brand{font-family:'Playfair Display';font-weight:800;letter-spacing:.5em;text-transform:uppercase;font-size:15px;color:#D9B45B}
+.d11 .dm{color:#D9B45B}
+.d11 .hero{text-align:center;padding:70px 0 50px}
+.d11 .over{font-size:10px;letter-spacing:.6em;text-transform:uppercase;color:#8d8471}
+.d11 h1{font-family:'Unbounded';font-weight:800;text-transform:uppercase;font-size:clamp(30px,4.8vw,64px);letter-spacing:.08em;margin:24px auto;max-width:16ch;line-height:1.2}
+.d11 h1 em{font-style:normal;color:#D9B45B}
+.d11 .hero p{color:#8d8471;max-width:50ch;margin:0 auto 44px;font-size:13.5px;line-height:1.85}
+.d11 .arch{width:min(440px,84%);margin:0 auto;border-radius:999px 999px 4px 4px;overflow:hidden;border:2px solid #D9B45B;box-shadow:0 0 0 6px #101010,0 0 0 7px rgba(217,180,91,.5)}
+.d11 .arch img{width:100%;height:460px;object-fit:cover}
+.d11 .seclab{text-align:center;letter-spacing:.5em;text-transform:uppercase;font-size:11px;color:#D9B45B;margin:80px 0 34px}
+.d11 .card{border:1px solid rgba(217,180,91,.45);background:#161513;position:relative;transition:.3s}
+.d11 .card::before{content:"";position:absolute;inset:6px;border:1px solid rgba(217,180,91,.3);pointer-events:none}
+.d11 .card:hover{transform:translateY(-6px);border-color:#D9B45B}
+.d11 .card img{width:100%;height:250px;object-fit:cover}
+.d11 .tx{padding:22px;text-align:center}
+.d11 .card h3{font-family:'Playfair Display';font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:16px}
+.d11 .card p{font-size:12px;color:#8d8471;line-height:1.65;margin:8px 0 12px}
+.d11 .price{color:#D9B45B;font-size:13px;letter-spacing:.2em}
+.d11 .mats{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 34px;margin-top:60px;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#cfc5ab}
+.d11 .steps{margin-top:50px}
+.d11 .step{text-align:center;border:1px solid rgba(217,180,91,.45);padding:24px 14px;background:#161513}
+.d11 .step b{font-family:'Playfair Display';color:#D9B45B;font-size:24px}
+.d11 .step h4{font-size:12px;letter-spacing:.28em;text-transform:uppercase;margin:10px 0 8px}
+.d11 .step p{font-size:12px;color:#8d8471;line-height:1.65}
+
+/* ================================================================
+   12 · ВЕРСТАК — крафт-бумага, штампы и плёнка
+================================================================ */
+.d12{background:#D8C6A4;color:#2C261E;font-family:'Manrope';--tline:#8f7f5f;
+  background-image:radial-gradient(rgba(120,100,60,.12) 1px,transparent 1px);background-size:22px 22px}
+.d12 .top{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-bottom:3px solid #2C261E}
+.d12 .brand{font-family:'Forum';font-size:22px;letter-spacing:.1em}
+.d12 .topnav{font:600 11px 'IBM Plex Mono';letter-spacing:.12em}
+.d12 .hero{padding:56px 0 30px;display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+.d12 h1{font-family:'Forum';font-size:clamp(36px,5.4vw,70px);line-height:1.05}
+.d12 h1 i{font-style:normal;color:#A63A2B}
+.d12 .hero p{margin-top:18px;font-size:14px;line-height:1.75;color:#574c3b;max-width:46ch}
+.d12 .stamp2{display:inline-block;margin-top:22px;border:3px solid #A63A2B;color:#A63A2B;font:700 11px 'IBM Plex Mono';letter-spacing:.24em;padding:10px 16px;transform:rotate(-2deg)}
+.d12 .pols{display:flex;gap:18px;justify-content:flex-end}
+.d12 .pol{background:#F4EDDD;padding:10px 10px 12px;box-shadow:0 20px 40px -20px rgba(44,38,30,.6);width:230px}
+.d12 .pol:nth-child(1){transform:rotate(-3deg)}
+.d12 .pol:nth-child(2){transform:rotate(2.4deg) translateY(16px)}
+.d12 .pol img{height:200px;width:100%;object-fit:cover;filter:sepia(.2)}
+.d12 .pol figcaption{font-family:'Caveat';font-size:17px;margin-top:8px;color:#574c3b}
+.d12 .seclab{font:600 12px 'IBM Plex Mono';letter-spacing:.2em;margin:60px 0 24px;color:#A63A2B}
+.d12 .card{border:2px dashed #8f7f5f;background:#E4D6B8;transition:.25s}
+.d12 .card:hover{transform:translateY(-5px);border-style:solid;border-color:#2C261E}
+.d12 .card img{width:100%;height:240px;object-fit:cover;filter:sepia(.25) contrast(1.02)}
+.d12 .tx{padding:16px}
+.d12 .num{font:600 11px 'IBM Plex Mono';color:#A63A2B}
+.d12 .card h3{font-family:'Forum';font-size:19px;margin:6px 0}
+.d12 .card p{font-size:12.5px;line-height:1.6;color:#574c3b;margin-bottom:10px}
+.d12 .price{font:600 13px 'IBM Plex Mono'}
+.d12 .mats{margin-top:60px;display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;align-items:center}
+.d12 .mats img{border:2px solid #2C261E;filter:sepia(.3)}
+.d12 .mats ul{list-style:none;font:600 13px 'IBM Plex Mono';line-height:2.2}
+.d12 .mats li::before{content:"→ ";color:#A63A2B}
+.d12 .steps{margin-top:50px}
+.d12 .step{border:2px solid #2C261E;background:#E4D6B8;padding:16px;position:relative}
+.d12 .step b{font:600 12px 'IBM Plex Mono';color:#A63A2B}
+.d12 .step h4{font-family:'Forum';font-size:18px;margin:8px 0 6px}
+.d12 .step p{font-size:12.5px;line-height:1.6;color:#574c3b}
+@media(max-width:900px){.d12 .hero,.d12 .mats{grid-template-columns:1fr}.d12 .pols{justify-content:flex-start}}
+</style>
+
+
+
+<!-- ПЕРЕКЛЮЧАТЕЛЬ -->
+<div id="bar">
+  <span class="logo">ВИТРИНА·ДИЗАЙНОВ</span>
+  <div class="chips" id="chips">
+    <button class="chip active" data-i="0"><b>01</b>Галерея</button>
+    <button class="chip" data-i="1"><b>02</b>Нуар</button>
+    <button class="chip" data-i="2"><b>03</b>Гравюра</button>
+    <button class="chip" data-i="3"><b>04</b>Баухаус</button>
+    <button class="chip" data-i="4"><b>05</b>Модерн</button>
+    <button class="chip" data-i="5"><b>06</b>Ремесло</button>
+    <button class="chip" data-i="6"><b>07</b>Брут</button>
+    <button class="chip" data-i="7"><b>08</b>Пудра</button>
+    <button class="chip" data-i="8"><b>09</b>Хвоя</button>
+    <button class="chip" data-i="9"><b>10</b>Ваби</button>
+    <button class="chip" data-i="10"><b>11</b>Деко</button>
+    <button class="chip" data-i="11"><b>12</b>Верстак</button>
+  </div>
+  <span id="cnt">01 / 12</span>
+  <button class="navbtn" id="prev" aria-label="Предыдущий дизайн">←</button>
+  <button class="navbtn" id="next" aria-label="Следующий дизайн">→</button>
+</div>
+
+<main>
+
+<!-- ================= 01 ГАЛЕРЕЯ ================= -->
+<section class="design d1 active in" id="d1">
+  <div class="wrap">
+    <header class="top anim"><div class="brand">Тихое золото</div><div class="topnav">Коллекция · Материалы · Процесс · Заказ</div></header>
+    <div class="hero">
+      <h1 class="anim" style="--d:.05s">Украшения, которые молчат — <em>и звучат.</em></h1>
+      <p class="anim" style="--d:.15s">Маленькая мастерская в Москве. Серебро, латунь и природный камень. Каждая вещь отливается и доводится вручную, тиражом не более двенадцати экземпляров.</p>
+    </div>
+    <figure class="heroimg anim" style="--d:.2s">
+      <img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо «Полынь» на льняной ткани">
+      <figcaption class="cap"><span>Съёмка № 04 · дневной свет</span><span>кольцо «Полынь», серебро 925</span></figcaption>
+    </figure>
+
+    <div class="seclab anim">Коллекция · весна</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><div class="im"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/112cf846f-baa9-4afb-a50d-05e8aa76e18d.png" alt="Серьги «Дым»"></div>
+        <figcaption class="tx"><span class="num">01</span><h3>Серьги «Дым»</h3><p>Серебро 925, чернение, фактура ручной ковки. Лёгкие конго, которые не хочется снимать.</p><span class="price">5 200 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><div class="im"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/13d4be24f-5b91-458c-b2cd-58a849349c3c.png" alt="Серьги «Пена»"></div>
+        <figcaption class="tx"><span class="num">02</span><h3>Серьги «Пена»</h3><p>Пресноводный жемчуг 10 мм, швендели из полированного серебра. Пара на каждый день.</p><span class="price">7 100 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><div class="im"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1b549ce92-f85d-4a92-9230-dde16fae9db9.png" alt="Перстень «Хвоя»"></div>
+        <figcaption class="tx"><span class="num">03</span><h3>Перстень «Хвоя»</h3><p>Латунь, демантоид. Шинка повторяет изгиб ветки — форма снимается с настоящего побега.</p><span class="price">8 900 ₽</span></figcaption></figure></article>
+    </div>
+
+    <div class="mats anim"><span>серебро 925°</span><span>латунь</span><span>природный камень</span><span>жемчуг</span><span>горячая эмаль</span></div>
+
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>01</b><h4>Эскиз</h4><p>Карандаш на кальке. Форма рождается из наблюдения: ветка, капля, тень на стене.</p></div>
+      <div class="step anim" style="--d:.1s"><b>02</b><h4>Воск</h4><p>Модель вырезается в воске и правится до тех пор, пока не ляжет в руку.</p></div>
+      <div class="step anim" style="--d:.15s"><b>03</b><h4>Литьё</h4><p>Отливаем по одному в песчаной форме — поэтому вещи чуть отличаются друг от друга.</p></div>
+      <div class="step anim" style="--d:.2s"><b>04</b><h4>Финиш</h4><p>Опиловка, шабрение, матирование или чернение. Никакого гальванического глянца.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>01 · «Галерея» — тихий минимализм</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#F4F1EC"></i>#F4F1EC</span><span class="sw"><i style="--c:#1B1815"></i>#1B1815</span>
+          <span class="sw"><i style="--c:#A98A57"></i>#A98A57</span><span class="sw"><i style="--c:#DCD5C9"></i>#DCD5C9</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Cormorant Garamond (дисплейная антиква, курсивные акценты) + Manrope для служебного текста. Крупный кегль, разреженные капители.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Волосяные линии-разделители, подписи-«кейшены» как в музейных каталогах, нумерация лотов, hover-подъём карточек и медленный зум фото. Много воздуха.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Тихая роскошь: витрины Mejuri, The Row, Celine; галерейная подача предмета на нейтральном фоне.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 02 НУАР ================= -->
+<section class="design d2 in" id="d2">
+  <div class="wrap">
+    <header class="top anim">Тихое золото · мастерская высокой ювелирки</header>
+    <div class="hero">
+      <p class="over anim">основана в 2016 · москва</p>
+      <h1 class="anim" style="--d:.08s">Тьма — лучшая <em>оправа</em> света.</h1>
+      <p class="anim" style="--d:.16s">Мы работаем с камнем, как работают с тишиной: убираем лишнее, пока не останется главное. Золото, чернёное серебро и камни, выбранные лично.</p>
+      <span class="lnk anim" style="--d:.24s">Смотреть коллекцию</span>
+    </div>
+    <div class="frame anim" style="--d:.3s"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1932c6961-f145-40bf-a863-20f6e3b43259.png" alt="Подвес с изумрудом на чёрном бархате"></div>
+
+    <div class="seclab anim">Коллекция «Полночь»</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1932c6961-f145-40bf-a863-20f6e3b43259.png" alt="Подвес «Полночь»">
+        <figcaption class="tx"><h3>Подвес «Полночь»</h3><p>Золото 585, колумбийский изумруд огранки «октагон». Цепь ручного плетения «жгут».</p><span class="price">по запросу</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/112cf846f-baa9-4afb-a50d-05e8aa76e18d.png" alt="Серьги «Дым»">
+        <figcaption class="tx"><h3>Серьги «Дым»</h3><p>Чернёное серебро 925. Кованая фактура держит свет, как гранёный уголь.</p><span class="price">5 200 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо «Полынь»">
+        <figcaption class="tx"><h3>Кольцо «Полынь»</h3><p>Матовое золото, белый топаз в глухой крапановой закрепке. Тираж — 12.</p><span class="price">6 400 ₽</span></figcaption></figure></article>
+    </div>
+
+    <blockquote class="quote anim">«Камень выбирает хозяина. Мы просто делаем оправу, в которой он согласится остаться.»<small>— мастер-основатель</small></blockquote>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>02 · «Нуар» — тёмная высокая ювелирка</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#0E0C0A"></i>#0E0C0A</span><span class="sw"><i style="--c:#C9A227"></i>#C9A227</span>
+          <span class="sw"><i style="--c:#EDE6D8"></i>#EDE6D8</span><span class="sw"><i style="--c:#8D857A"></i>#8D857A</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Playfair Display с курсивными вкраплениями; разреженные капители Manrope для навигации и цен. Экстремальный трекинг как знак «дорого».</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Центральная ось, бархатный чёрный фон, двойная золотая рамка-паспарту вокруг фото, цитата-манифест, инверсия кнопки при наведении.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Кампейны Cartier и Bvlgari, витрины haute joaillerie: один предмет в луче света, цена «по запросу».</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 03 ГРАВЮРА ================= -->
+<section class="design d3 in" id="d3">
+  <div class="wrap">
+    <div class="page">
+      <header class="phead anim">
+        <p class="small">Мастерская «Тихое золото» · издание третье, дополненное</p>
+        <h1>КАТАЛОГЪ ИЗДѢЛІЙ РУЧНОЙ РАБОТЫ</h1>
+        <p class="chp">Глава I. Вещи, отлитые и оправленные вручную, с приложениями о материалах</p>
+      </header>
+      <div class="cols">
+        <div class="anim" style="--d:.1s">
+          <p class="dropcap">Всякая вещь нашей мастерской начинается с наблюдения. Мастер снимает форму с ветки полыни, с капли смолы, с изгиба речной гальки — и переносит её в воск, а затем в металл.</p>
+          <p>Серебро берётся пробы 925, латунь — листовая, камни — только природные, с неровностями и внутренней жизнью. Мы не полируем вещи до глянца: матовая поверхность стареет благороднее.</p>
+          <p>Тираж каждой модели — двенадцать экземпляров, и каждый нумеруется клеймом на внутренней стороне шинки.</p>
+        </div>
+        <figure class="fig anim" style="--d:.2s">
+          <img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1c2658689-46dc-4acb-a40f-e82a051d3344.png" alt="Брошь «Гранатовая» на старой бумаге">
+          <figcaption class="figcap">Фиг. 1 — Брошь «Гранатовая». Серебро, скань, гранаты-кабошоны.</figcaption>
+        </figure>
+      </div>
+
+      <div class="orn anim">❦</div>
+
+      <div class="tbl anim" style="--d:.1s">
+        <h3>ТАБЛИЦА I · ИЗДѢЛІЯ</h3>
+        <div class="entry"><span class="eno">№ 1</span><div><h4>Брошь «Гранатовая»</h4><p>Сканое серебро, девять гранатов-кабошонов; работа по мотивам северного модерна.</p></div><span class="dots"></span><span class="epr">12 500 р.</span></div>
+        <div class="entry"><span class="eno">№ 2</span><div><h4>Серьги «Дым»</h4><p>Серебро 925, чернение; фактура ручной ковки, замок-конго.</p></div><span class="dots"></span><span class="epr">5 200 р.</span></div>
+        <div class="entry"><span class="eno">№ 3</span><div><h4>Кольцо «Полынь»</h4><p>Матовое серебро, белый топаз в глухой закрепке; тираж 12 экз.</p></div><span class="dots"></span><span class="epr">6 400 р.</span></div>
+        <div class="entry"><span class="eno">№ 4</span><div><h4>Серьги «Пена»</h4><p>Пресноводный жемчуг, серебряные швендели ручной гибки.</p></div><span class="dots"></span><span class="epr">7 100 р.</span></div>
+        <p class="matsline">Приложение: серебро 925° · латунь · гранат · топаз · жемчуг · горячая эмаль · воск формовочный.</p>
+      </div>
+
+      <p class="pageno anim">— 3 —</p>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>03 · «Гравюра» — страница старого ювелирного каталога</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#EFE3C8"></i>#EFE3C8</span><span class="sw"><i style="--c:#3A2E22"></i>#3A2E22</span>
+          <span class="sw"><i style="--c:#7C2D2A"></i>#7C2D2A</span><span class="sw"><i style="--c:#6B5A41"></i>#6B5A41</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Forum (заголовки «под старину») + Spectral с буквицей и выключкой по ширине. Курсивные подписи фигур, как в дореволюционных изданиях.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Двойная рамка страницы, линейки и двойные линейки, буквица, точечные отбивки в прейскуранте, сепия на фото, виньетка ❦, колонцифра «— 3 —».</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Каталоги фабрик Фаберже и Овчинникова, старые книги по ювелирному делу, антикварные прейскуранты.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 04 БАУХАУС ================= -->
+<section class="design d4 in" id="d4">
+  <div class="wrap">
+    <header class="top anim"><div class="brand">ТИХОЕ<i>·</i>ЗОЛОТО</div><div class="topnav">МАСТЕРСКАЯ / ФОРМА / МЕТАЛЛ</div></header>
+    <div class="hero">
+      <div class="shp c"></div><div class="shp s"></div><div class="shp q"></div>
+      <h1 class="anim">Форма. <span class="r">Металл.</span> <span class="b">Камень.</span> <span class="y">Ничего лишнего.</span></h1>
+      <p class="anim" style="--d:.12s">Мы делаем украшения как делают стулья и лампы: честная форма, честный материал. Круг — жемчуг. Квадрат — эмаль. Линия — серебряная шинка.</p>
+    </div>
+
+    <div class="seclab anim">Продукция</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><div class="bar"></div><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/13d4be24f-5b91-458c-b2cd-58a849349c3c.png" alt="Серьги «Пена»">
+        <figcaption class="tx"><h3>Серьги «Пена»</h3><p>Жемчуг = круг. Серебро = линия. Пара, которая работает с любой одеждой.</p><span class="price">7 100 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><div class="bar"></div><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/112cf846f-baa9-4afb-a50d-05e8aa76e18d.png" alt="Серьги «Дым»">
+        <figcaption class="tx"><h3>Серьги «Дым»</h3><p>Кованое серебро 925. Фактура как след инструмента — без полировки.</p><span class="price">5 200 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><div class="bar"></div><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо «Полынь»">
+        <figcaption class="tx"><h3>Кольцо «Полынь»</h3><p>Топаз в глухой закрепке. Геометрия круга, доведённая до конца.</p><span class="price">6 400 ₽</span></figcaption></figure></article>
+    </div>
+
+    <div class="mats anim"><span>Серебро 925</span><span>Латунь</span><span>Эмаль</span><span>Жемчуг</span><span>Камень</span><span>Воск</span></div>
+
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>1</b><h4>Эскиз</h4><p>Циркуль и линейка. Никаких «украшательств».</p></div>
+      <div class="step anim" style="--d:.1s"><b>2</b><h4>Воск</h4><p>Модель из формовочного воска, правка до полной геометрии.</p></div>
+      <div class="step anim" style="--d:.15s"><b>2</b><h4>Литьё</h4><p>Песчаная форма, один тираж — 12 штук.</p></div>
+      <div class="step anim" style="--d:.2s"><b>4</b><h4>Монтаж</h4><p>Закрепка, клеймо, матовый финиш.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>04 · «Баухаус» — конструктивизм и основные цвета</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#F2EEE3"></i>#F2EEE3</span><span class="sw"><i style="--c:#D5432E"></i>#D5432E</span>
+          <span class="sw"><i style="--c:#2B4C9B"></i>#2B4C9B</span><span class="sw"><i style="--c:#E8B93B"></i>#E8B93B</span><span class="sw"><i style="--c:#141414"></i>#141414</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Unbounded 800 в верхнем регистре для плакатных заголовков + IBM Plex Mono для служебных подписей. Только гротески, только капс.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Плакатная сетка, геометрические фигуры фоном, жёсткие тени со смещением (8px), цветные шины карточек, стикеры-материалы под наклоном.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Баухаус, Родченко, плакатная школа ВХУТЕМАСа; современные продолжатели — витрины HAY и Arket.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 05 МОДЕРН ================= -->
+<section class="design d5 in" id="d5">
+  <div class="wrap">
+    <header class="top anim">
+      <div class="brand">тихое золото</div>
+      <div class="topnav">коллекция · материалы · процесс</div>
+      <svg class="stem" width="160" height="26" viewBox="0 0 160 26" fill="none"><path d="M2 20 C 40 4, 70 26, 100 10 S 150 6, 158 14" stroke="#B08D3F" stroke-width="1.4"></path><circle cx="80" cy="14" r="2.6" fill="#B08D3F"></circle></svg>
+    </header>
+    <div class="hero">
+      <h1 class="anim">Линия, выросшая <em>из сада</em></h1>
+      <p class="anim" style="--d:.1s">Наши украшения — побеги: они изгибаются, как стебель под дождём, и держат камень, как бутон держит каплю. Серебро и латунь, горячая эмаль и жемчуг.</p>
+      <div class="arch anim" style="--d:.2s"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/13d4be24f-5b91-458c-b2cd-58a849349c3c.png" alt="Жемчужные серьги на шёлке"></div>
+    </div>
+
+    <div class="seclab anim">вещи весны</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/13d4be24f-5b91-458c-b2cd-58a849349c3c.png" alt="Серьги «Пена»">
+        <figcaption class="tx"><h3>Серьги «Пена»</h3><p>Жемчуг на серебряных швенделях ручной гибки — как две капли на нити.</p><span class="price">7 100 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо «Полынь»">
+        <figcaption class="tx"><h3>Кольцо «Полынь»</h3><p>Шинка повторяет изгиб стебля; белый топаз — бутон в глухой закрепке.</p><span class="price">6 400 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1b549ce92-f85d-4a92-9230-dde16fae9db9.png" alt="Перстень «Хвоя»">
+        <figcaption class="tx"><h3>Перстень «Хвоя»</h3><p>Латунь и демантоид: камень цвета молодой хвои в оправе-черенке.</p><span class="price">8 900 ₽</span></figcaption></figure></article>
+    </div>
+
+    <div class="mats anim"><span>серебро</span><span>латунь</span><span>жемчуг</span><span>эмаль</span><span>природный камень</span></div>
+
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>I</b><h4>Наблюдение</h4><p>Зарисовки растений и насекомых в альбом мастерской.</p></div>
+      <div class="step anim" style="--d:.1s"><b>II</b><h4>Воск</h4><p>Стебель и лист вылепливаются в воске иглой и стекой.</p></div>
+      <div class="step anim" style="--d:.15s"><b>III</b><h4>Литьё</h4><p>Отливка в песчаной форме, по двенадцать штук тираж.</p></div>
+      <div class="step anim" style="--d:.2s"><b>IV</b><h4>Эмаль</h4><p>Горячая эмаль в тон листвы; обжиг в муфеле при 780°.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>05 · «Модерн» — ар-нуво, арки и растительная линия</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#EEF0E4"></i>#EEF0E4</span><span class="sw"><i style="--c:#39413A"></i>#39413A</span>
+          <span class="sw"><i style="--c:#B08D3F"></i>#B08D3F</span><span class="sw"><i style="--c:#68745F"></i>#68745F</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Playfair Display с обильными курсивами — «ударная» линия модерна; служебный текст набран мелким разреженным капсом.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Арочные маски фото (окно-«теплица»), SVG-стебли и виньетки ✦, центральная симметрия, карточки-арки, мягкие подъёмы при наведении.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Афиши Альфонса Мухи, ювелирный модерн Лалика и северный модерн; современные — Aesop и флористические студии.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 06 РЕМЕСЛО ================= -->
+<section class="design d6 in" id="d6">
+  <div class="wrap">
+    <header class="top anim"><div class="brand">тихое золото <i>·</i> мастерская</div><div class="stamp">СДЕЛАНО ВРУЧНУЮ · МСК</div></header>
+    <div class="hero">
+      <div>
+        <h1 class="anim">Вещи с характером <mark>и царапинами</mark></h1>
+        <p class="anim" style="--d:.1s">Мы не прячем следы инструмента. Каждая вмятинка от шабера — часть истории вещи: она будет жить с вами, темнеть, светлеть и становиться вашей.</p>
+        <span class="hand anim" style="--d:.2s">← всё это лежит у нас на верстаке прямо сейчас</span>
+      </div>
+      <figure class="heroimg anim" style="--d:.15s"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/12f84ccd1-615d-4efc-927c-c9e66807633a.png" alt="Руки мастера за верстаком"></figure>
+    </div>
+
+    <div class="seclab anim">что сейчас в работе</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/112cf846f-baa9-4afb-a50d-05e8aa76e18d.png" alt="Серьги «Дым»">
+        <figcaption class="tx"><h3>Серьги «Дым»</h3><p>Кованое серебро, чернение. Оставляем фактуру молотка — так честнее.</p><span class="price">5 200 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо «Полынь»">
+        <figcaption class="tx"><h3>Кольцо «Полынь»</h3><p>Матовое серебро и топаз. Полируем только посадочную часть — пальцу должно быть удобно.</p><span class="price">6 400 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/13d4be24f-5b91-458c-b2cd-58a849349c3c.png" alt="Серьги «Пена»">
+        <figcaption class="tx"><h3>Серьги «Пена»</h3><p>Жемчуг подбираем парой по блеску — на это уходит неделя, и мы не торопимся.</p><span class="price">7 100 ₽</span></figcaption></figure></article>
+    </div>
+
+    <div class="mats anim">
+      <img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/143e1e97a-2c0f-4363-80e3-7c3354481a7f.png" alt="Материалы на верстаке">
+      <ul>
+        <li>серебро 925° — пруток, лист, проволока</li>
+        <li>латунь листовая, отожжённая</li>
+        <li>жемчуг пресноводный, калибр 8–10 мм</li>
+        <li>природный камень: топаз, гранат, демантоид</li>
+        <li>эмаль горячая, припой, воск, штихели</li>
+      </ul>
+    </div>
+
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>шаг 1</b><h4>Эскиз</h4><p>Карандаш, калька, кофе. Иногда форма приходит из сна.</p></div>
+      <div class="step anim" style="--d:.1s"><b>шаг 2</b><h4>Воск</h4><p>Вырезаем модель и носим «восковку» пару дней — проверяем посадку.</p></div>
+      <div class="step anim" style="--d:.15s"><b>шаг 3</b><h4>Литьё</h4><p>По одному в песчаной форме. Двенадцать штук — и форма уходит в архив.</p></div>
+      <div class="step anim" style="--d:.2s"><b>шаг 4</b><h4>Финиш</h4><p>Опиловка, шабрение, чернение или матирование. Клеймо — в конце.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>06 · «Ремесло» — крафт, терракота и рукописные пометки</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#E9DECC"></i>#E9DECC</span><span class="sw"><i style="--c:#BC5B32"></i>#BC5B32</span>
+          <span class="sw"><i style="--c:#41352B"></i>#41352B</span><span class="sw"><i style="--c:#F6EFE2"></i>#F6EFE2</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Плотный гротеск Manrope 800 + рукописный Caveat для пометок «от руки» и цен. Штампы и пунктиры — моноширинным IBM Plex Mono.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Фото в белых паспарту под наклоном, пунктирные рамки, штамп «сделано вручную», лёгкий разворот карточек, выпрямление при hover.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Крафтовые студии и гончарные мастерские, упаковка мыла и керамики ручной работы; эстетика фермерских маркетов.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 07 БРУТ ================= -->
+<section class="design d7 in" id="d7">
+  <div class="wrap">
+    <header class="top anim"><span>ТИХОЕ ЗОЛОТО / МАСТЕРСКАЯ</span><span>МСК · 55.75°N <b>37.61°E</b></span></header>
+    <div class="hero">
+      <h1 class="anim">МЕТАЛЛ<br><span>НЕ ВРЁТ.</span></h1>
+      <div class="meta anim" style="--d:.15s"><i>СЕРЕБРО 925</i><i>ТИРАЖ 12</i><i>ВРУЧНУЮ</i><i>БЕЗ ПОКРЫТИЯ</i></div>
+    </div>
+  </div>
+  <div class="ticker anim"><div class="trow">
+    <span>СЕРЕБРО 925 ✦ ЛАТУНЬ ✦ ЖЕМЧУГ ✦ ЭМАЛЬ ✦ КАМЕНЬ ✦ СЕРЕБРО 925 ✦ ЛАТУНЬ ✦ ЖЕМЧУГ ✦ ЭМАЛЬ ✦ КАМЕНЬ ✦&nbsp;</span>
+    <span>СЕРЕБРО 925 ✦ ЛАТУНЬ ✦ ЖЕМЧУГ ✦ ЭМАЛЬ ✦ КАМЕНЬ ✦ СЕРЕБРО 925 ✦ ЛАТУНЬ ✦ ЖЕМЧУГ ✦ ЭМАЛЬ ✦ КАМЕНЬ ✦&nbsp;</span>
+  </div></div>
+  <div class="wrap">
+    <div class="seclab anim">КАТАЛОГ</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/112cf846f-baa9-4afb-a50d-05e8aa76e18d.png" alt="Серьги «Дым»">
+        <figcaption class="tx"><span class="num">[01]</span><h3>Серьги «Дым»</h3><p>Серебро 925, чернение, ковка. 5 200 ₽.</p><span class="price">КУПИТЬ →</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо «Полынь»">
+        <figcaption class="tx"><span class="num">[02]</span><h3>Кольцо «Полынь»</h3><p>Матовое серебро, топаз. Тираж 12. 6 400 ₽.</p><span class="price">КУПИТЬ →</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1b549ce92-f85d-4a92-9230-dde16fae9db9.png" alt="Перстень «Хвоя»">
+        <figcaption class="tx"><span class="num">[03]</span><h3>Перстень «Хвоя»</h3><p>Латунь, демантоид. Форма с ветки. 8 900 ₽.</p><span class="price">КУПИТЬ →</span></figcaption></figure></article>
+    </div>
+
+    <div class="seclab anim">МАТЕРИАЛЫ</div>
+    <div class="mats anim"><span>Серебро 925</span><span>Латунь</span><span>Жемчуг</span><span>Эмаль</span><span>Камень</span></div>
+
+    <div class="seclab anim">ПРОЦЕСС</div>
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>01</b><h4>Эскиз</h4><p>Линия на бумаге. Если линия слабая — вещь не делается.</p></div>
+      <div class="step anim" style="--d:.1s"><b>02</b><h4>Воск</h4><p>Модель. Правка. Ещё правка.</p></div>
+      <div class="step anim" style="--d:.15s"><b>03</b><h4>Литьё</h4><p>Песчаная форма, 12 штук, архив.</p></div>
+      <div class="step anim" style="--d:.2s"><b>04</b><h4>Финиш</h4><p>Мат. Чернь. Клеймо. Отгрузка.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>07 · «Брут» — редакционный брутализм</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#F6F5F1"></i>#F6F5F1</span><span class="sw"><i style="--c:#0A0A0A"></i>#0A0A0A</span>
+          <span class="sw"><i style="--c:#FF4D00"></i>#FF4D00</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Unbounded 800 гигантского кегля + IBM Plex Mono для метаданных. Заголовки-плакаты, координаты, квадратные скобки.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Линейки 2px на весь экран, бегущая строка на кислотном оранже, ч/б фото с высоким контрастом, инверсия карточки при hover, табличные материалы.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Сайты современных стритвир-брендов и студий (Balenciaga, MSCHF), редакционная сетка швейцарского плаката.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 08 ПУДРА ================= -->
+<section class="design d8 in" id="d8">
+  <div class="wrap">
+    <header class="top anim"><div class="brand">тихое золото ✿</div><div class="pill">доставка по всему миру</div></header>
+    <div class="hero">
+      <div class="blob a"></div><div class="blob b"></div>
+      <h1 class="anim">Нежности много <em>не бывает</em></h1>
+      <p class="anim" style="--d:.1s">Украшения, которые хочется трогать: тёплое серебро, круглый жемчуг, эмаль цвета пудры. Делается медленно, носится каждый день.</p>
+      <span class="btn anim" style="--d:.2s">Выбрать подарок</span>
+      <figure class="heroimg anim" style="--d:.28s"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/13d4be24f-5b91-458c-b2cd-58a849349c3c.png" alt="Жемчужные серьги и кольцо на шёлке"></figure>
+    </div>
+
+    <div class="seclab anim">любимое</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/13d4be24f-5b91-458c-b2cd-58a849349c3c.png" alt="Серьги «Пена»">
+        <figcaption class="tx"><h3>Серьги «Пена»</h3><p>Круглый жемчуг и тонкие швендели. Нежные, но не хрупкие.</p><span class="price">7 100 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо «Полынь»">
+        <figcaption class="tx"><h3>Кольцо «Полынь»</h3><p>Мягкая матовая шинка и искра топаза. Подарок, который попадает в точку.</p><span class="price">6 400 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/112cf846f-baa9-4afb-a50d-05e8aa76e18d.png" alt="Серьги «Дым»">
+        <figcaption class="tx"><h3>Серьги «Дым»</h3><p>Для тех, кто любит серебро с характером. Кованая фактура, глубокая чернь.</p><span class="price">5 200 ₽</span></figcaption></figure></article>
+    </div>
+
+    <div class="mats anim"><span>серебро 925</span><span>жемчуг</span><span>топаз</span><span>эмаль пудра</span><span>латунь</span></div>
+
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>1</b><h4>Эскиз</h4><p>Рисуем акварелью — цвет будущей эмали видно сразу.</p></div>
+      <div class="step anim" style="--d:.1s"><b>2</b><h4>Воск</h4><p>Мягкие формы, никаких острых углов.</p></div>
+      <div class="step anim" style="--d:.15s"><b>3</b><h4>Литьё</h4><p>Маленькие тиражи, каждая вещь нумерована.</p></div>
+      <div class="step anim" style="--d:.2s"><b>4</b><h4>Упаковка</h4><p>Шёлковая лента и открытка, подписанная мастером.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>08 · «Пудра» — мягкая пастель и воздушность</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#F7EFF3"></i>#F7EFF3</span><span class="sw"><i style="--c:#C47A9A"></i>#C47A9A</span>
+          <span class="sw"><i style="--c:#7B5F92"></i>#7B5F92</span><span class="sw"><i style="--c:#4A3F55"></i>#4A3F55</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Manrope 800 с округлыми формами; никаких антикв — только мягкий гротеск и пилюли-кнопки.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Градиентная подложка, размытые цветные пятна, радиусы 24–36px, воздушные тени, фото в белой «полароидной» рамке-скруглении.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Подарочные витрины молодежных ювелирных брендов (Missoma, Astrid &amp; Miyu), эстетика корейских канцелярских и косметических брендов.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 09 ХВОЯ ================= -->
+<section class="design d9 in" id="d9">
+  <div class="wrap">
+    <header class="top anim"><div class="brand">ТИХОЕ ЗОЛОТО</div><div class="topnav">наследие · лес · металл</div></header>
+    <div class="hero">
+      <p class="over anim">мастерская при лесной заимке · осн. 2016</p>
+      <h1 class="anim" style="--d:.08s">Украшения из леса, <em>что севернее всех дорог</em></h1>
+      <p class="anim" style="--d:.16s">Мы собираем формы там, где растёт хвоя: мох, кора, речной камень. Металл — латунь и серебро; камни — те, что найдены, а не куплены.</p>
+      <div class="arch anim" style="--d:.24s"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1b549ce92-f85d-4a92-9230-dde16fae9db9.png" alt="Латунный перстень на мху"></div>
+      <svg class="leaf anim" width="220" height="30" viewBox="0 0 220 30" fill="none"><path d="M4 15 H216" stroke="#D2AC6C"></path><path d="M60 15 q10 -12 22 0 q-12 10 -22 0Z M138 15 q10 -12 22 0 q-12 10 -22 0Z" stroke="#D2AC6C" fill="none"></path><circle cx="110" cy="15" r="3" fill="#D2AC6C"></circle></svg>
+    </div>
+
+    <div class="seclab anim">вещи из коллекции «Хвоя»</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1b549ce92-f85d-4a92-9230-dde16fae9db9.png" alt="Перстень «Хвоя»">
+        <figcaption class="tx"><h3>Перстень «Хвоя»</h3><p>Латунь, демантоид. Шинка снята с изгиба сосновой ветки.</p><span class="price">8 900 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/112cf846f-baa9-4afb-a50d-05e8aa76e18d.png" alt="Серьги «Дым»">
+        <figcaption class="tx"><h3>Серьги «Дым»</h3><p>Чернёное серебро — цвет дыма над осенней заимкой.</p><span class="price">5 200 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо «Полынь»">
+        <figcaption class="tx"><h3>Кольцо «Полынь»</h3><p>Матовое серебро, белый топаз — иней на полыни в октябре.</p><span class="price">6 400 ₽</span></figcaption></figure></article>
+    </div>
+
+    <div class="mats anim"><span>латунь</span><span>серебро 925</span><span>демантоид</span><span>моховой агат</span><span>гранат</span></div>
+
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>I</b><h4>Сбор</h4><p>Формы и камни приносим из леса дважды в год.</p></div>
+      <div class="step anim" style="--d:.1s"><b>II</b><h4>Воск</h4><p>Отпечатки коры и ветвей уходят в восковую модель.</p></div>
+      <div class="step anim" style="--d:.15s"><b>III</b><h4>Литьё</h4><p>Латунь и серебро, песчаная форма, тираж 12.</p></div>
+      <div class="step anim" style="--d:.2s"><b>IV</b><h4>Патина</h4><p>Воронение и матирование — вещь выглядит найденной.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>09 · «Хвоя» — тёмная зелень, золото и наследие</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#0F2A20"></i>#0F2A20</span><span class="sw"><i style="--c:#D2AC6C"></i>#D2AC6C</span>
+          <span class="sw"><i style="--c:#EFE7D6"></i>#EFE7D6</span><span class="sw"><i style="--c:#9DB3A4"></i>#9DB3A4</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Playfair Display 700 с широкими капителями; служебный текст — разреженный капс Manrope, как на этикетках старых аптек.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Глубокий хвойный фон, арочное фото в золотой рамке, ботанические SVG-разделители, центральная ось, «наследные» карточки с тонкими кантами.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Русские ювелирные дома конца XIX века, «лесные» бренды скандинавского heritage-сегмента, этикетки выдержанных чаёв и настоек.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 10 ВАБИ ================= -->
+<section class="design d10 in" id="d10">
+  <span class="vert">тихое золото · ручная работа</span>
+  <div class="wrap">
+    <header class="top anim"><div class="brand">тихое золото</div><div class="sq"></div></header>
+    <div class="hero">
+      <div>
+        <h1 class="anim">Красивое —<br>в неровном.</h1>
+        <p class="anim" style="--d:.12s">Мы оставляем металлу след инструмента, а камню — его природную форму. Вещь не спорит с рукой: она привыкает к ней, как камень в реке привыкает к воде.</p>
+      </div>
+      <figure class="heroimg anim" style="--d:.2s">
+        <img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо на льне">
+        <figcaption>кольцо «полынь» · серебро</figcaption>
+      </figure>
+    </div>
+
+    <div class="seclab anim">вещи</div>
+    <div class="rows anim">
+      <div class="row"><span class="n">一</span><h3>кольцо «полынь»</h3><p>матовое серебро 925, белый топаз; тираж 12</p><span class="pr">6 400 ₽</span></div>
+      <div class="row"><span class="n">二</span><h3>серьги «дым»</h3><p>чернёное серебро, кованая фактура</p><span class="pr">5 200 ₽</span></div>
+      <div class="row"><span class="n">三</span><h3>серьги «пена»</h3><p>пресноводный жемчуг, серебряные швендели</p><span class="pr">7 100 ₽</span></div>
+      <div class="row"><span class="n">四</span><h3>перстень «хвоя»</h3><p>латунь, демантоид; форма с живой ветки</p><span class="pr">8 900 ₽</span></div>
+    </div>
+
+    <div class="mats anim"><span>серебро</span><span>латунь</span><span>камень</span><span>жемчуг</span><span>эмаль</span></div>
+
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>01</b><h4>смотреть</h4><p>форма уже есть в природе — её нужно заметить.</p></div>
+      <div class="step anim" style="--d:.1s"><b>02</b><h4>лепить</h4><p>воск принимает форму без усилия.</p></div>
+      <div class="step anim" style="--d:.15s"><b>03</b><h4>лить</h4><p>металл запоминает неровности — это и есть лицо вещи.</p></div>
+      <div class="step anim" style="--d:.2s"><b>04</b><h4>отпустить</h4><p>вещь уходит к человеку. дальше она живёт сама.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>10 · «Ваби» — ваби-саби, пустота и асимметрия</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#ECE7DE"></i>#ECE7DE</span><span class="sw"><i style="--c:#2E2B27"></i>#2E2B27</span>
+          <span class="sw"><i style="--c:#B5442C"></i>#B5442C</span><span class="sw"><i style="--c:#9A9284"></i>#9A9284</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Spectral строчными, просторные интерлиньи; один киноварный акцент — квадрат-печать, как ханко. Вертикальная колонка текста справа.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Асимметричная сетка, много пустоты, товары — тихие строки-таблицы с иероглифной нумерацией, hover как лёгкий сдвиг строки, фото приглушены.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Японские студии керамики и чайные дома, минимализм Muji и Kyoto-брендинг; принцип «красота в несовершенстве».</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 11 ДЕКО ================= -->
+<section class="design d11 in" id="d11">
+  <div class="wrap">
+    <header class="top anim"><span class="dm">◆</span><div class="brand">Тихое золото</div><span class="dm">◆</span></header>
+    <div class="hero">
+      <p class="over anim">мастерская · вечерняя коллекция</p>
+      <h1 class="anim" style="--d:.08s">Геометрия <em>вечера</em></h1>
+      <p class="anim" style="--d:.16s">Линии ар-деко: ступени, веера, лучи. Золото по чёрному, симметрия и блеск — украшения для времени, когда зажигают свечи.</p>
+      <div class="arch anim" style="--d:.24s"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1932c6961-f145-40bf-a863-20f6e3b43259.png" alt="Подвес с изумрудом"></div>
+    </div>
+
+    <div class="seclab anim">◆ коллекция ◆</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1932c6961-f145-40bf-a863-20f6e3b43259.png" alt="Подвес «Полночь»">
+        <figcaption class="tx"><h3>Полночь</h3><p>Подвес: изумруд «октагон», золочёная цепь ручного плетения.</p><span class="price">по запросу</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/112cf846f-baa9-4afb-a50d-05e8aa76e18d.png" alt="Серьги «Дым»">
+        <figcaption class="tx"><h3>Дым</h3><p>Серьги из чернёного серебра; грань ловит свет люстры.</p><span class="price">5 200 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/13d4be24f-5b91-458c-b2cd-58a849349c3c.png" alt="Серьги «Пена»">
+        <figcaption class="tx"><h3>Пена</h3><p>Жемчуг в вечернем свете; серебряные швендели-лучи.</p><span class="price">7 100 ₽</span></figcaption></figure></article>
+    </div>
+
+    <div class="mats anim"><span>золочение</span><span>серебро</span><span>изумруд</span><span>жемчуг</span><span>оникс</span></div>
+
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>I</b><h4>Чертёж</h4><p>Симметрия выверяется циркулем, как в 1925-м.</p></div>
+      <div class="step anim" style="--d:.1s"><b>II</b><h4>Воск</h4><p>Ступенчатые формы ар-деко в воске.</p></div>
+      <div class="step anim" style="--d:.15s"><b>III</b><h4>Литьё</h4><p>Литьё по одному, тираж двенадцать.</p></div>
+      <div class="step anim" style="--d:.2s"><b>IV</b><h4>Полировка</h4><p>Зеркало и мат чередуются лучами.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>11 · «Деко» — ар-деко, золото по чёрному</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#101010"></i>#101010</span><span class="sw"><i style="--c:#D9B45B"></i>#D9B45B</span>
+          <span class="sw"><i style="--c:#EFE7D2"></i>#EFE7D2</span><span class="sw"><i style="--c:#8D8471"></i>#8D8471</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Unbounded с разрядкой в капс для заголовков + Playfair 800 для названий; ромбы ◆ как пунктуация композиции.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Фоновые «веера» из повторяющихся радиальных колец, арочные фото с двойным золотым кантом, строгая центральная симметрия, внутренние рамки карточек.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Выставка 1925 года в Париже, витрины Van Cleef &amp; Arpels, плакаты и интерьеры ар-деко; современное прочтение — «Гэтсби»-эстетика.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<!-- ================= 12 ВЕРСТАК ================= -->
+<section class="design d12 in" id="d12">
+  <div class="wrap">
+    <header class="top anim"><div class="brand">МАСТЕРСКАЯ «ТИХОЕ ЗОЛОТО»</div><div class="topnav">приём заказов: пн–сб 11:00–19:00</div></header>
+    <div class="hero">
+      <div>
+        <h1 class="anim">Здесь пахнет канифолью <i>и металлом</i></h1>
+        <p class="anim" style="--d:.1s">Заходите без звонка: верстак у окна, кофе на плите. Покажем воск, дадим подержать отливку, запишем ваш размер в амбарную книгу.</p>
+        <span class="stamp2 anim" style="--d:.2s">ЗАКАЗ ПО ЭСКИЗУ · 7–14 ДНЕЙ</span>
+      </div>
+      <div class="pols anim" style="--d:.15s">
+        <figure class="pol"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/12f84ccd1-615d-4efc-927c-c9e66807633a.png" alt="Мастер за верстаком"><figcaption>утро, первая примерка</figcaption></figure>
+        <figure class="pol"><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/143e1e97a-2c0f-4363-80e3-7c3354481a7f.png" alt="Материалы"><figcaption>что лежит на столе</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="seclab anim">// СЕЙЧАС НА ВИТРИНЕ</div>
+    <div class="prods">
+      <article class="card anim" style="--d:.05s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/112cf846f-baa9-4afb-a50d-05e8aa76e18d.png" alt="Серьги «Дым»">
+        <figcaption class="tx"><span class="num">арт. ТЗ-011</span><h3>Серьги «Дым»</h3><p>Серебро 925, чернение. Кованы в четверг, проданы не будут — сделаем новую пару.</p><span class="price">5 200 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.15s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/19824eba9-6f09-484c-8b3e-08c5ba6fbd6a.png" alt="Кольцо «Полынь»">
+        <figcaption class="tx"><span class="num">арт. ТЗ-014</span><h3>Кольцо «Полынь»</h3><p>Матовое серебро, топаз. Размер любой: снимем за пять минут.</p><span class="price">6 400 ₽</span></figcaption></figure></article>
+      <article class="card anim" style="--d:.25s"><figure><img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/1b549ce92-f85d-4a92-9230-dde16fae9db9.png" alt="Перстень «Хвоя»">
+        <figcaption class="tx"><span class="num">арт. ТЗ-017</span><h3>Перстень «Хвоя»</h3><p>Латунь, демантоид. Последний из тиража — дальше только под заказ.</p><span class="price">8 900 ₽</span></figcaption></figure></article>
+    </div>
+
+    <div class="seclab anim">// СКЛАД МАТЕРИАЛОВ</div>
+    <div class="mats anim">
+      <img src="https://image.qwenlm.ai/public_source/b9306e40-506e-4f4b-b75b-b34055866751/143e1e97a-2c0f-4363-80e3-7c3354481a7f.png" alt="Материалы склада">
+      <ul>
+        <li>серебро 925°: пруток 2–6 мм, лист 0,8 мм</li>
+        <li>латунь листовая, отожжённая</li>
+        <li>припой: твёрдый, средний, мягкий</li>
+        <li>камень: топаз, гранат, демантоид</li>
+        <li>жемчуг пресноводный 8–10 мм</li>
+        <li>воск формовочный, наждачка, паста ГОИ</li>
+      </ul>
+    </div>
+
+    <div class="seclab anim">// ПОРЯДОК РАБОТЫ</div>
+    <div class="steps">
+      <div class="step anim" style="--d:.05s"><b>01</b><h4>Разговор</h4><p>Чай, эскиз на салфетке, смета на месте.</p></div>
+      <div class="step anim" style="--d:.1s"><b>02</b><h4>Воск</h4><p>Модель за 2–3 дня, примерка на пальце.</p></div>
+      <div class="step anim" style="--d:.15s"><b>03</b><h4>Литьё</h4><p>Отливка в песке, опиловка, закрепка.</p></div>
+      <div class="step anim" style="--d:.2s"><b>04</b><h4>Выдача</h4><p>Клеймо, бирка с артикулом, запись в книгу.</p></div>
+    </div>
+
+    <footer class="tech">
+      <p class="tlabel">Технический паспорт дизайна</p>
+      <h4>12 · «Верстак» — крафт-бумага, штампы и плёнка</h4>
+      <div class="tgrid">
+        <div class="tg"><h5>Палитра</h5><div>
+          <span class="sw"><i style="--c:#D8C6A4"></i>#D8C6A4</span><span class="sw"><i style="--c:#2C261E"></i>#2C261E</span>
+          <span class="sw"><i style="--c:#A63A2B"></i>#A63A2B</span><span class="sw"><i style="--c:#E4D6B8"></i>#E4D6B8</span></div></div>
+        <div class="tg"><h5>Типографика</h5><p>Forum для «вывески» и названий + IBM Plex Mono для артикулов и служебных строк; рукописный Caveat в подписях полароидов.</p></div>
+        <div class="tg"><h5>Композиция и приёмы</h5><p>Крафт-фон с точечным растром, полароиды с наклоном и тенью, штампы с поворотом, пунктирные карточки-накладные, стрелки-«→» в списках.</p></div>
+        <div class="tg"><h5>Референсы</h5><p>Афиши ремесленных ярмарок, амбарные книги и накладные, эстетика старых фотоателье и мастерских при антикварных лавках.</p></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+</main>
+
+<script nonce="">
+(function(){
+  var designs = Array.prototype.slice.call(document.querySelectorAll('.design'));
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+  var cnt = document.getElementById('cnt');
+  var cur = 0;
+
+  function pad(n){ return (n<10?'0':'')+n; }
+
+  function show(i, scroll){
+    i = (i + designs.length) % designs.length;
+    cur = i;
+    designs.forEach(function(s,j){ s.classList.toggle('active', j===i); });
+    chips.forEach(function(c,j){ c.classList.toggle('active', j===i); });
+    cnt.textContent = pad(i+1)+' / '+pad(designs.length);
+    var active = chips[i];
+    if(active && active.scrollIntoView){ active.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'}); }
+    var s = designs[i];
+    s.classList.remove('in');
+    void s.offsetWidth;
+    s.classList.add('in');
+    history.replaceState(null, '', '#'+s.id);
+    if(scroll !== false){ window.scrollTo({top:0, behavior:'auto'}); }
+  }
+
+  chips.forEach(function(c){
+    c.addEventListener('click', function(){ show(parseInt(c.getAttribute('data-i'),10)); });
+  });
+  document.getElementById('prev').addEventListener('click', function(){ show(cur-1); });
+  document.getElementById('next').addEventListener('click', function(){ show(cur+1); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight'){ show(cur+1); }
+    if(e.key === 'ArrowLeft'){ show(cur-1); }
+  });
+
+  var start = 0;
+  var h = location.hash.replace('#','');
+  designs.forEach(function(s,j){ if(s.id === h){ start = j; } });
+  show(start, false);
+})();
+</script>
+
+
+
+  
+  </body></html>

@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-10T19:33:00Z",
+  "title": "Design System: JulCraft",
+  "extensions": {
+    "colorMeta": {
+      "editorial-paper": {
+        "role": "neutral",
+        "displayName": "Editorial Paper",
+        "canonical": "#f7f4ee",
+        "tonalRamp": ["#f7f4ee", "#f4f0e8", "#f0ebe1", "#ebe5d9", "#e6dfd1", "#e1d9c9", "#dcd3c1", "#d7cdb9"]
+      },
+      "editorial-ink": {
+        "role": "neutral",
+        "displayName": "Editorial Ink",
+        "canonical": "#1c1a17",
+        "tonalRamp": ["#1c1a17", "#2a2724", "#383531", "#46433e", "#54514c", "#625f5a", "#706d68", "#7e7b76"]
+      },
+      "editorial-accent": {
+        "role": "primary",
+        "displayName": "Burnt Sienna",
+        "canonical": "#b3492e",
+        "tonalRamp": ["#b3492e", "#bf5a3f", "#cb6b50", "#d77c61", "#e38d72", "#ef9e83", "#fbaf94", "#ffc0a5"]
+      },
+      "terracotta-clay": {
+        "role": "primary",
+        "displayName": "Terracotta Clay",
+        "canonical": "#c96f4a",
+        "tonalRamp": ["#c96f4a", "#d17f5c", "#d98f6e", "#e19f80", "#e9af92", "#f1bfa4", "#f9cfb6", "#ffdfc8"]
+      },
+      "seaglass-deep": {
+        "role": "neutral",
+        "displayName": "Deep Teal",
+        "canonical": "#0f3d4a",
+        "tonalRamp": ["#0f3d4a", "#1a4d5a", "#255d6a", "#306d7a", "#3b7d8a", "#468d9a", "#519daa", "#5cadba"]
+      },
+      "seaglass-sea": {
+        "role": "primary",
+        "displayName": "Ocean Teal",
+        "canonical": "#2e7d8a",
+        "tonalRamp": ["#2e7d8a", "#3e8d9a", "#4e9daa", "#5eadba", "#6ebdca", "#7ecdda", "#8eddEA", "#9eedfa"]
+      },
+      "herbarium-green": {
+        "role": "primary",
+        "displayName": "Forest Green",
+        "canonical": "#3f5940",
+        "tonalRamp": ["#3f5940", "#4f6950", "#5f7960", "#6f8970", "#7f9980", "#8fa990", "#9fb9a0", "#afc9b0"]
+      },
+      "darklux-gold": {
+        "role": "primary",
+        "displayName": "Antiqued Gold",
+        "canonical": "#c8a24e",
+        "tonalRamp": ["#c8a24e", "#d0ae5e", "#d8ba6e", "#e0c67e", "#e8d28e", "#f0de9e", "#f8eaae", "#fff6be"]
+      },
+      "retro70-mustard": {
+        "role": "primary",
+        "displayName": "Harvest Gold",
+        "canonical": "#d9a441",
+        "tonalRamp": ["#d9a441", "#e1b051", "#e9bc61", "#f1c871", "#f9d481", "#ffe091", "#ffec91", "#fff8a1"]
+      },
+      "wabisabi-aki": {
+        "role": "primary",
+        "displayName": "Autumn Gold",
+        "canonical": "#a3805c",
+        "tonalRamp": ["#a3805c", "#b3906c", "#c3a07c", "#d3b08c", "#e3c09c", "#f3d0ac", "#ffe0bc", "#fff0cc"]
+      },
+      "sketchbook-red": {
+        "role": "primary",
+        "displayName": "Pencil Red",
+        "canonical": "#c0392b",
+        "tonalRamp": ["#c0392b", "#cc493b", "#d8594b", "#e4695b", "#f0796b", "#fc897b", "#ff998b", "#ffa99b"]
+      },
+      "artdeco-gold": {
+        "role": "primary",
+        "displayName": "Deco Gold",
+        "canonical": "#b28a3e",
+        "tonalRamp": ["#b28a3e", "#be9a4e", "#caaa5e", "#d6ba6e", "#e2ca7e", "#eeda8e", "#faea9e", "#fffabe"]
+      },
+      "swiss-red": {
+        "role": "primary",
+        "displayName": "Swiss Red",
+        "canonical": "#e6321e",
+        "tonalRamp": ["#e6321e", "#ee422e", "#f6523e", "#fe624e", "#ff725e", "#ff826e", "#ff927e", "#ffa28e"]
+      },
+      "linen-berry": {
+        "role": "primary",
+        "displayName": "Dusty Rose",
+        "canonical": "#8a5a63",
+        "tonalRamp": ["#8a5a63", "#9a6a73", "#aa7a83", "#ba8a93", "#ca9aa3", "#daaab3", "#eabac3", "#facad3"]
+      },
+      "memphis-c1": {
+        "role": "primary",
+        "displayName": "Sunshine Yellow",
+        "canonical": "#e8b64c",
+        "tonalRamp": ["#e8b64c", "#f0c25c", "#f8ce6c", "#ffda7c", "#ffe68c", "#fff29c", "#fffcac", "#ffffbc"]
+      },
+      "memphis-c2": {
+        "role": "secondary",
+        "displayName": "Mint Green",
+        "canonical": "#7fae9e",
+        "tonalRamp": ["#7fae9e", "#8fbeae", "#9fcebe", "#afdece", "#bfeeDE", "#cffeee", "#dffffe", "#efffff"]
+      },
+      "memphis-c3": {
+        "role": "tertiary",
+        "displayName": "Coral",
+        "canonical": "#d0785a",
+        "tonalRamp": ["#d0785a", "#dc886a", "#e8987a", "#f4a88a", "#ffb89a", "#ffc8aa", "#ffd8ba", "#ffe8ca"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headlines only — maximum visual impact"
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Paragraphs, descriptions, and general readable text"
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Navigation, kicker text, captions, and metadata"
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient",
+        "value": "0 4px 24px rgba(0,0,0,0.12)",
+        "purpose": "Subtle lift for cards and elevated surfaces"
+      },
+      {
+        "name": "hard-offset",
+        "value": "6px 6px 0 var(--accent)",
+        "purpose": "Graphic, illustrative depth for neobrutalist concepts"
+      },
+      {
+        "name": "color-shadow",
+        "value": "8px 8px 0 var(--c1)",
+        "purpose": "Memphis-style playful depth with colored shadows"
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for state transitions"
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.2, 0.6, 0.2, 1)",
+        "purpose": "Entrance animations and hover effects"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "768px"
+      },
+      {
+        "name": "tablet",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main call-to-action button with solid fill"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Outlined secondary action button"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "card-product",
+      "description": "Card displaying a jewelry piece with image, name, and price"
+    },
+    {
+      "name": "Navigation Header",
+      "kind": "nav",
+      "refersTo": "nav-header",
+      "description": "Fixed or static header with logo and navigation links"
+    },
+    {
+      "name": "Hero Section",
+      "kind": "custom",
+      "refersTo": "section-hero",
+      "description": "Full-height hero with display headline and CTA"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Artisan's Workshop",
+    "overview": "JulCraft is a modular design system for a handmade jewelry workshop. Rather than a single monolithic visual identity, it offers 12 distinct visual worlds — each a complete, self-contained design concept that explores a different aesthetic direction for the same product truth: handmade jewelry with character, warmth, and story. The system is built for concept selection: a master jeweler and her potential customers browse these visual directions to find the world that best represents the workshop's identity.",
+    "keyCharacteristics": [
+      "Modular architecture: 12 independent visual worlds, each self-contained",
+      "Warm, handmade character across all directions — never cold or corporate",
+      "Storytelling-driven: each piece of jewelry has context and personality",
+      "Low-friction conversion: inquiry-based model, no shopping cart",
+      "Accessible: static HTML/CSS, no frameworks, works without JavaScript"
+    ],
+    "rules": [
+      {
+        "name": "The One-Accent Rule",
+        "body": "Each concept uses one dominant accent color, applied to ≤15% of any given screen. The rarity creates emphasis; overuse destroys it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Warmth Rule",
+        "body": "No concept uses pure white (#fff) or pure black (#000) for backgrounds or text. All neutrals carry warm undertones to maintain the handmade character.",
+        "section": "colors"
+      },
+      {
+        "name": "The Display Restraint Rule",
+        "body": "Display fonts appear only in hero sections and major headings. They never appear in cards, labels, or body text.",
+        "section": "typography"
+      },
+      {
+        "name": "The Weight Contrast Rule",
+        "body": "Headings use significantly heavier weight than body text (typically 2–3 weight steps apart) to create clear hierarchy without relying on size alone.",
+        "section": "typography"
+      },
+      {
+        "name": "The Shadow-intent Rule",
+        "body": "Shadows are never decorative. Each shadow communicates a specific state: rest (ambient), hover (elevated), or active (compressed).",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use concept-specific color tokens — each concept is self-contained",
+      "Do maintain warm neutrals — no pure white or pure black backgrounds",
+      "Do use display fonts sparingly — hero headlines only",
+      "Do provide clear visual hierarchy through weight and size contrast",
+      "Do include hover states on all interactive elements",
+      "Do use responsive images with loading='lazy' and width/height attributes",
+      "Do maintain consistent spacing rhythm (8px base unit)"
+    ],
+    "donts": [
+      "Don't mix tokens between concepts — each world is independent",
+      "Don't use pure white (#fff) or pure black (#000) for backgrounds",
+      "Don't apply display fonts to body text or labels",
+      "Don't use shadows decoratively — each shadow communicates state",
+      "Don't skip mobile responsive design — all concepts must work on phones",
+      "Don't use JavaScript for visual effects — CSS only",
+      "Don't overload screens with accent colors — maintain the One-Accent Rule"
+    ]
+  }
+}

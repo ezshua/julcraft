@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — Бохо украшения</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Open+Sans:wght@300;400&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: #f7f2e9;
+  color: #4a3f35;
+}
+header {
+  background: url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=1920&q=80') center/cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+header::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(74,63,53,0.35);
+}
+.header-content {
+  position: relative; z-index: 1;
+  text-align: center;
+  color: #faf6f0;
+}
+.header-content h1 {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(4rem, 10vw, 7rem);
+  margin-bottom: 10px;
+}
+.header-content p {
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 5%; }
+
+.about-section {
+  padding: 100px 0;
+  background: #faf6f0;
+}
+.about-wrap {
+  display: flex;
+  gap: 50px;
+  align-items: center;
+}
+.about-text { flex: 1; }
+.about-text h2 {
+  font-family: 'Amatic SC', cursive;
+  font-size: 3rem;
+  color: #8b7355;
+  margin-bottom: 20px;
+}
+.about-text p { font-weight: 300; line-height: 1.9; margin-bottom: 15px; }
+.about-img {
+  flex: 1;
+  border-radius: 200px 200px 20px 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(139,115,85,0.15);
+}
+.about-img img { width: 100%; display: block; }
+
+.gallery-section { padding: 100px 0; }
+.gallery-section h2 {
+  font-family: 'Amatic SC', cursive;
+  font-size: 3rem;
+  text-align: center;
+  color: #8b7355;
+  margin-bottom: 50px;
+}
+.masonry {
+  column-count: 3;
+  column-gap: 20px;
+}
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.masonry-item img {
+  width: 100%; display: block;
+  transition: transform 0.5s;
+}
+.masonry-item:hover img { transform: scale(1.05); }
+.masonry-item span {
+  position: absolute;
+  bottom: 15px; left: 15px;
+  color: #fff;
+  font-size: 0.85rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.masonry-item:hover span { opacity: 1; }
+
+.values {
+  background: #e8ddd0;
+  padding: 80px 0;
+  text-align: center;
+}
+.values h2 {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2.5rem;
+  color: #6b5b4a;
+  margin-bottom: 40px;
+}
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+.value h3 {
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.8rem;
+  color: #8b7355;
+  margin-bottom: 10px;
+}
+.value p { font-weight: 300; font-size: 0.95rem; }
+
+.footer {
+  background: #4a3f35;
+  color: #d4c5b0;
+  text-align: center;
+  padding: 50px 5%;
+}
+.footer h3 {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+.footer a { color: #e8ddd0; text-decoration: none; border-bottom: 1px dashed; }
+
+@media (max-width: 768px) {
+  .about-wrap { flex-direction: column; }
+  .masonry { column-count: 2; }
+  .values-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .masonry { column-count: 1; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <h1>JulCraft</h1>
+    <p>Свобода в каждой детали</p>
+  </div>
+</header>
+
+<section class="about-section">
+  <div class="container">
+    <div class="about-wrap">
+      <div class="about-text">
+        <h2>Обо мне</h2>
+        <p>Меня зовут Юля, и я создаю украшения, которые дышат. Вдохновляюсь природой, путешествиями и этническими мотивами — от марокканских базаров до скандинавских фьордов.</p>
+        <p>Работаю с натуральными материалами: латунь, медь, яшма, агат, бирюза, дерево, хлопковые нити. Каждое украшение собираю вручную, без станков и конвейеров.</p>
+        <p>Моя философия простая: украшение должно быть лёгким, живым и рассказывать о своей хозяйке что-то важное.</p>
+      </div>
+      <div class="about-img">
+        <img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600&q=80" alt="JulCraft">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery-section">
+  <div class="container">
+    <h2>Мои работы</h2>
+    <div class="masonry">
+      <div class="masonry-item"><img src="https://images.unsplash.com/photo-1630019852942-f89202989a51?w=500&q=80" alt=""><span>Серьги с бирюзой</span></div>
+      <div class="masonry-item"><img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80" alt=""><span>Кулон «Пустыня»</span></div>
+      <div class="masonry-item"><img src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=500&q=80" alt=""><span>Браслет из латуни</span></div>
+      <div class="masonry-item"><img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=500&q=80" alt=""><span>Колье с кисточками</span></div>
+      <div class="masonry-item"><img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&q=80" alt=""><span>Кольцо с агатом</span></div>
+      <div class="masonry-item"><img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&q=80" alt=""><span>Серьги-люстры</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="values">
+  <div class="container">
+    <h2>Почему JulCraft</h2>
+    <div class="values-grid">
+      <div class="value">
+        <h3>Ручная работа</h3>
+        <p>Каждое изделие собрано вручную с вниманием к мельчайшим деталям</p>
+      </div>
+      <div class="value">
+        <h3>Натуральные камни</h3>
+        <p>Только подлинные полудрагоценные камни, без пластика и имитаций</p>
+      </div>
+      <div class="value">
+        <h3>Уникальность</h3>
+        <p>Повторяю мотивы, но никогда не копирую себя — каждая вещь особенная</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <h3>JulCraft</h3>
+  <p>Заказы и вопросы: <a href="mailto:hello@julcraft.ru">hello@julcraft.ru</a></p>
+  <p style="margin-top:20px; font-size:0.8rem; opacity:0.6;">© 2025 JulCraft</p>
+</footer>
+
+</body>
+</html>

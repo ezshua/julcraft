@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — Украшения ручной работы</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@200;300;400&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #fafafa;
+  color: #2a2a2a;
+  line-height: 1.7;
+}
+.hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, #f5f0eb 0%, #faf7f4 50%, #f0ebe5 100%);
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=1920&q=80') center/cover;
+  opacity: 0.08;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: #3a3a3a;
+  margin-bottom: 0.3em;
+}
+.hero .subtitle {
+  font-weight: 200;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #8a7e72;
+}
+.scroll-down {
+  position: absolute;
+  bottom: 40px;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: #8a7e72;
+  animation: bounce 2s infinite;
+}
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
+
+section { padding: 100px 5%; max-width: 1200px; margin: 0 auto; }
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 60px;
+  color: #3a3a3a;
+}
+.about {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.about-img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  filter: grayscale(20%);
+}
+.about-text h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+.about-text p { font-weight: 300; color: #666; margin-bottom: 15px; }
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+}
+.gallery-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-item::after {
+  content: attr(data-name);
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 30px 20px 20px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.4));
+  color: #fff;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.gallery-item:hover::after { opacity: 1; }
+
+.process {
+  background: #f5f0eb;
+  padding: 100px 5%;
+}
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  text-align: center;
+}
+.process-step .num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  color: #c4b8a8;
+  margin-bottom: 15px;
+}
+.process-step h4 { font-weight: 400; margin-bottom: 10px; }
+.process-step p { font-weight: 300; font-size: 0.9rem; color: #777; }
+
+.contact {
+  text-align: center;
+  padding: 100px 5%;
+}
+.contact a {
+  display: inline-block;
+  padding: 18px 50px;
+  border: 1px solid #3a3a3a;
+  color: #3a3a3a;
+  text-decoration: none;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  transition: all 0.4s;
+}
+.contact a:hover { background: #3a3a3a; color: #fafafa; }
+
+footer {
+  text-align: center;
+  padding: 40px;
+  font-size: 0.8rem;
+  color: #999;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 768px) {
+  .about { grid-template-columns: 1fr; }
+  .process-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>JulCraft</h1>
+    <p class="subtitle">Украшения ручной работы</p>
+  </div>
+  <span class="scroll-down">Листай вниз ↓</span>
+</section>
+
+<section>
+  <h2 class="section-title">О мастерской</h2>
+  <div class="about">
+    <img class="about-img" src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=800&q=80" alt="JulCraft">
+    <div class="about-text">
+      <h3>Каждое украшение — история</h3>
+      <p>JulCraft — это небольшая мастерская, где рождаются украшения из латуни, меди, натуральных камней, стекла и керамики. Я работаю в техниках ковки, литья и сборки, сочетая древние приёмы с современным дизайном.</p>
+      <p>Материалы подбираю вручную — полудрагоценные камни от уральских поставщиков, чешское стекло, натуральный жемчуг. Никакого масс-маркета: каждая пара серёг или браслет существует в единственном экземпляре или ограниченной серии до 10 штук.</p>
+      <p>Создаю украшения для тех, кто ценит медленную моду и хочет носить вещи с характером.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">Коллекция</h2>
+  <div class="gallery">
+    <div class="gallery-item" data-name="Серьги «Полярная звезда»">
+      <img src="https://images.unsplash.com/photo-1630019852942-f89202989a51?w=600&q=80" alt="">
+    </div>
+    <div class="gallery-item" data-name="Кулон «Тихий океан»">
+      <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80" alt="">
+    </div>
+    <div class="gallery-item" data-name="Браслет «Медовый месяц»">
+      <img src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=600&q=80" alt="">
+    </div>
+    <div class="gallery-item" data-name="Колье «Лесная тишина»">
+      <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=600&q=80" alt="">
+    </div>
+    <div class="gallery-item" data-name="Кольцо «Северное сияние»">
+      <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80" alt="">
+    </div>
+    <div class="gallery-item" data-name="Серьги «Золотой песок»">
+      <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80" alt="">
+    </div>
+  </div>
+</section>
+
+<section class="process">
+  <h2 class="section-title">Как создаётся украшение</h2>
+  <div class="process-grid">
+    <div class="process-step">
+      <div class="num">01</div>
+      <h4>Идея</h4>
+      <p>Эскиз, подбор материалов, цветовая гамма</p>
+    </div>
+    <div class="process-step">
+      <div class="num">02</div>
+      <h4>Литьё</h4>
+      <p>Формовка металла вручную или методом литья</p>
+    </div>
+    <div class="process-step">
+      <div class="num">03</div>
+      <h4>Обработка</h4>
+      <p>Шлифовка, патинирование, полировка</p>
+    </div>
+    <div class="process-step">
+      <div class="num">04</div>
+      <h4>Сборка</h4>
+      <p>Крепление камней, финальная доводка</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact">
+  <h2 class="section-title">Заказать украшение</h2>
+  <p style="font-weight:300;color:#666;margin-bottom:40px;">Индивидуальные заказы, коллаборации, вопросы</p>
+  <a href="mailto:hello@julcraft.ru">Написать письмо</a>
+</section>
+
+<footer>© JulCraft 2025 — Мастерская ручной бижутерии</footer>
+
+</body>
+</html>

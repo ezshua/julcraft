@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft® — система украшений</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --ink:#111; --bg:#fff; --red:#e6321e; --grey:#efefef; }
+  body {
+    font-family:'Inter Tight','Helvetica Neue',Arial,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.4;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page { border-top:4px solid var(--ink); }
+
+  header {
+    display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(--ink);
+  }
+  header .brand {
+    padding:22px 3vw; font-weight:900; font-size:1.4rem; letter-spacing:-.02em;
+    border-right:1px solid var(--ink);
+  }
+  header .brand sup { color:var(--red); font-size:.6em; }
+  header nav { display:flex; align-items:center; justify-content:flex-end; gap:0; }
+  header nav a {
+    height:100%; display:flex; align-items:center; padding:0 20px;
+    color:var(--ink); text-decoration:none; font-weight:500; font-size:.8rem;
+    text-transform:uppercase; letter-spacing:.1em; border-left:1px solid var(--ink);
+    transition:background .2s, color .2s;
+  }
+  header nav a:hover { background:var(--ink); color:var(--bg); }
+
+  /* ------ герой: типографский плакат ------ */
+  .hero { display:grid; grid-template-columns:1.2fr 1fr; min-height:78vh; border-bottom:1px solid var(--ink); }
+  .hero-left { padding:6vw 3vw; display:flex; flex-direction:column; justify-content:space-between; }
+  .hero-left h1 {
+    font-weight:900; font-size:clamp(2.6rem,6.5vw,5.6rem); line-height:.94; letter-spacing:-.03em;
+    text-transform:uppercase;
+  }
+  .hero-left h1 span { color:var(--red); }
+  .hero-meta { display:flex; gap:40px; font-size:.75rem; text-transform:uppercase; letter-spacing:.12em; font-weight:500; }
+  .hero-meta b { color:var(--red); }
+  .hero-right { border-left:1px solid var(--ink); position:relative; overflow:hidden; }
+  .hero-right img { width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(1) contrast(1.1); }
+
+  /* ------ сетка-прайс ------ */
+  .grid-head {
+    display:grid; grid-template-columns:repeat(12,1fr); gap:0; border-bottom:1px solid var(--ink);
+  }
+  .grid-head div { padding:16px 3vw; font-size:.72rem; text-transform:uppercase; letter-spacing:.15em; font-weight:700; }
+  .grid-head div:nth-child(3) { text-align:right; }
+  .grid-head div:not(:last-child) { border-right:1px solid var(--ink); }
+
+  section { border-bottom:1px solid var(--ink); }
+
+  .catalog { display:grid; grid-template-columns:repeat(3,1fr); }
+  .product { border-right:1px solid var(--ink); display:flex; flex-direction:column; }
+  .product:last-child { border-right:none; }
+  .product .img { height:340px; overflow:hidden; border-bottom:1px solid var(--ink); }
+  .product img { width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.1); transition:filter .4s; }
+  .product:hover img { filter:grayscale(0) contrast(1); }
+  .product .info { padding:18px 20px; flex:1; }
+  .product .code { font-size:.7rem; font-weight:700; color:var(--red); letter-spacing:.15em; }
+  .product h3 { font-weight:700; font-size:1.15rem; text-transform:uppercase; letter-spacing:-.01em; margin:4px 0 8px; }
+  .product p { font-size:.85rem; color:#555; }
+  .product .row { display:flex; justify-content:space-between; border-top:1px solid var(--ink); padding:12px 20px; font-weight:700; font-size:.9rem; }
+  .product .row a { color:var(--red); text-decoration:none; transition:color .2s; }
+  .product .row a:hover { color:var(--ink); }
+
+  /* ------ о мастере: досье ------ */
+  .dossier { display:grid; grid-template-columns:1fr 1fr; }
+  .dossier .photo { border-right:1px solid var(--ink); height:100%; min-height:520px; }
+  .dossier .photo img { width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.15); display:block; }
+  .dossier .data { padding:5vw 3vw; }
+  .dossier h2 { font-weight:900; font-size:clamp(1.8rem,4vw,3rem); text-transform:uppercase; letter-spacing:-.02em; margin-bottom:30px; }
+  .dossier table { width:100%; border-collapse:collapse; }
+  .dossier td { border-top:1px solid var(--ink); padding:14px 4px; font-size:.9rem; vertical-align:top; }
+  .dossier td:first-child { font-weight:700; width:38%; text-transform:uppercase; font-size:.75rem; letter-spacing:.12em; color:var(--red); }
+  .dossier .note { margin-top:30px; font-size:.95rem; max-width:52ch; color:#333; }
+
+  footer {
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px;
+    padding:26px 3vw; font-size:.72rem; text-transform:uppercase; letter-spacing:.15em; font-weight:500;
+  }
+  footer b { color:var(--red); }
+  footer a { color:var(--ink); text-decoration:none; border-bottom:1.5px solid var(--red); }
+
+  @media (min-width:768px) and (max-width:1023px){
+    .hero { min-height:70vh; }
+    .hero-left h1 { font-size:clamp(2.2rem,5.5vw,4.5rem); }
+    .catalog { grid-template-columns:repeat(2,1fr); }
+    .product:nth-child(3) { grid-column:span 2; }
+    .product .img { height:300px; }
+    .dossier .photo { min-height:440px; }
+  }
+  @media (max-width:820px){
+    .hero { grid-template-columns:1fr; }
+    .hero-right { border-left:none; border-top:1px solid var(--ink); height:50vh; }
+    .catalog { grid-template-columns:1fr; }
+    .product { border-right:none; border-bottom:1px solid var(--ink); }
+    .dossier { grid-template-columns:1fr; }
+    .dossier .photo { border-right:none; border-bottom:1px solid var(--ink); min-height:360px; }
+    header { grid-template-columns:1fr; }
+    header .brand { border-right:none; border-bottom:1px solid var(--ink); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="brand">JULCRAFT<sup>®</sup></div>
+  <nav>
+    <a href="#cat">01 Каталог</a>
+    <a href="#about">02 Мастер</a>
+    <a href="#contact">03 Связь</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-left">
+    <h1>Функциональные<br>украшения<br><span>системной</span><br>сборки</h1>
+    <div class="hero-meta">
+      <span><b>Модуль</b><br>латунь / сталь</span>
+      <span><b>Метод</b><br>ручной труд</span>
+      <span><b>Выпуск</b><br>серия M-04</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=1200&q=80" alt="Украшение" loading="lazy" decoding="async" width="1200" height="800">
+  </div>
+</div>
+
+<div class="grid-head">
+  <div>№</div><div>Наименование / материал</div><div>Наличие</div>
+</div>
+
+<section class="catalog" id="cat">
+  <div class="product">
+    <div class="img"><img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80" alt="Брошь" loading="lazy" decoding="async" width="800" height="600"></div>
+    <div class="info">
+      <span class="code">Арт. JC-M04-01</span>
+      <h3>Клипса-модуль A</h3>
+      <p>Сталь, чёрное никелирование. Крепится к воротнику, сумке, петлице — точка сборки любая.</p>
+    </div>
+    <div class="row"><span>1 900 ₽</span><a href="#contact">→ заказ</a></div>
+  </div>
+  <div class="product">
+    <div class="img"><img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=800&q=80" alt="Какафония" loading="lazy" decoding="async" width="800" height="600"></div>
+    <div class="info">
+      <span class="code">Арт. JC-M04-02</span>
+      <h3>Каскад B-2</h3>
+      <p>Три съёмных элемента: сегмент, диск, штифт. Набор перекомпонуется под задачу вечера.</p>
+    </div>
+    <div class="row"><span>4 600 ₽</span><a href="#contact">→ заказ</a></div>
+  </div>
+  <div class="product">
+    <div class="img"><img src="https://images.unsplash.com/photo-1629224316810-9d8805b95e76?w=800&q=80" alt="Серьги" loading="lazy" decoding="async" width="800" height="600"></div>
+    <div class="info">
+      <span class="code">Арт. JC-M04-03</span>
+      <h3>Серьги-шарниры</h3>
+      <p>Подвижное сочленение из латуни; угол раскрытия регулируется вручную, без инструментов.</p>
+    </div>
+    <div class="row"><span>2 700 ₽</span><a href="#contact">→ заказ</a></div>
+  </div>
+</section>
+
+<section class="dossier" id="about">
+  <div class="photo">
+    <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=1000&q=80" alt="Юля за работой" loading="lazy" decoding="async" width="1000" height="800">
+  </div>
+  <div class="data">
+    <h2>Досье · Мастер</h2>
+    <table>
+      <tr><td>Фамилия</td><td>Крафт, Юлия Андреевна</td></tr>
+      <tr><td>Профиль</td><td>Инженер-конструктор → мастер украшений</td></tr>
+      <tr><td>Принцип</td><td>Каждая вещь должна иметь схему сборки</td></tr>
+      <tr><td>Материалы</td><td>Нержавеющая сталь, латунь, промышленная фурнитура</td></tr>
+      <tr><td>Допуск</td><td>± 0,1 мм — рука чувствует лучше калибра</td></tr>
+      <tr><td>Серия в работе</td><td>M-05 «Транспортные кольца» — весна 2027</td></tr>
+    </table>
+    <p class="note">
+      Прежде чем стать мастером, Юля пять лет проектировала крепёж для велосипедов.
+      Сейчас она проектирует крепёж для людей: застёжки, которые не отваливаются,
+      шарниры, которые не скрипят, и вещи, которые чинятся, а не выбрасываются.
+    </p>
+  </div>
+</section>
+
+<footer id="contact">
+  <span><b>JulCraft®</b> — система украшений</span>
+  <span>Почта: <a href="mailto:spec@julcraft.ru">spec@julcraft.ru</a> · TG: <a href="#">@julcraft_spec</a></span>
+  <span>© 2026 · Сделано по ГОСТ сердца</span>
+</footer>
+
+</div>
+</body>
+</html>

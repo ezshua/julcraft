@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — украшения из морского стекла</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Marcellus&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --deep:#0f3d4a; --sea:#2e7d8a; --foam:#eaf4f3; --sand:#e7e3d7; --glass:#8fc1bd;
+  }
+  html { scroll-behavior:smooth; }
+  body { font-family:'IBM Plex Sans',sans-serif; background:var(--foam); color:var(--deep); line-height:1.7; }
+  h1,h2,h3 { font-family:'Marcellus',serif; font-weight:400; }
+
+  /* ------ герой-океан ------ */
+  .hero {
+    min-height:100vh; position:relative; display:flex; align-items:flex-end;
+    background:
+      linear-gradient(180deg, rgba(15,61,74,0) 30%, rgba(15,61,74,.75) 100%),
+      url('https://images.unsplash.com/photo-1439405326854-014607f694d7?w=1920&q=80') center/cover;
+  }
+  .hero-inner { width:100%; padding:0 6vw 9vh; color:#fff; }
+  .hero .logo {
+    position:absolute; top:26px; left:6vw; font-family:'Marcellus',serif;
+    font-size:1.5rem; color:#fff; letter-spacing:.08em;
+  }
+  .hero .top-links {
+    position:absolute; top:30px; right:6vw; display:flex; gap:26px;
+  }
+  .hero .top-links a { color:#fff; text-decoration:none; font-size:.8rem; letter-spacing:.16em; text-transform:uppercase; opacity:.9; transition:opacity .2s; }
+  .hero .top-links a:hover { opacity:1; border-bottom:1px solid #fff; }
+  .hero h1 { font-size:clamp(2.4rem,6vw,5rem); line-height:1.05; margin-bottom:18px; max-width:14ch; }
+  .hero p { max-width:52ch; font-weight:300; color:#e6f2f1; margin-bottom:30px; }
+  .hero .btns { display:flex; gap:16px; flex-wrap:wrap; }
+  .btn {
+    padding:15px 34px; text-decoration:none; font-size:.85rem; letter-spacing:.14em; text-transform:uppercase;
+    transition:.3s;
+  }
+  .btn-solid { background:#fff; color:var(--deep); }
+  .btn-solid:hover { background:var(--glass); color:var(--deep); }
+  .btn-ghost { border:1px solid #fff; color:#fff; }
+  .btn-ghost:hover { background:rgba(255,255,255,.15); }
+
+  /* ------ повествование полосами ------ */
+  .strip { display:grid; grid-template-columns:1fr 1fr; min-height:70vh; }
+  .strip .txt { display:flex; flex-direction:column; justify-content:center; padding:8vh 6vw; }
+  .strip .txt h2 { font-size:clamp(1.8rem,3.2vw,2.6rem); margin-bottom:18px; }
+  .strip .txt p { color:#3d5f68; max-width:48ch; }
+  .strip .img { background-size:cover; background-position:center; min-height:340px; }
+  .strip-sea { background:var(--foam); }
+  .strip-sea h2 { color:var(--sea); }
+  .strip-sand { background:var(--sand); }
+
+  /* ------ галерея «улов» ------ */
+  .catch { padding:100px 6vw; }
+  .catch .head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:44px; flex-wrap:wrap; gap:12px; }
+  .catch h2 { font-size:clamp(1.8rem,3.4vw,2.7rem); color:var(--deep); }
+  .catch .head span { font-size:.8rem; letter-spacing:.2em; text-transform:uppercase; color:var(--sea); }
+  .shelf { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .shelf figure { position:relative; overflow:hidden; height:400px; }
+  .shelf img { width:100%; height:100%; object-fit:cover; transition:transform .7s; }
+  .shelf figure:hover img { transform:scale(1.06); }
+  .shelf figcaption {
+    position:absolute; inset:auto 0 0 0; padding:18px 22px;
+    background:linear-gradient(0deg, rgba(15,61,74,.8), transparent); color:#fff;
+  }
+  .shelf figcaption b { display:block; font-family:'Marcellus',serif; font-weight:400; font-size:1.15rem; }
+  .shelf figcaption small { font-size:.78rem; letter-spacing:.1em; opacity:.85; }
+
+  /* ------ о себе: карта находок ------ */
+  .about { background:var(--deep); color:var(--foam); padding:110px 6vw; }
+  .about-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1.1fr .9fr; gap:60px; align-items:center; }
+  .about img { width:100%; height:480px; object-fit:cover; }
+  .about h2 { font-size:clamp(1.8rem,3.4vw,2.7rem); margin-bottom:20px; color:#fff; }
+  .about p { color:#cfe3e1; margin-bottom:16px; }
+  .about .signature { font-family:'Marcellus',serif; font-size:1.5rem; color:var(--glass); margin-top:26px; }
+
+  /* ------ футер-волна ------ */
+  .wave { display:block; width:100%; }
+  footer { background:#eaf4f3; padding:40px 6vw; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:.82rem; color:#3d5f68; }
+
+  @media (min-width:768px) and (max-width:1023px){
+    .strip { min-height:60vh; }
+    .shelf { grid-template-columns:repeat(2,1fr); gap:18px; }
+    .shelf figure { height:360px; }
+    .about-inner { gap:40px; }
+    .about img { height:420px; }
+  }
+  @media (max-width:860px){
+    .strip { grid-template-columns:1fr; }
+    .shelf { grid-template-columns:1fr; }
+    .shelf figure { height:320px; }
+    .about-inner { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="logo">JulCraft ✳</div>
+  <div class="top-links">
+    <a href="#catch">Находки</a>
+    <a href="#about">О мастерской</a>
+  </div>
+  <div class="hero-inner">
+    <h1>Море отшлифовало. Мы — собрали.</h1>
+    <p>
+      Украшения из морского стекла, найденного на берегах Балтики и Баренцева моря.
+      Каждый осколок десятилетиями катало волной — теперь он стал кулоном.
+      Никаких двух одинаковых: море не повторяется.
+    </p>
+    <div class="btns">
+      <a class="btn btn-solid" href="#catch">Смотреть улов</a>
+      <a class="btn btn-ghost" href="#about">История мастерской</a>
+    </div>
+  </div>
+</section>
+
+<div class="strip strip-sand">
+  <div class="txt">
+    <h2>Что такое морское стекло</h2>
+    <p>
+      Это осколки бутылок и посуды, которые волны и песок превратили в матовые
+      «камешки». Редкий лавандовый — от посуды времён Первой мировой,
+      оливковый — от старых винных бутылок, бирюзовый — от аптечной тары.
+      Мы не красим и не граним: только собираем, сортируем и оправляем.
+    </p>
+  </div>
+  <div class="img" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80')"></div>
+</div>
+
+<section class="catch" id="catch">
+  <div class="head">
+    <h2>Свежий улов</h2>
+    <span>обновлено в этот четверг</span>
+  </div>
+  <div class="shelf">
+    <figure>
+      <img src="https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?w=900&q=80" alt="Подвеска из морского стекла" loading="lazy" decoding="async" width="900" height="600">
+      <figcaption><b>Подвеска «Отлив»</b><small>стекло цвета морской волны · 2 400 ₽</small></figcaption>
+    </figure>
+    <figure>
+      <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=900&q=80" alt="Серьги" loading="lazy" decoding="async" width="900" height="600">
+      <figcaption><b>Серьги «Прибой»</b><small>белое стекло, серебро 925 · 3 100 ₽</small></figcaption>
+    </figure>
+    <figure>
+      <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=900&q=80" alt="Кольцо" loading="lazy" decoding="async" width="900" height="600">
+      <figcaption><b>Кольцо «Маяк»</b><small>оливковое стекло · 2 700 ₽</small></figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="strip strip-sea">
+  <div class="img" style="background-image:url('https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&q=80')"></div>
+  <div class="txt">
+    <h2>Оправляем бережно</h2>
+    <p>
+      Никаких клеевых «шапочек»: каждый осколок сидит в плетёном оплете из
+      серебряной или ювелирной проволоки, сделанном под его форму.
+      Оправу можно заказать в серебре 925 пробы или никеле — для чувствительной
+      кожи подойдёт оба варианта.
+    </p>
+  </div>
+</div>
+
+<section class="about" id="about">
+  <div class="about-inner">
+    <div>
+      <h2>Мы — Юля и Гоша, и у нас сорок пляжей за плечами</h2>
+      <p>
+        Всё началось с рыбалки: вместо рыбы на крючок попался зелёный осколок —
+        гладкий, как шоколадка после кармана. Мы не выбросили его обратно, а
+        повесили на шнурок. Знакомые стали просить «и нам такой».
+      </p>
+      <p>
+        Теперь каждое лето уходит на экспедиции по берегам: от Калининграда до
+        Териберки. Чем хуже погода — тем лучше сбор. Осень и зима — инвентаризация,
+        оправа и эта самая витрина.
+      </p>
+      <p>
+        Пять процентов с каждого заказа уходят волонтёрам, которые чистят те самые
+        пляжи. Круг замыкается.
+      </p>
+      <p class="signature">— Юля и Гоша, JulCraft</p>
+    </div>
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1000&q=80" alt="Берег" loading="lazy" decoding="async" width="1000" height="800">
+  </div>
+</section>
+
+<svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" style="background:#0f3d4a">
+  <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" fill="#eaf4f3"/>
+</svg>
+
+<footer>
+  <span>JulCraft · мастерская морского стекла</span>
+  <span>Написать: @julcraft_sea · Почта: hello@julcraft.ru</span>
+  <span>© 2026 · собрано на берегу</span>
+</footer>
+
+</body>
+</html>

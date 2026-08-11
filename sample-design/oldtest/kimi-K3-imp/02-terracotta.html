@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — глиняная мастерская украшений</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Mulish:wght@300;400;600&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --clay:#c96f4a; --clay-deep:#a4502f; --cream:#f4e9dc; --sand:#e9d8c3;
+    --earth:#5b4636; --olive:#7a7a52;
+  }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Mulish',sans-serif; background:var(--cream); color:var(--earth); line-height:1.7; overflow-x:hidden; }
+  h1,h2,h3 { font-family:'Fraunces',serif; font-weight:500; color:#4a382b; }
+
+  header {
+    position:fixed; top:0; left:0; right:0; z-index:10;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 5vw; background:rgba(244,233,220,.88); backdrop-filter:blur(8px);
+  }
+  .logo { font-family:'Fraunces',serif; font-size:1.35rem; font-weight:600; color:var(--clay-deep); text-decoration:none; transition:opacity .25s; }
+  .logo:hover { opacity:.7; }
+  .logo span { color:var(--olive); }
+  nav a {
+    margin-left:26px; font-size:.8rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--earth); text-decoration:none; border-bottom:2px solid transparent; transition:.25s;
+  }
+  nav a:hover { border-color:var(--clay); color:var(--clay-deep); }
+
+  /* ------ герой с аркой ------ */
+  .hero { min-height:100vh; display:flex; align-items:center; padding:120px 5vw 60px; gap:6vw; }
+  .hero-text { flex:1; }
+  .hero .tag {
+    display:inline-block; background:var(--olive); color:var(--cream);
+    padding:7px 18px; border-radius:999px; font-size:.78rem; letter-spacing:.15em; text-transform:uppercase;
+    margin-bottom:26px;
+  }
+  .hero h1 { font-size:clamp(2.6rem,5.6vw,4.6rem); line-height:1.08; margin-bottom:24px; }
+  .hero h1 em { font-style:italic; color:var(--clay-deep); }
+  .hero p { max-width:46ch; margin-bottom:36px; color:#6d5847; }
+  .btn {
+    display:inline-block; background:var(--clay); color:#fff; text-decoration:none;
+    padding:16px 38px; border-radius:999px; font-weight:600; font-size:.95rem;
+    box-shadow:0 8px 24px rgba(201,111,74,.35); transition:.25s;
+  }
+  .btn:hover { background:var(--clay-deep); transform:translateY(-2px); }
+  .hero-arch {
+    flex:1; max-width:480px; align-self:center;
+  }
+  .hero-arch .arch-img {
+    border-radius:260px 260px 26px 26px; overflow:hidden; height:560px;
+    box-shadow:24px 24px 0 var(--sand);
+  }
+  .hero-arch img { width:100%; height:100%; object-fit:cover; }
+
+  /* ------ волнистый разделитель ------ */
+  .wave { display:block; width:100%; margin:-2px 0; }
+
+  /* ------ галерея ------ */
+  .gallery-sec { background:var(--sand); padding:90px 5vw 110px; }
+  .sec-head { text-align:center; max-width:640px; margin:0 auto 56px; }
+  .sec-head .kicker { color:var(--olive); font-size:.78rem; letter-spacing:.28em; text-transform:uppercase; font-weight:600; }
+  .sec-head h2 { font-size:clamp(1.9rem,3.6vw,2.8rem); margin:12px 0 14px; }
+  .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:26px; max-width:1200px; margin:0 auto; }
+  .card {
+    background:var(--cream); border-radius:140px 140px 22px 22px; overflow:hidden;
+    transition:transform .3s, box-shadow .3s;
+  }
+  .card:hover { transform:translateY(-8px); box-shadow:0 18px 40px rgba(91,70,54,.16); }
+  .card img { width:100%; height:260px; object-fit:cover; display:block; }
+  .card-body { padding:20px 22px 26px; text-align:center; }
+  .card-body h3 { font-size:1.12rem; margin-bottom:6px; }
+  .card-body p { font-size:.85rem; color:#8a7460; margin-bottom:10px; }
+  .card-body .price { font-family:'Fraunces',serif; color:var(--clay-deep); font-size:1.05rem; font-weight:600; }
+
+  /* ------ о себе ------ */
+  .about { padding:110px 5vw; max-width:1150px; margin:0 auto; display:grid; grid-template-columns:1fr 1.15fr; gap:70px; align-items:center; }
+  .about-photos { position:relative; }
+  .about-photos .main { width:100%; height:460px; object-fit:cover; border-radius:22px; }
+  .about-photos .small {
+    position:absolute; width:180px; height:220px; object-fit:cover;
+    border-radius:120px 120px 18px 18px; right:-30px; bottom:-40px;
+    border:6px solid var(--cream);
+  }
+  .about h2 { font-size:clamp(1.9rem,3.4vw,2.7rem); margin-bottom:22px; }
+  .about p { margin-bottom:16px; color:#6d5847; }
+  .facts { display:flex; gap:34px; margin-top:30px; }
+  .fact b { display:block; font-family:'Fraunces',serif; font-size:2rem; color:var(--clay-deep); font-weight:600; }
+  .fact span { font-size:.82rem; color:#8a7460; }
+
+  /* ------ процесс ------ */
+  .process { background:#efe0cd; padding:90px 5vw; }
+  .steps { max-width:1000px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:30px; }
+  .step { background:var(--cream); border-radius:20px; padding:34px 28px; }
+  .step .num {
+    width:44px; height:44px; border-radius:60px 60px 60px 8px; background:var(--clay);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-size:1.2rem; margin-bottom:18px;
+  }
+  .step h3 { margin-bottom:8px; font-size:1.1rem; }
+  .step p { font-size:.9rem; color:#6d5847; }
+
+  footer { padding:44px 5vw; background:#4a382b; color:#e9d8c3; display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px; align-items:center; }
+  footer .logo { color:#f4e9dc; font-size:1.2rem; }
+  footer p { font-size:.85rem; }
+
+  @media (min-width:768px) and (max-width:1023px){
+    .hero { gap:4vw; padding:120px 5vw 60px; }
+    .hero-arch { max-width:420px; }
+    .hero-arch .arch-img { height:500px; }
+    .cards { grid-template-columns:repeat(2,1fr); gap:22px; }
+    .about { gap:50px; padding:90px 5vw; }
+    .about-photos .main { height:400px; }
+    .steps { grid-template-columns:repeat(3,1fr); gap:24px; }
+  }
+  @media (max-width:900px){
+    .hero { flex-direction:column; padding-top:110px; }
+    .hero-arch { max-width:100%; } .hero-arch .arch-img { height:420px; box-shadow:12px 12px 0 var(--sand); }
+    .cards { grid-template-columns:repeat(2,1fr); }
+    .about { grid-template-columns:1fr; }
+    .about-photos .small { position:static; width:100%; max-width:300px; margin-top:16px; }
+    .steps { grid-template-columns:1fr; }
+    nav a { margin-left:14px; font-size:.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">Jul<span>Craft</span></a>
+  <nav>
+    <a href="#works">Работы</a>
+    <a href="#about">О мастере</a>
+    <a href="#process">Как рождается вещь</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-text">
+    <span class="tag">Мастерская украшений</span>
+    <h1>Тёплые вещи из <em>глины, меди и стекла</em> — носить каждый день</h1>
+    <p>
+      JulCraft — маленькая мастерская, где серьги и броши лепятся, как посуда:
+      медленно, в две обжиговые печи и с большим чувством. Каждая вещь — одна,
+      вторая такая же просто не получится. И это её главное достоинство.
+    </p>
+    <a class="btn" href="#works">Смотреть работы</a>
+  </div>
+  <div class="hero-arch">
+    <div class="arch-img">
+      <img src="https://images.unsplash.com/photo-1620656798579-1984d9e87df7?w=1200&q=80" alt="Украшения на керамике">
+    </div>
+  </div>
+</div>
+
+<div class="gallery-sec" id="works">
+  <div class="sec-head">
+    <span class="kicker">Галерея</span>
+    <h2>Свежие из печи</h2>
+    <p>Каждую неделю — небольшой «обжиг»: 4–6 новых вещей. Забирайте, пока тёплые.</p>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=800&q=80" alt="Серьги" loading="lazy" decoding="async" width="800" height="800">
+      <div class="card-body">
+        <h3>Серьги «Дюна»</h3><p>полимерная глина, позолоченная фурнитура</p>
+        <span class="price">2 100 ₽</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80" alt="Кольцо" loading="lazy" decoding="async" width="800" height="800">
+      <div class="card-body">
+        <h3>Кольцо «Терра»</h3><p>медь, патина</p>
+        <span class="price">1 600 ₽</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800&q=80" alt="Браслет" loading="lazy" decoding="async" width="800" height="800">
+      <div class="card-body">
+        <h3>Браслет «Горизонт»</h3><p>камни, ювелирный тросик</p>
+        <span class="price">2 800 ₽</span>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80" alt="Колье" loading="lazy" decoding="async" width="800" height="800">
+      <div class="card-body">
+        <h3>Колье «Сад»</h3><p>стекло, латунь</p>
+        <span class="price">3 200 ₽</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="about" id="about">
+  <div class="about-photos">
+    <img class="main" src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1000&q=80" alt="Юля за работой" loading="lazy" decoding="async" width="1000" height="800">
+    <img class="small" src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=500&q=80" alt="Материалы" loading="lazy" decoding="async" width="500" height="600">
+  </div>
+  <div>
+    <h2>Привет, я Юля — леплю украшения с 2018 года</h2>
+    <p>
+      Всё началось с курсов керамики: я поняла, что люблю глину, но не люблю
+      мыть тарелки. Перенесла объём в маленькое — и зависла на серьгах.
+      Сейчас в мастерской пахнет запечённой глиной и воском, а на полке
+      живут два чемодана камней, собранных по поездкам.
+    </p>
+    <p>
+      Работаю без каталогов: вещь начинается с наброска на салфетке,
+      а не с трендов. Люблю заказы «под историю» — например, серьги с цветом
+      маминого сада или брошь к защите диссертации.
+    </p>
+    <div class="facts">
+      <div class="fact"><b>8 лет</b><span>за гончарным столом</span></div>
+      <div class="fact"><b>600+</b><span>вещей уехало по миру</span></div>
+      <div class="fact"><b>2 печки</b><span>и один верный таймер</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="process" id="process">
+  <div class="sec-head">
+    <span class="kicker">Процесс</span>
+    <h2>Как рождается вещь</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <h3>Набросок</h3>
+      <p>Всё начинается с кривого рисунка в блокноте — иногда прямо за завтраком.</p>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <h3>Лепка и обжиг</h3>
+      <p>Форма лепится вручную, сохнет сутки и отправляется в печь при 1000°C.</p>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <h3>Сборка</h3>
+      <p>Фурнитура гипоаллергенная, узлы проверяю дважды — вещь должна пережить активную жизнь.</p>
+    </div>
+  </div>
+</div>
+
+<footer id="contacts">
+  <a class="logo" href="#">Jul<span style="color:#c96f4a">Craft</span></a>
+  <p>Заказ: @julcraft · Примерка в мастерской по записи · Доставка по всей стране</p>
+  <p>© 2026, слеплено с любовью</p>
+</footer>
+
+</body>
+</html>

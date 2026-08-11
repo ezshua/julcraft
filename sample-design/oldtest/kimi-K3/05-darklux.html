@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JULCRAFT — украшения из чёрного и золота</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Manrope:wght@200;300;400&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --gold:#c8a24e; --gold-dim:#8f7439; --bg:#101013; --panel:#17171c; --txt:#d9d5cc; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Manrope',sans-serif; background:var(--bg); color:var(--txt); font-weight:300; line-height:1.75; }
+  h1,h2,h3 { font-family:'Cinzel',serif; font-weight:400; color:#f0e9da; }
+
+  header {
+    position:fixed; inset:0 0 auto 0; z-index:20; display:flex; justify-content:space-between;
+    padding:22px 5vw; align-items:center; background:linear-gradient(180deg, rgba(16,16,19,.92), transparent);
+  }
+  .logo { font-family:'Cinzel',serif; font-size:1.3rem; letter-spacing:.4em; color:var(--gold); text-decoration:none; }
+  nav a {
+    color:var(--txt); text-decoration:none; font-size:.72rem; letter-spacing:.3em;
+    text-transform:uppercase; margin-left:34px; transition:color .3s;
+  }
+  nav a:hover { color:var(--gold); }
+
+  .hero {
+    height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; position:relative; overflow:hidden;
+  }
+  .hero::before {
+    content:''; position:absolute; inset:0;
+    background:url('https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=1920&q=80') center/cover;
+    opacity:.28; filter:saturate(.6);
+  }
+  .hero::after {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at center, transparent 30%, var(--bg) 85%);
+  }
+  .hero > * { position:relative; z-index:2; }
+  .hero .over { font-size:.75rem; letter-spacing:.5em; text-transform:uppercase; color:var(--gold); margin-bottom:22px; }
+  .hero h1 { font-size:clamp(2.4rem,7vw,5.6rem); letter-spacing:.14em; line-height:1.15; }
+  .hero .rule { width:1px; height:70px; background:linear-gradient(var(--gold), transparent); margin:34px auto 0; }
+
+  section { padding:120px 6vw; max-width:1240px; margin:0 auto; }
+  .sec-label {
+    display:flex; align-items:center; gap:20px; margin-bottom:50px;
+  }
+  .sec-label .line { flex:1; height:1px; background:linear-gradient(90deg, var(--gold-dim), transparent); }
+  .sec-label span { font-size:.72rem; letter-spacing:.34em; text-transform:uppercase; color:var(--gold); }
+  h2 { font-size:clamp(1.7rem,3.6vw,2.6rem); margin-bottom:44px; letter-spacing:.08em; }
+
+  /* ------ галерея ------ */
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+  .grid figure { position:relative; height:440px; overflow:hidden; background:var(--panel); }
+  .grid img { width:100%; height:100%; object-fit:cover; opacity:.85; transition:.6s; }
+  .grid figure:hover img { opacity:1; transform:scale(1.03); }
+  .grid figcaption {
+    position:absolute; left:0; right:0; bottom:0; padding:22px 26px;
+    background:linear-gradient(0deg, rgba(16,16,19,.9), transparent);
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .grid figcaption b { font-family:'Cinzel',serif; font-weight:400; font-size:1.05rem; letter-spacing:.06em; }
+  .grid figcaption span { color:var(--gold); font-size:.9rem; letter-spacing:.1em; }
+
+  /* ------ о себе ------ */
+  .about { display:grid; grid-template-columns:.9fr 1.1fr; gap:80px; align-items:center; }
+  .about .frame {
+    border:1px solid var(--gold-dim); padding:14px; position:relative;
+  }
+  .about .frame::before {
+    content:''; position:absolute; inset:-9px; border:1px solid rgba(200,162,78,.25); pointer-events:none;
+  }
+  .about .frame img { width:100%; height:520px; object-fit:cover; display:block; filter:grayscale(35%); }
+  .about h2 { margin-bottom:26px; }
+  .about p { margin-bottom:18px; color:#b7b2a7; }
+  .about .sign {
+    margin-top:30px; font-family:'Cinzel',serif; color:var(--gold);
+    letter-spacing:.24em; font-size:1.05rem;
+  }
+  .seal {
+    display:inline-block; width:64px; height:64px; border:1px solid var(--gold);
+    border-radius:50%; color:var(--gold); font-family:'Cinzel',serif;
+    line-height:62px; text-align:center; font-size:1.3rem; margin-left:18px; transform:rotate(-8deg);
+  }
+
+  /* ------ манифест ------ */
+  .manifesto { text-align:center; background:var(--panel); max-width:none; }
+  .manifesto-inner { max-width:760px; margin:0 auto; }
+  .manifesto p {
+    font-family:'Cinzel',serif; font-size:clamp(1.2rem,2.6vw,1.8rem); line-height:1.7; color:#e9e2d3;
+  }
+  .manifesto .star { color:var(--gold); font-size:1rem; letter-spacing:1em; display:block; margin-top:36px; }
+
+  footer {
+    padding:50px 6vw; display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    border-top:1px solid rgba(200,162,78,.2); font-size:.75rem; letter-spacing:.2em; text-transform:uppercase;
+    color:#8d887c;
+  }
+  footer a { color:var(--gold); text-decoration:none; }
+
+  @media (max-width:860px){
+    .grid { grid-template-columns:1fr; } .grid figure { height:360px; }
+    .about { grid-template-columns:1fr; }
+    nav a { margin-left:16px; font-size:.62rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">JULCRAFT</a>
+  <nav>
+    <a href="#collection">Коллекция</a>
+    <a href="#atelier">Ателье</a>
+    <a href="#contact">Заказ</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <p class="over">Частная мастерская украшений</p>
+  <h1>ТЬМА,<br>ОБРАМЛЁННАЯ ЗОЛОТОМ</h1>
+  <div class="rule"></div>
+</div>
+
+<section id="collection">
+  <div class="sec-label"><span>Коллекция № VII — «Ноктюрн»</span><div class="line"></div></div>
+  <h2>Девять вещей. Больше не будет.</h2>
+  <div class="grid">
+    <figure>
+      <img src="https://images.unsplash.com/photo-1610694955371-d4a3e0ce4b52?w=900&q=80" alt="Колье">
+      <figcaption><b>Колье «Интермеццо»</b><span>12 400 ₽</span></figcaption>
+    </figure>
+    <figure>
+      <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=900&q=80" alt="Серьги">
+      <figcaption><b>Серьги «Фа-диез»</b><span>8 900 ₽</span></figcaption>
+    </figure>
+    <figure>
+      <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=900&q=80" alt="Кольцо">
+      <figcaption><b>Кольцо «Пауза»</b><span>6 700 ₽</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="about" id="atelier">
+  <div class="frame">
+    <img src="https://images.unsplash.com/photo-1535644422015-4689579d5db2?w=1000&q=80" alt="Юля в мастерской">
+  </div>
+  <div>
+    <div class="sec-label"><span>Ателье</span><div class="line"></div></div>
+    <h2>Работаю одна. Ночи длиннее дней.</h2>
+    <p>
+      Меня зовут Юлия. Мастерская JulCraft — это двадцать квадратных метров
+      полутёмной комнаты, паяльная лампа и правило: не больше девяти вещей
+      в коллекции. Когда коллекция закрыта, эскизы сжигаются — повторов нет.
+    </p>
+    <p>
+      Основные материалы — патинированная латунь, чёрный агат и золочение
+      в 24 карата. Техника — старинная «канитель», освоенная у реставратора.
+      Медленно, да. Именно поэтому здесь нет корзины и кнопки «купить» —
+      есть личная переписка и примерка при свече.
+    </p>
+    <p class="sign">Юлия Крафт<span class="seal">JC</span></p>
+  </div>
+</section>
+
+<section class="manifesto">
+  <div class="manifesto-inner">
+    <p>«Украшение не обязано сиять.<br>Иногда оно должно затягивать — как музыка».</p>
+    <span class="star">✦ ✦ ✦</span>
+  </div>
+</section>
+
+<footer id="contact">
+  <span>JulCraft · по записи · Санкт-Петербург</span>
+  <span>Заказ: <a href="mailto:order@julcraft.ru">order@julcraft.ru</a> · @julcraft.noir</span>
+  <span>© MMXXVI</span>
+</footer>
+
+</body>
+</html>

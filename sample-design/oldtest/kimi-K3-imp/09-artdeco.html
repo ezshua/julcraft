@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — салон украшений · ар-деко</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Marcellus&family=Poiret+One&family=Rubik:wght@300;400&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --cream:#f0e7d3; --gold:#b28a3e; --ink:#263f3c; --deep:#16302d;
+  }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Rubik',sans-serif; font-weight:300; background:var(--cream); color:var(--ink); line-height:1.7; }
+  h1,h2,h3 { font-family:'Poiret One',cursive; font-weight:400; letter-spacing:.08em; color:var(--deep); }
+
+  /* двойная золотая рамка по краю */
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:40;
+    border:2px solid var(--gold);
+    outline:6px solid var(--cream); outline-offset:-10px;
+  }
+
+  /* ------ герой ------ */
+  .hero {
+    min-height:100vh; background:var(--deep); color:var(--cream);
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; position:relative; overflow:hidden; padding:40px 6vw;
+  }
+  .sunburst {
+    position:absolute; inset:-40%;
+    background:repeating-conic-gradient(from 0deg at 50% 50%, rgba(178,138,62,.14) 0deg 6deg, transparent 6deg 12deg);
+    -webkit-mask:radial-gradient(circle, #000 20%, transparent 62%);
+            mask:radial-gradient(circle, #000 20%, transparent 62%);
+  }
+  .hero > * { position:relative; }
+  .hero .over { font-family:'Poiret One',cursive; letter-spacing:.55em; text-transform:uppercase; font-size:.85rem; color:var(--gold); }
+  .hero h1 { font-size:clamp(3.4rem,10vw,7.5rem); color:var(--cream); margin:14px 0; }
+  .hero .under { font-family:'Marcellus',serif; letter-spacing:.3em; text-transform:uppercase; font-size:.8rem; color:#cbb77f; }
+  .fan { display:flex; gap:6px; margin-top:46px; }
+  .fan span {
+    width:3px; height:44px; background:var(--gold); transform-origin:bottom;
+  }
+  .fan span:nth-child(1){transform:rotate(-24deg)} .fan span:nth-child(2){transform:rotate(-16deg)}
+  .fan span:nth-child(3){transform:rotate(-8deg)} .fan span:nth-child(4){transform:rotate(0)}
+  .fan span:nth-child(5){transform:rotate(8deg)} .fan span:nth-child(6){transform:rotate(16deg)}
+  .fan span:nth-child(7){transform:rotate(24deg)}
+
+  /* разделитель-шеврон */
+  .chevron {
+    display:flex; align-items:center; justify-content:center; gap:16px; padding:22px 0;
+    color:var(--gold); font-size:.8rem; letter-spacing:.5em; text-transform:uppercase;
+    font-family:'Poiret One',cursive;
+  }
+  .chevron::before, .chevron::after {
+    content:''; width:120px; height:2px;
+    background:repeating-linear-gradient(90deg, var(--gold) 0 8px, transparent 8px 16px);
+  }
+
+  section { padding:80px 6vw; max-width:1180px; margin:0 auto; }
+  .sec-head { text-align:center; margin-bottom:56px; }
+  .sec-head .roman { font-family:'Marcellus',serif; color:var(--gold); letter-spacing:.4em; font-size:.8rem; }
+  .sec-head h2 { font-size:clamp(2rem,5vw,3.2rem); margin-top:8px; }
+
+  /* ------ галерея: витрины ------ */
+  .vitrines { display:grid; grid-template-columns:repeat(3,1fr); gap:36px; }
+  .vitrine { border:2px solid var(--gold); padding:12px; background:#f6efdd; }
+  .vitrine-inner { border:1px solid var(--gold); padding:14px; height:100%; display:flex; flex-direction:column; }
+  .vitrine img { width:100%; height:280px; object-fit:cover; display:block; filter:sepia(.25) contrast(1.05); }
+  .vitrine h3 { font-size:1.3rem; margin:16px 0 4px; }
+  .vitrine .desc { font-size:.85rem; color:#57706b; flex:1; }
+  .vitrine .price {
+    font-family:'Marcellus',serif; margin-top:14px; padding-top:12px;
+    border-top:1px dashed var(--gold); display:flex; justify-content:space-between; align-items:baseline;
+    color:var(--deep); letter-spacing:.06em;
+  }
+  .vitrine .price a { font-family:'Poiret One',cursive; color:var(--gold); text-decoration:none; letter-spacing:.2em; text-transform:uppercase; font-size:.78rem; transition:color .2s; }
+  .vitrine .price a:hover { color:var(--ink); }
+
+  /* ------ о мастере ------ */
+  .salon { background:var(--deep); color:var(--cream); max-width:none; }
+  .salon-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center; }
+  .salon-frame {
+    border:2px solid var(--gold); padding:12px;
+  }
+  .salon-frame .inner { border:1px solid var(--gold); height:460px; overflow:hidden; }
+  .salon-frame img { width:100%; height:100%; object-fit:cover; filter:sepia(.35) contrast(1.02); }
+  .salon .sec-head { text-align:left; margin-bottom:26px; }
+  .salon h2 { color:var(--cream); }
+  .salon p { color:#cfd6bd; margin-bottom:16px; font-size:1rem; }
+  .salon .signature { font-family:'Poiret One',cursive; font-size:1.6rem; color:var(--gold); letter-spacing:.15em; }
+  .addresses { margin-top:30px; border-top:1px solid rgba(178,138,62,.4); padding-top:20px; font-family:'Marcellus',serif; font-size:.9rem; letter-spacing:.1em; color:#cfc79f; }
+  .addresses div { display:flex; justify-content:space-between; padding:6px 0; }
+
+  /* ------ блок приглашения ------ */
+  .invite { text-align:center; padding:90px 6vw; }
+  .invite .card {
+    max-width:620px; margin:0 auto; border:2px solid var(--gold); padding:12px; background:#f6efdd;
+  }
+  .invite .card-in { border:1px solid var(--gold); padding:48px 34px; }
+  .invite h2 { font-size:clamp(1.7rem,4vw,2.5rem); margin-bottom:12px; }
+  .invite p { color:#57706b; max-width:44ch; margin:0 auto 28px; }
+  .btn-deco {
+    display:inline-block; font-family:'Poiret One',cursive; letter-spacing:.3em; text-transform:uppercase;
+    background:var(--deep); color:var(--cream); padding:16px 44px; text-decoration:none; font-size:.85rem;
+    border:2px solid var(--deep); transition:.3s;
+  }
+  .btn-deco:hover { background:transparent; color:var(--deep); }
+
+  footer {
+    background:var(--deep); color:#8fa39b; text-align:center; padding:36px 6vw 44px;
+    font-size:.8rem; letter-spacing:.2em; text-transform:uppercase;
+  }
+  footer .logo { font-family:'Poiret One',cursive; color:var(--gold); font-size:1.3rem; letter-spacing:.4em; display:block; margin-bottom:10px; }
+
+  @media (min-width:768px) and (max-width:1023px){
+    .vitrines { grid-template-columns:repeat(2,1fr); gap:28px; }
+    .vitrine img { height:260px; }
+    .salon-inner { gap:50px; }
+    .salon-frame .inner { height:400px; }
+    section { padding:70px 5vw; }
+  }
+  @media (max-width:860px){
+    .vitrines { grid-template-columns:1fr; }
+    .salon-inner { grid-template-columns:1fr; }
+    .salon-frame .inner { height:340px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="sunburst"></div>
+  <p class="over">Салон украшений</p>
+  <h1>JULCRAFT</h1>
+  <p class="under">Геометрия · Эмаль · 1925</p>
+  <div class="fan"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+</div>
+
+<div class="chevron">Избранное сезона</div>
+
+<section id="collection">
+  <div class="sec-head">
+    <span class="roman">— I —</span>
+    <h2>Витрина салона</h2>
+  </div>
+  <div class="vitrines">
+    <div class="vitrine">
+      <div class="vitrine-inner">
+        <img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=800&q=80" alt="Серьги" loading="lazy" decoding="async" width="800" height="600">
+        <h3>Серьги «Восход»</h3>
+        <p class="desc">веерная эмаль цвета слоновой кости, латунь; длина 6 см</p>
+        <div class="price"><span>4 200 ₽</span><a href="#invite">Заказать</a></div>
+      </div>
+    </div>
+    <div class="vitrine">
+      <div class="vitrine-inner">
+        <img src="https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?w=800&q=80" alt="Кулон" loading="lazy" decoding="async" width="800" height="600">
+        <h3>Саутуар «Залига»</h3>
+        <p class="desc">длинное колье в духе флэпперов; шёлковый шнур ручной прокраски</p>
+        <div class="price"><span>6 800 ₽</span><a href="#invite">Заказать</a></div>
+      </div>
+    </div>
+    <div class="vitrine">
+      <div class="vitrine-inner">
+        <img src="https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800&q=80" alt="Кольцо" loading="lazy" decoding="async" width="800" height="600">
+        <h3>Печатка «Метрополь»</h3>
+        <p class="desc">step-мотив брусьев; чёрная эмаль, позолота 24k</p>
+        <div class="price"><span>3 400 ₽</span><a href="#invite">Заказать</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="salon" id="salon">
+  <div class="salon-inner">
+    <div class="salon-frame"><div class="inner">
+      <img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=900&q=80" alt="Мастерская" loading="lazy" decoding="async" width="900" height="600">
+    </div></div>
+    <div>
+      <div class="sec-head">
+        <span class="roman">— II —</span>
+        <h2>Хозяйка салона</h2>
+      </div>
+      <p>
+        Юлия Крафт собирала марки ещё школьницей — за чёткие линии. Потом были
+        факультет графического дизайна, стажировка у реставратора эмалей
+        и главная находка: ящик бельевых зажимов 1920-х с маркировкой «Made in Deco».
+        Вопрос «чем заниматься» решился сам.
+      </p>
+      <p>
+        Салон работает как в старые времена: по записи, с кофе в тонких чашках
+        и картотекой постоянных клиентов. Каждая вещь упаковывается в коробку
+        с золотым тиснением и карточкой, заполненной от руки.
+      </p>
+      <p class="signature">— Юлия</p>
+      <div class="addresses">
+        <div><span>Петроградская, салон</span><span>чт–сб · 12–19</span></div>
+        <div><span>Фурштатский пер., мастерская</span><span>по записи</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="chevron">Будем знакомы</div>
+
+<div class="invite" id="invite">
+  <div class="card">
+    <div class="card-in">
+      <h2>Вход — свободный,<br>примерка — обязательная</h2>
+      <p>
+        Уходить с пустыми руками из салона мы не разрешаем.
+        По крайней мере уйдёте с открыткой и хорошим настроением.
+      </p>
+      <a class="btn-deco" href="mailto:salon@julcraft.ru">Записаться</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="logo">JULCRAFT</span>
+  Salon de Parure · Петроградская наб., 22 · @julcraft.deco · MCMXXVI
+</footer>
+
+</body>
+</html>

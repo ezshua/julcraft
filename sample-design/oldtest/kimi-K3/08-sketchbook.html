@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — блокнот мастера</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Neucha&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --pencil:#4a4a4a; --red:#c0392b; --blue:#3a6ea8; }
+  body {
+    font-family:'Neucha',cursive; color:var(--pencil); line-height:1.75; font-size:1.12rem;
+    background-color:#fdfbf4;
+    background-image:
+      linear-gradient(rgba(58,110,168,.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(192,57,43,.25) 1px, transparent 1px);
+    background-size:100% 34px, 80px 100%;
+    background-position:0 12px, 60px 0;
+  }
+  .page { max-width:960px; margin:0 auto; padding:60px 5vw 60px calc(5vw + 40px); position:relative; }
+
+  h1 { font-family:'Caveat',cursive; font-size:clamp(3rem,8vw,5.4rem); font-weight:700; color:#333; line-height:1; }
+  h2 { font-family:'Caveat',cursive; font-size:clamp(1.9rem,4.6vw,2.9rem); font-weight:700; color:var(--blue); margin-bottom:10px; }
+  h3 { font-family:'Caveat',cursive; font-size:1.5rem; color:#333; }
+
+  .pencil-note { color:#8a8a8a; font-size:.95rem; }
+  .under { text-decoration:underline wavy var(--red) 1.5px; text-underline-offset:5px; }
+  .hl { background:linear-gradient(transparent 45%, #ffe985 45%); padding:0 4px; }
+
+  section { padding:64px 0; }
+  .arrow { color:var(--red); font-family:'Caveat',cursive; font-size:2.2rem; display:inline-block; transform:rotate(-8deg); margin-left:10px; }
+
+  /* ------ geroj ------ */
+  .hero-row { display:flex; gap:40px; align-items:flex-end; flex-wrap:wrap; }
+  .hero-row p { max-width:34ch; }
+  .hero-fig { position:relative; transform:rotate(2deg); }
+  .hero-fig img {
+    width:min(300px, 70vw); height:340px; object-fit:cover; display:block;
+    border:6px solid #fff; box-shadow:4px 6px 18px rgba(0,0,0,.14);
+  }
+  .hero-fig::before {
+    content:''; position:absolute; top:-14px; left:34px; width:80px; height:26px;
+    background:rgba(58,110,168,.28); transform:rotate(-4deg);
+  }
+  .hero-fig figcaption { font-family:'Caveat',cursive; font-size:1.4rem; color:#666; text-align:center; margin-top:6px; }
+
+  /* ------ галерея: эскизы и результат ------ */
+  .sketches { display:grid; grid-template-columns:repeat(2,1fr); gap:56px; margin-top:30px; }
+  .sketch { position:relative; }
+  .sketch:nth-child(odd) { transform:rotate(-1.2deg); }
+  .sketch:nth-child(even) { transform:rotate(.9deg); margin-top:40px; }
+  .sketch .pin {
+    position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+    width:18px; height:18px; background:var(--red); border-radius:50%;
+    box-shadow:2px 3px 4px rgba(0,0,0,.25); z-index:2;
+  }
+  .sketch.pin-blue .pin { background:var(--blue); }
+  .sketch img {
+    width:100%; height:300px; object-fit:cover; display:block;
+    border:8px solid #fff; box-shadow:3px 5px 16px rgba(0,0,0,.13);
+  }
+  .sketch .note { font-family:'Caveat',cursive; font-size:1.5rem; color:#555; margin-top:8px; }
+  .sketch .note .price { color:var(--red); }
+  .stamp {
+    position:absolute; right:10px; bottom:56px; transform:rotate(-10deg);
+    border:2px solid var(--red); color:var(--red); padding:3px 10px;
+    font-family:'Caveat',cursive; font-size:1.1rem; font-weight:700; opacity:.7;
+  }
+
+  /* ------ о себе ------ */
+  .about-box { display:grid; grid-template-columns:1fr 240px; gap:44px; align-items:start; }
+  .about-box p { margin-bottom:14px; }
+  .portrait { position:relative; transform:rotate(2.4deg); }
+  .portrait img { width:100%; height:280px; object-fit:cover; border:6px solid #fff; box-shadow:4px 6px 16px rgba(0,0,0,.14); display:block; }
+  .portrait figcaption { font-family:'Caveat',cursive; font-size:1.35rem; color:#666; margin-top:6px; text-align:center; }
+  .todo {
+    margin-top:26px; padding-left:8px;
+  }
+  .todo li { list-style:none; padding-left:30px; position:relative; margin-bottom:8px; }
+  .todo li::before {
+    content:''; position:absolute; left:0; top:5px; width:16px; height:16px;
+    border:2px solid var(--pencil); border-radius:3px;
+  }
+  .todo li.done::after {
+    content:''; position:absolute; left:3px; top:2px; width:11px; height:18px;
+    border-right:2.5px solid var(--red); border-bottom:2.5px solid var(--red);
+    transform:rotate(45deg) scale(.8);
+  }
+  .todo li.done span { text-decoration:line-through; color:#9a9a9a; }
+
+  .footer-note {
+    text-align:center; padding:40px 0 80px;
+  }
+  .footer-note h2 { margin-bottom:4px; }
+  .footer-note .hand { font-family:'Caveat',cursive; font-size:1.6rem; color:#555; }
+  .envelope {
+    display:inline-block; margin-top:16px; border:2.5px solid var(--blue); color:var(--blue);
+    padding:12px 34px; font-family:'Caveat',cursive; font-size:1.6rem; font-weight:700;
+    text-decoration:none; border-radius:4px; transform:rotate(-1deg); transition:.2s;
+  }
+  .envelope:hover { background:var(--blue); color:#fdfbf4; transform:rotate(1deg) scale(1.04); }
+
+  @media (max-width:760px){
+    .page { padding-left:5vw; }
+    .sketches { grid-template-columns:1fr; }
+    .sketch:nth-child(even) { margin-top:0; }
+    .about-box { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header>
+  <p class="pencil-note">(найдено на верстаке № 2, страница 44)</p>
+  <h1>Блокнот<br>мастера <span class="under">JulCraft</span></h1>
+  <div class="hero-row" style="margin-top:24px">
+    <p>
+      Сюда попадают идеи, которые позже становятся серьгами и брошами.
+      <span class="hl">Часть — уже в продаже</span>, часть — ждёт своего утра.
+      Листайте, помечайте, заказывайте.
+      <span class="arrow">↓ листай!</span>
+    </p>
+    <figure class="hero-fig">
+      <img src="https://images.unsplash.com/photo-1610694955371-d4a3e0ce4b52?w=700&q=80" alt="Колье">
+      <figcaption>вот это уже готово ↩</figcaption>
+    </figure>
+  </div>
+</header>
+
+<section id="works">
+  <h2>Эскизы, ставшие вещами</h2>
+  <p class="pencil-note">карандашный набросок — слева, результат — на фото :)</p>
+  <div class="sketches">
+    <div class="sketch">
+      <span class="pin"></span>
+      <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=700&q=80" alt="Серьги">
+      <p class="note">«листья, но не скучные» → серьги «Смородина» · <span class="price">2 200 ₽</span></p>
+    </div>
+    <div class="sketch pin-blue">
+      <span class="pin"></span>
+      <img src="https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=700&q=80" alt="Кольца">
+      <p class="note">кольца-наколки из латуни · <span class="price">1 700 ₽</span></p>
+      <span class="stamp">всё, ушло!</span>
+    </div>
+    <div class="sketch pin-blue">
+      <span class="pin"></span>
+      <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=700&q=80" alt="Браслет">
+      <p class="note">браслет-змейка, пробный камешек · <span class="price">2 900 ₽</span></p>
+    </div>
+    <div class="sketch">
+      <span class="pin"></span>
+      <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=700&q=80" alt="Колье">
+      <p class="note">подумать: бусы из «конфет»? · <span class="price">от 3 000 ₽</span></p>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <h2>Кто тут пишет</h2>
+  <div class="about-box">
+    <div>
+      <p>
+        Меня зовут Юля. Пять лет назад я выиграла у метро книгу
+        «Как делать украшения из проволоки», и с тех пор мои руки
+        <span class="hl">покрыты мелкими царапинами идеями</span>.
+      </p>
+      <p>
+        Рисую плохо, латаю хорошо. Мои эскизы поймёт только тот,
+        кто делает, — поэтому рядом всегда фотография готовой вещи.
+        Если у u бирюзовый джемпер и рыжий кот — возможно, наше колье уже ждёт вас.
+      </p>
+      <ul class="todo">
+        <li class="done"><span>научиться паять (2019) ✔</span></li>
+        <li class="done"><span>сделать смешную брошь-гречку ✔</span></li>
+        <li><span>перестать хранить проволоку в щелях дивана</span></li>
+        <li><span>коллекция «городские птицы» — к марту!</span></li>
+      </ul>
+    </div>
+    <figure class="portrait">
+      <img src="https://images.unsplash.com/photo-1580984969071-a8da5656c2fb?w=600&q=80" alt="Юля">
+      <figcaption>автопортрет с чаем (≈)</figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="footer-note">
+  <h2>Понравилась страничка?</h2>
+  <p class="hand">пришлите набросок — сделаем из него вещь</p>
+  <a class="envelope" href="mailto:hello@julcraft.ru">✉ hello@julcraft.ru</a>
+</div>
+
+</div>
+
+</body>
+</html>
