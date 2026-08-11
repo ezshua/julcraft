@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Заявки — JulCraft Админ</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="logo" href="dashboard.html">JulCraft<small>панель мастера</small></a>
+  <nav>
+    <a href="dashboard.html">Дашборд</a>
+    <a href="products.html">Товары</a>
+    <a href="components.html">Склад</a>
+    <a href="categories.html">Категории</a>
+    <a href="orders.html" class="is-active">Заявки</a>
+    <a href="settings.html">Настройки</a>
+  </nav>
+  <div class="actions">
+    <a class="icon-btn icon-btn--rust" href="login.html" title="Выйти">⏻</a>
+    <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mm">
+  <div class="mm-head">
+    <b>Панель мастера</b>
+    <button class="icon-btn" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  </div>
+  <a class="mm" href="dashboard.html">Дашборд</a>
+  <a class="mm" href="products.html">Товары</a>
+  <a class="mm" href="components.html">Склад</a>
+  <a class="mm" href="categories.html">Категории</a>
+  <a class="mm" href="orders.html">Заявки</a>
+  <a class="mm" href="settings.html">Настройки</a>
+  <div class="mm-foot"><a href="login.html" style="color:var(--rust);">Выйти →</a></div>
+</div>
+
+<main class="admin-wrap">
+
+  <div class="page-title">
+    <h1>Заявки</h1>
+    <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+      <span class="doodle">4 новых · ждут звонка</span>
+    </div>
+  </div>
+
+  <!-- тулбар -->
+  <div class="board board--paper mb-20" style="padding:16px 20px;">
+    <div class="filters" style="justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+      <div class="filters">
+        <span class="filter is-active">Все (18)</span>
+        <span class="filter">Новые (4)</span>
+        <span class="filter">В работе (6)</span>
+        <span class="filter">Готово (7)</span>
+        <span class="filter">Отменено (1)</span>
+      </div>
+      <div class="filters">
+        <span class="filter">Товар (11)</span>
+        <span class="filter">Конфигуратор (7)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>№</th><th>Тип</th><th>Клиент</th><th>Контакт</th><th>Сумма</th><th>Срок</th><th>Коллаж</th><th>Статус</th><th>Дата</th><th>Действия</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="num">#124</td><td><span class="tag tag--new">товар</span></td>
+            <td class="cell-name"><b>Ольга Р.</b><small>Брошь «Ромашковая»</small></td>
+            <td class="cell-name"><small>@olga_r_76 · +7 912 000-11-22</small></td>
+            <td class="cell-price">1 950 ₽</td><td class="num">—</td>
+            <td>—</td>
+            <td><span class="tag tag--new">new</span></td><td class="num">11.08 14:02</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="num">#123</td><td><span class="tag tag--new">товар</span></td>
+            <td class="cell-name"><b>Марина К.</b><small>Серьги «Танец-76»</small></td>
+            <td class="cell-name"><small>marina.k@gmail.com · +7 912 111-22-33</small></td>
+            <td class="cell-price">2 300 ₽</td><td class="num">—</td>
+            <td>—</td>
+            <td><span class="tag tag--new">new</span></td><td class="num">11.08 10:47</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="num">#122</td><td><span class="tag tag--mustard">конфигуратор</span></td>
+            <td class="cell-name"><b>Дмитрий С.</b><small>Кулон: агат + латунь</small></td>
+            <td class="cell-name"><small>@dmitry_s · +7 903 555-66-77</small></td>
+            <td class="cell-price">3 240 ₽</td><td class="num">9 дн</td>
+            <td><button class="icon-btn" style="width:32px;height:32px;" title="Смотреть коллаж" onclick="document.getElementById('modal-order').classList.add('open')">🖼</button></td>
+            <td><span class="tag tag--new">new</span></td><td class="num">10.08 19:31</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="num">#121</td><td><span class="tag tag--mustard">конфигуратор</span></td>
+            <td class="cell-name"><b>Анна В.</b><small>Бусы: стеклярус + янтарь</small></td>
+            <td class="cell-name"><small>anna.v@ya.ru · +7 921 000-44-55</small></td>
+            <td class="cell-price">4 180 ₽</td><td class="num">12 дн</td>
+            <td><button class="icon-btn" style="width:32px;height:32px;" title="Смотреть коллаж" onclick="document.getElementById('modal-order').classList.add('open')">🖼</button></td>
+            <td><span class="tag tag--in_progress">in_progress</span></td><td class="num">10.08 09:12</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="num">#120</td><td><span class="tag tag--new">товар</span></td>
+            <td class="cell-name"><b>Игорь Л.</b><small>Кольцо «Воскресное»</small></td>
+            <td class="cell-name"><small>@igor_l · +7 905 222-33-44</small></td>
+            <td class="cell-price">1 750 ₽</td><td class="num">—</td>
+            <td>—</td>
+            <td><span class="tag tag--in_progress">in_progress</span></td><td class="num">09.08 16:20</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="num">#119</td><td><span class="tag tag--mustard">конфигуратор</span></td>
+            <td class="cell-name"><b>Светлана П.</b><small>Кулон: слеза + цепь серебро</small></td>
+            <td class="cell-name"><small>svet.p@mail.ru · +7 911 888-99-00</small></td>
+            <td class="cell-price">5 640 ₽</td><td class="num">21 дн</td>
+            <td><button class="icon-btn" style="width:32px;height:32px;" title="Смотреть коллаж" onclick="document.getElementById('modal-order').classList.add('open')">🖼</button></td>
+            <td><span class="tag tag--in_progress">in_progress</span></td><td class="num">08.08 12:05</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="num">#118</td><td><span class="tag tag--new">товар</span></td>
+            <td class="cell-name"><b>Наталья Д.</b><small>Комплект «Вечер на Радищева»</small></td>
+            <td class="cell-name"><small>nata.d@gmail.com · +7 902 333-44-55</small></td>
+            <td class="cell-price">4 200 ₽</td><td class="num">—</td>
+            <td>—</td>
+            <td><span class="tag tag--done">done</span></td><td class="num">07.08 15:44</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="num">#117</td><td><span class="tag tag--mustard">конфигуратор</span></td>
+            <td class="cell-name"><b>Елена М.</b><small>Серьги: коралловый сон + швензы</small></td>
+            <td class="cell-name"><small>@elena_m · +7 904 666-77-88</small></td>
+            <td class="cell-price">2 480 ₽</td><td class="num">7 дн</td>
+            <td><button class="icon-btn" style="width:32px;height:32px;" title="Смотреть коллаж" onclick="document.getElementById('modal-order').classList.add('open')">🖼</button></td>
+            <td><span class="tag tag--done">done</span></td><td class="num">06.08 11:33</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="num">#116</td><td><span class="tag tag--new">товар</span></td>
+            <td class="cell-name"><b>Павел Т.</b><small>Браслет «Кассета-минус»</small></td>
+            <td class="cell-name"><small>pavel.t@yandex.ru · +7 915 111-55-99</small></td>
+            <td class="cell-price">2 100 ₽</td><td class="num">—</td>
+            <td>—</td>
+            <td><span class="tag tag--cancelled">cancelled</span></td><td class="num">05.08 18:02</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pagination" style="justify-content:flex-start;">
+    <span class="page-btn is-active">1</span>
+    <a class="page-btn" href="#">2</a>
+  </div>
+
+</main>
+
+<!-- ===== Модалка: детали заявки (конфигуратор) ===== -->
+<div class="modal-overlay" id="modal-order">
+  <div class="modal modal--wide">
+    <div class="m-head">
+      <h3>Заявка #122 — Кулон Дмитрия С.</h3>
+      <button class="icon-btn" onclick="document.getElementById('modal-order').classList.remove('open')" aria-label="Закрыть">✕</button>
+    </div>
+
+    <div class="order-detail">
+      <div class="field--row" style="gap:24px;">
+        <div class="grow-1">
+          <div class="dropzone" style="margin-bottom:14px;">
+            <b>Коллаж (PNG)</b>
+            <div class="dz-example" style="gap:10px;">
+              <svg viewBox="0 0 24 24" width="56" height="56" style="background:var(--white); border:3px solid var(--brown); border-radius:12px;"><circle cx="12" cy="10" r="7" fill="none" stroke="#d9a441" stroke-width="3"/><path d="M12 17v4"/></svg>
+              <svg viewBox="0 0 24 24" width="56" height="56" style="background:var(--white); border:3px solid var(--brown); border-radius:12px;"><circle cx="12" cy="12" r="9" fill="#f5edd8" stroke="#4a3226" stroke-width="2"/><circle cx="9" cy="9" r="1.5" fill="#4a3226"/><circle cx="15" cy="9" r="1.5" fill="#4a3226"/></svg>
+              <span>коллаж собран сервером · sharp</span>
+            </div>
+          </div>
+        </div>
+        <div class="grow-1">
+          <div class="field"><label>Клиент</label><input type="text" value="Дмитрий С." disabled></div>
+          <div class="field"><label>Контакт</label><input type="text" value="@dmitry_s · +7 903 555-66-77" disabled></div>
+          <div class="field"><label>Комментарий</label><textarea disabled>Хочу агат «Лунный», если будет — латунная цепь 50 см.</textarea></div>
+        </div>
+      </div>
+
+      <div class="receipt" style="max-width:100%; margin:0 0 16px; padding:26px 24px;">
+        <div class="row"><span>Камень «Лунный агат» ×1</span><span class="r">520 ₽</span></div>
+        <div class="row"><span>&nbsp;&nbsp;обработка ×1</span><span class="r">100 ₽</span></div>
+        <div class="row"><span>Подвеска «Ромашка-76» ×1</span><span class="r">220 ₽</span></div>
+        <div class="row"><span>&nbsp;&nbsp;обработка ×1</span><span class="r">50 ₽</span></div>
+        <div class="row"><span>Цепь латунная 50 см ×1</span><span class="r">250 ₽</span></div>
+        <div class="row"><span>&nbsp;&nbsp;обработка ×1</span><span class="r">40 ₽</span></div>
+        <div class="row"><span>Работа мастера (кулоны)</span><span class="r">1 400 ₽</span></div>
+        <div class="row" style="font-weight:500;"><span><b>Итого</b></span><span class="r"><b>2 780 ₽</b></span></div>
+        <div class="row"><span>Срок</span><span class="r">5 + 0 + 0 = 5 дн</span></div>
+      </div>
+
+      <div class="form-actions">
+        <span class="tag tag--new">new</span>
+        <button class="btn btn--primary btn--small" onclick="this.classList.add('btn--secondary'); this.textContent='Готово ✓'; document.getElementById('st').textContent='done'; document.getElementById('st').className='tag tag--done';" style="margin-left:auto;">Взять в работу</button>
+        <button class="btn btn--secondary btn--small">Отменить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

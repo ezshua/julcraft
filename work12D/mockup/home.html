@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — геометрия, которую можно надеть</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="confetti"></div>
+
+<!-- ===== Header ===== -->
+<header class="header">
+  <a class="logo" href="home.html">JulCraft<i></i></a>
+  <nav class="nav">
+    <a href="catalog.html">Вещи</a>
+    <a href="configurator.html">Собрать</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+  </nav>
+  <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+</header>
+
+<!-- мобильное меню -->
+<div class="mobile-menu" id="mm">
+  <button class="btn-icon btn-icon--c3 close" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  <a class="mm" href="catalog.html">Вещи</a>
+  <a class="mm" href="configurator.html">Собрать</a>
+  <a class="mm" href="about.html">О нас</a>
+  <a class="mm" href="contacts.html">Контакты</a>
+</div>
+
+<!-- ===== Hero ===== -->
+<div class="hero">
+  <div>
+    <h1>Геометрия,<br>которую <span class="chip">можно</span><br><span class="chip chip--2">надеть</span></h1>
+    <p>Круглое, треугольное, зигзагообразное — украшения из цветной смолы и латуни, собранные как конструктор. Надень счастье по схеме.</p>
+    <div class="cta-row">
+      <a class="btn btn--fill" href="catalog.html">Смотреть вещи →</a>
+      <a class="btn btn--line" href="configurator.html">Собрать своё</a>
+    </div>
+  </div>
+  <div class="hero-fig">
+    <div class="blob"><img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=900&q=80" alt="Украшение из смолы" loading="lazy" decoding="async"></div>
+    <div class="badge">каждая вещь — не повторяется!</div>
+  </div>
+</div>
+
+<!-- ===== Витрина: 12 образцов ===== -->
+<section class="sect" id="shop">
+  <div class="sec-title">
+    <h2>Собери свой набор</h2>
+    <span class="doodle">▲●■ миксуй!</span>
+  </div>
+  <div class="cards">
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=800&q=80" alt="Серьги «Полукруг и точка»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Серьги «Полукруг и точка»</h3>
+        <p>Смола в трёх оттенках на выбор, швензы — титан. Вес — как два стикера.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>1 900 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=800&q=80" alt="Кулон «Зигзаг удачи»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кулон «Зигзаг удачи»</h3>
+        <p>Классический мемфис-зигзаг: медь в цветной оправе. Цепочка 45 см.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>2 400 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=800&q=80" alt="Бусы «Конструктор № 6»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Бусы «Конструктор № 6»</h3>
+        <p>Элементы отстёгиваются и переставляются — новая форма каждое утро.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>3 600 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80" alt="Серьги «Треугольник дня»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Серьги «Треугольник дня»</h3>
+        <p>Латунные треугольники с мятной эмалью. Пара весит меньше монеты.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>2 100 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80" alt="Кулон «Круглая луна»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кулон «Круглая луна»</h3>
+        <p>Полупрозрачная смола «под луну», фурнитура латунь. На свету теплеет.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>1 800 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80" alt="Браслет «Геометрия на запястье»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Браслет «Геометрия на запястье»</h3>
+        <p>Смоляные плитки на хлопковом шнуре. Регулируется на 16–19 см.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>2 600 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&q=80" alt="Брошь «Квадрат смелости»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Брошь «Квадрат смелости»</h3>
+        <p>Крупная брошь-квадрат в терракотовых разводах. Крепление булавка.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>1 500 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800&q=80" alt="Серьги «Зигзаг и точка»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Серьги «Зигзаг и точка»</h3>
+        <p>Два зигзага разной высоты — одна «точка» внизу. Титановые швензы.</p>
+        <div class="meta"><span class="tag tag--order">под заказ · 5 дней</span></div>
+      </div>
+      <div class="foot"><b>2 300 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1588444837495-c6cfeb53f32d?w=800&q=80" alt="Кольцо «Угол 45°»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кольцо «Угол 45°»</h3>
+        <p>Смоляной уголок на латунной шине. Размер регулируется чуть-чуть.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>1 400 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=800&q=80" alt="Комплект «Мемфис-сет»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Комплект «Мемфис-сет»</h3>
+        <p>Серьги + кулон из одной партии смолы. Подарочная коробка в комплекте.</p>
+        <div class="meta"><span class="tag tag--order">под заказ · 7 дней</span></div>
+      </div>
+      <div class="foot"><b>5 200 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800&q=80" alt="Бусы «Соты»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Бусы «Соты»</h3>
+        <p>Гексагональные бусины трёх оттенков. Собираются в любом порядке.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>4 100 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=800&q=80" alt="Кулон «Мятная капля»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кулон «Мятная капля»</h3>
+        <p>Капля из мятной смолы на вощёном шнуре. Узел держит 3 года проверено.</p>
+        <div class="meta"><span class="tag tag--new">новинка</span></div>
+      </div>
+      <div class="foot"><b>2 000 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== Категории ===== -->
+<section class="sect" id="categories">
+  <div class="sec-title">
+    <h2>Выбери форму</h2>
+    <span class="doodle doodle--c2">10 категорий</span>
+  </div>
+  <div class="cards cards--cat">
+
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" fill="#22242a"/></svg></div>
+      <h3>Серьги</h3><p>Круглое и точечное</p><span class="count tag tag--info">18 изделий</span>
+    </a>
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,3 21,20 3,20" fill="#22242a"/></svg></div>
+      <h3>Кулоны</h3><p>Треугольное на цепочке</p><span class="count tag tag--info">14 изделий</span>
+    </a>
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><polygon points="3,6 10,6 13,12 17,18 21,18 18,12 21,6 14,6" fill="#22242a"/></svg></div>
+      <h3>Броши</h3><p>Зигзаг на лацкан</p><span class="count tag tag--info">9 изделий</span>
+    </a>
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" fill="#22242a"/></svg></div>
+      <h3>Браслеты</h3><p>Квадратное на запястье</p><span class="count tag tag--info">11 изделий</span>
+    </a>
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,2 21,8.5 17.5,20 6.5,20 3,8.5" fill="#22242a"/></svg></div>
+      <h3>Бусы</h3><p>Гексагон на шею</p><span class="count tag tag--info">8 изделий</span>
+    </a>
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,1.5 15.2,8.2 22,9.4 17,14.2 18.3,21 12,17.7 5.7,21 7,14.2 2,9.4 8.8,8.2" fill="#22242a"/></svg></div>
+      <h3>Кольца</h3><p>Звезда на пальце</p><span class="count tag tag--info">7 изделий</span>
+    </a>
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,2 21,12 12,22 3,12" fill="#22242a"/></svg></div>
+      <h3>Ожерелья</h3><p>Ромб вокруг шеи</p><span class="count tag tag--info">6 изделий</span>
+    </a>
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M2 12c3-5 6-5 9 0s6 5 9 0" stroke="#22242a" stroke-width="3" fill="none"/></svg></div>
+      <h3>Комплекты</h3><p>Волна из трёх частей</p><span class="count tag tag--info">5 изделий</span>
+    </a>
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M15 3a9 9 0 100 18c-4 0-7-3.5-7-9s3-9 7-9z" fill="#22242a"/></svg></div>
+      <h3>Заколки</h3><p>Полукруг в волосы</p><span class="count tag tag--info">6 изделий</span>
+    </a>
+    <a class="card cat-card" href="category.html">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z" fill="#22242a"/></svg></div>
+      <h3>Клипсы</h3><p>Плюс без прокола</p><span class="count tag tag--info">4 изделия</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===== О мастере ===== -->
+<section class="about" id="about">
+  <div class="about-grid">
+    <div class="frame">
+      <img src="https://images.unsplash.com/photo-1521146764736-56c929d59c83?w=900&q=80" alt="Юля в мастерской" loading="lazy" decoding="async">
+    </div>
+    <div>
+      <h2>Юля собирает <span>радость</span> по инструкции без инструкции</h2>
+      <p>
+        В детстве Юля не соблюдала схемы «Лего» — и с тех пор так и живёт.
+        Теперь она делает украшения по тому же принципу: есть детали, есть цвет,
+        а результат каждый раз превращается в сюрприз. Хороший, проверенный сюрприз.
+      </p>
+      <p>
+        В мастерской — кастрюля с цветной смолой, полка с латунными заготовками
+        и магнитная доска, где посетители оставляют рисунок «хочу вот так».
+        Половину этих рисунков Юля воплощает. Вторую половину — тоже.
+      </p>
+      <div class="chips">
+        <span class="y">● цвет — всегда</span>
+        <span class="g">■ честность — по умолчанию</span>
+        <span class="r">▲ повтор — никогда</span>
+        <span>✳ стразы — по запросу</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer (расширенный) ===== -->
+<footer class="footer-grid" id="go">
+  <div>
+    <div class="brand">JulCraft<i style="display:inline-block;width:12px;height:12px;background:var(--c3);border-radius:50%;margin-left:6px;"></i></div>
+    <div class="tagline">Геометрия, которую можно надеть</div>
+    <div class="socials">
+      <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="#22242a"><path d="M21.9 4.6 18.8 19c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.3-.5.5-.9.5l.3-4.6L18.2 6c.4-.3-.1-.5-.6-.2L7.3 12.7l-4.5-1.4c-1-.3-1-1 .2-1.5l17.5-6.8c.8-.3 1.5.2 1.4 1.6z"/></svg></a>
+      <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="#22242a" stroke="none"/></svg></a>
+      <a href="#" aria-label="Почта"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2.5"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg></a>
+    </div>
+  </div>
+  <div>
+    <h4>Быстрые ссылки</h4>
+    <a href="catalog.html">Вещи</a>
+    <a href="configurator.html">Собрать</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+  </div>
+  <div>
+    <h4>Контакты</h4>
+    <a href="mailto:go@julcraft.ru">go@julcraft.ru</a>
+    <a href="tel:+79990000000">+7 999 000-00-00</a>
+    <a href="#">@julcraft.play</a>
+    <a href="#">Москва, мастерская «Соты»</a>
+  </div>
+</footer>
+<div class="footer-copy">JulCraft · © 2026 · вебсайт не содержит стразов, но содержит любовь</div>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Панель мастера — JulCraft</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="admin page--flat">
+
+<div class="confetti"></div>
+
+<!-- ===== Admin Header ===== -->
+<header class="header">
+  <a class="logo" href="dashboard.html">JulCraft<i></i><span style="font-size:.65rem; color:var(--muted); font-family:var(--font-body); font-weight:700;">админ</span></a>
+  <nav class="nav admin-nav">
+    <a href="dashboard.html" class="is-active">Дашборд</a>
+    <a href="products.html">Товары</a>
+    <a href="components.html">Склад</a>
+    <a href="categories.html">Категории</a>
+    <a href="orders.html">Заявки</a>
+    <a href="settings.html">Настройки</a>
+    <a href="login.html" class="nav-admin">Выйти</a>
+  </nav>
+  <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+</header>
+
+<div class="mobile-menu" id="mm">
+  <button class="btn-icon btn-icon--c3 close" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  <a class="mm" href="dashboard.html">Дашборд</a>
+  <a class="mm" href="products.html">Товары</a>
+  <a class="mm" href="components.html">Склад</a>
+  <a class="mm" href="categories.html">Категории</a>
+  <a class="mm" href="orders.html">Заявки</a>
+  <a class="mm" href="settings.html">Настройки</a>
+</div>
+
+<!-- ===== Контент ===== -->
+<main class="admin-wrap">
+
+  <div class="page-title">
+    <h1>Панель мастера</h1>
+    <span class="doodle">● свежо на 11:40</span>
+  </div>
+
+  <!-- метрики -->
+  <div class="cards cards--4 mb-30">
+    <div class="card card--flat stat-card stat-card--c1">
+      <div class="num">7</div>
+      <div class="lbl">новых заявок · сегодня</div>
+    </div>
+    <div class="card card--flat stat-card stat-card--c2">
+      <div class="num">32</div>
+      <div class="lbl">в работе</div>
+    </div>
+    <div class="card card--flat stat-card stat-card--c3">
+      <div class="num">14</div>
+      <div class="lbl">изделий на витрине</div>
+    </div>
+    <div class="card card--flat stat-card stat-card--ink">
+      <div class="num">212</div>
+      <div class="lbl">комплектующих на складе</div>
+    </div>
+  </div>
+
+  <!-- последние заявки -->
+  <div class="admin-section">
+    <h2>Последние заявки</h2>
+    <div class="card card--flat">
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>ID</th><th>Тип</th><th>Клиент</th><th>Сумма</th><th>Срок</th><th>Статус</th><th>Дата</th></tr>
+          </thead>
+          <tbody>
+            <tr class="is-clickable" onclick="window.location='orders.html'">
+              <td class="num">#107</td>
+              <td><span class="tag tag--work">конфигуратор</span></td>
+              <td class="cell-name"><b>Мария К.</b><small>@maria_k · Telegram</small></td>
+              <td class="cell-price">3 940 ₽</td>
+              <td>6 дней</td>
+              <td><span class="tag tag--new">новая</span></td>
+              <td>сегодня, 10:24</td>
+            </tr>
+            <tr class="is-clickable" onclick="window.location='orders.html'">
+              <td class="num">#106</td>
+              <td><span class="tag tag--info">товар</span></td>
+              <td class="cell-name"><b>Игорь С.</b><small>+7 912 344-56-78</small></td>
+              <td class="cell-price">2 400 ₽</td>
+              <td>3 дня</td>
+              <td><span class="tag tag--work">в работе</span></td>
+              <td>вчера, 18:02</td>
+            </tr>
+            <tr class="is-clickable" onclick="window.location='orders.html'">
+              <td class="num">#105</td>
+              <td><span class="tag tag--work">конфигуратор</span></td>
+              <td class="cell-name"><b>Аня П.</b><small>anna.p@mail.ru</small></td>
+              <td class="cell-price">5 120 ₽</td>
+              <td>9 дней</td>
+              <td><span class="tag tag--work">в работе</span></td>
+              <td>вчера, 12:47</td>
+            </tr>
+            <tr class="is-clickable" onclick="window.location='orders.html'">
+              <td class="num">#104</td>
+              <td><span class="tag tag--info">товар</span></td>
+              <td class="cell-name"><b>Дина Р.</b><small>@dina_rays</small></td>
+              <td class="cell-price">1 900 ₽</td>
+              <td>2 дня</td>
+              <td><span class="tag tag--done">готово</span></td>
+              <td>11 авг, 09:15</td>
+            </tr>
+            <tr class="is-clickable" onclick="window.location='orders.html'">
+              <td class="num">#103</td>
+              <td><span class="tag tag--info">товар</span></td>
+              <td class="cell-name"><b>Лёша В.</b><small>+7 903 122-33-44</small></td>
+              <td class="cell-price">3 600 ₽</td>
+              <td>—</td>
+              <td><span class="tag tag--cancel">отменена</span></td>
+              <td>10 авг, 21:30</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="mt-20"><a class="btn btn--line btn--small" href="orders.html">Все заявки →</a></p>
+  </div>
+
+</main>
+
+</body>
+</html>

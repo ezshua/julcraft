@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — Конфигуратор: Кулоны</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="confetti"></div>
+
+<!-- ===== Header ===== -->
+<header class="header">
+  <a class="logo" href="home.html">JulCraft<i></i></a>
+  <nav class="nav">
+    <a href="catalog.html">Вещи</a>
+    <a href="configurator.html">Собрать</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+  </nav>
+  <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+</header>
+
+<!-- мобильное меню -->
+<div class="mobile-menu" id="mm">
+  <button class="btn-icon btn-icon--c3 close" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  <a class="mm" href="catalog.html">Вещи</a>
+  <a class="mm" href="configurator.html">Собрать</a>
+  <a class="mm" href="about.html">О нас</a>
+  <a class="mm" href="contacts.html">Контакты</a>
+</div>
+
+<!-- ===== Хлебные крошки ===== -->
+<nav class="crumbs"><a href="home.html">Главная</a> <span class="sep">›</span> <a href="configurator.html">Собрать</a> <span class="sep">›</span> <span class="cur">Кулоны</span></nav>
+
+<!-- ===== Конфигуратор ===== -->
+<section class="sect">
+  <div class="sec-title">
+    <h2>Кулон</h2>
+    <span class="doodle">▲●■ миксуй!</span>
+    <span class="sub">Соберите украшение из деталей со склада</span>
+  </div>
+
+  <div class="conf-grid">
+
+    <!-- левая колонка: холст -->
+    <div class="canvas-area">
+      <div class="ca-bar">
+        <b>Коллаж вашего украшения</b>
+        <div class="tools">
+          <button class="btn-icon btn-icon--c2" aria-label="Скачать PNG">⤓</button>
+          <button class="btn-icon btn-icon--c3" aria-label="Сбросить">⟲</button>
+        </div>
+      </div>
+      <div class="canvas">
+        <div class="guide guide--v1"></div>
+        <div class="guide guide--v2"></div>
+        <div class="guide guide--v3"></div>
+        <div class="guide guide--h1"></div>
+        <div class="guide guide--h2"></div>
+
+        <div class="placed placed--1">
+          <div class="chip-img"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" fill="#e8b64c" stroke="#22242a" stroke-width="2.5"/></svg></div>
+          <span>Круг 1 шт</span>
+        </div>
+        <div class="placed placed--2">
+          <div class="chip-img"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,3.5 21,20 3,20" fill="#7fae9e" stroke="#22242a" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+          <span>Треугольник 1 шт</span>
+        </div>
+        <div class="placed placed--3">
+          <div class="chip-img"><svg viewBox="0 0 24 24" fill="none"><polyline points="3,7 9,7 12,13 15,18 21,18" stroke="#d0785a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span>Зигзаг 1 шт</span>
+        </div>
+        <div class="placed placed--4">
+          <div class="chip-img"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,2.5 21,12 12,21.5 3,12" fill="#22242a"/></svg></div>
+          <span>Ромб 1 шт</span>
+        </div>
+        <div class="placed placed--5">
+          <div class="chip-img"><svg viewBox="0 0 24 24" fill="none"><path d="M15 3a9 9 0 100 18c-4 0-7-3.5-7-9s3-9 7-9z" fill="#7fae9e" stroke="#22242a" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+          <span>Полукруг 1 шт</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- правая колонка: слоты -->
+    <div class="accordion">
+
+      <!-- Слот 1 -->
+      <div class="slot is-open">
+        <div class="slot-head">
+          <span class="sq sq--c1">●</span>
+          <b>Основной элемент</b>
+          <small>от 1 до 1</small>
+          <span class="caret">▾</span>
+        </div>
+        <div class="slot-body">
+          <div class="comps">
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" fill="#e8b64c" stroke="#22242a" stroke-width="2.5"/></svg></div>
+              <div class="info"><b>Смола «Круг» янтарная</b><small>Ø 20 мм, полировка вручную</small></div>
+              <span class="price">120 ₽</span>
+              <span class="tag tag--stock">в наличии</span>
+              <div class="stepper"><button disabled aria-label="Убрать">−</button><span class="val">1</span><button aria-label="Добавить">+</button></div>
+            </div>
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,3.5 21,20 3,20" fill="#7fae9e" stroke="#22242a" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+              <div class="info"><b>Смола «Треугольник» мятная</b><small>Сторона 24 мм, матовый верх</small></div>
+              <span class="price">150 ₽</span>
+              <span class="tag tag--stock">в наличии</span>
+              <div class="stepper"><button disabled aria-label="Убрать">−</button><span class="val">0</span><button aria-label="Добавить">+</button></div>
+            </div>
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><polyline points="3,7 9,7 12,13 15,18 21,18" stroke="#d0785a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="info"><b>Смола «Зигзаг» терракотовая</b><small>32 × 24 мм, с медовыми разводами</small></div>
+              <span class="price">180 ₽</span>
+              <span class="tag tag--order">под заказ 7 дн</span>
+            </div>
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" fill="none" stroke="#22242a" stroke-width="2.5"/></svg></div>
+              <div class="info"><b>Основа латунь «Круг» 20 мм</b><small>Штампованная, с ушком</small></div>
+              <span class="price">90 ₽</span>
+              <span class="tag tag--stock">в наличии</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Слот 2 -->
+      <div class="slot">
+        <div class="slot-head">
+          <span class="sq sq--c2">▲</span>
+          <b>Дополнительные элементы</b>
+          <small>от 0 до 3</small>
+          <span class="caret">▾</span>
+        </div>
+        <div class="slot-body">
+          <div class="comps">
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><path d="M15 3a9 9 0 100 18c-4 0-7-3.5-7-9s3-9 7-9z" fill="#d0785a" stroke="#22242a" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+              <div class="info"><b>Подвеска «Полукруг» терракота</b><small>18 × 14 мм, на карабине</small></div>
+              <span class="price">75 ₽</span>
+              <span class="tag tag--stock">в наличии</span>
+            </div>
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7" fill="none" stroke="#7fae9e" stroke-width="2.5"/></svg></div>
+              <div class="info"><b>Подвеска «Кольцо» мятная</b><small>Ø 16 мм, полупрозрачная</small></div>
+              <span class="price">85 ₽</span>
+              <span class="tag tag--order">под заказ 5 дн</span>
+            </div>
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,2 21,8.5 17.5,20 6.5,20 3,8.5" fill="#e8b64c" stroke="#22242a" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+              <div class="info"><b>Бусина смола «Соты»</b><small>Гексагон 12 мм, янтарная</small></div>
+              <span class="price">35 ₽</span>
+              <span class="tag tag--stock">в наличии</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Слот 3 -->
+      <div class="slot">
+        <div class="slot-head">
+          <span class="sq sq--c3">⚡</span>
+          <b>Шнур и фурнитура</b>
+          <small>от 1 до 1</small>
+          <span class="caret">▾</span>
+        </div>
+        <div class="slot-body">
+          <div class="comps">
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10c4-3 8 3 12 0s6-3 6 0" stroke="#22242a" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg></div>
+              <div class="info"><b>Шнур хлопок 3 мм</b><small>50 см, цвет натуральный</small></div>
+              <span class="price">45 ₽</span>
+              <span class="tag tag--stock">в наличии</span>
+            </div>
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><path d="M3 8c4-2 8 2 12 0s6-2 6 0" stroke="#22242a" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M3 16c4-2 8 2 12 0s6-2 6 0" stroke="#22242a" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".4"/></svg></div>
+              <div class="info"><b>Шнур вощёный 2 мм</b><small>50 см, держит узел намертво</small></div>
+              <span class="price">55 ₽</span>
+              <span class="tag tag--stock">в наличии</span>
+            </div>
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><circle cx="7" cy="12" r="3.2" fill="none" stroke="#22242a" stroke-width="2.5"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#22242a" stroke-width="2.5"/><circle cx="17" cy="12" r="3.2" fill="none" stroke="#22242a" stroke-width="2.5"/></svg></div>
+              <div class="info"><b>Цепь латунная 45 см</b><small>Звено 3 мм, с застёжкой</small></div>
+              <span class="price">220 ₽</span>
+              <span class="tag tag--stock">в наличии</span>
+            </div>
+            <div class="mini-card">
+              <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><path d="M9 4a3 3 0 016 0v7a3 3 0 01-6 0" stroke="#22242a" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M7 8h10" stroke="#22242a" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+              <div class="info"><b>Застёжка-карабин 12 мм</b><small>Латунь, надёжно щёлкает</small></div>
+              <span class="price">70 ₽</span>
+              <span class="tag tag--stock">в наличии</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== Калькулятор ===== -->
+  <div class="calc">
+    <div class="row row--big">
+      <div class="k">Цена</div>
+      <div class="v">2 440 ₽</div>
+      <div class="breakdown">Работа: 800 ₽ + Компоненты: 1 640 ₽</div>
+    </div>
+    <div class="row">
+      <div class="k">Срок изготовления</div>
+      <div class="v">3 дня</div>
+    </div>
+    <button class="btn btn--fill" onclick="document.getElementById('modal').classList.add('open')">Оформить заявку</button>
+  </div>
+</section>
+
+<!-- ===== Модалка заявки конфигуратора ===== -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="m-head">
+      <h3>Оформить заявку</h3>
+      <button class="btn-icon btn-icon--c3" onclick="document.getElementById('modal').classList.remove('open')" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="m-photo">
+      <div style="display:flex;gap:8px;flex:none;">
+        <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" fill="#e8b64c" stroke="#22242a" stroke-width="2.5"/></svg></div>
+        <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,3.5 21,20 3,20" fill="#7fae9e" stroke="#22242a" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+        <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><polyline points="3,7 9,7 12,13 15,18 21,18" stroke="#d0785a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div><b>Кулон по вашей схеме</b><small>Круг · Треугольник · Зигзаг</small></div>
+    </div>
+    <div class="field"><label>Имя</label><input type="text" placeholder="Как к вам обращаться"></div>
+    <div class="field"><label>Контакт</label><input type="tel" placeholder="Телефон или Telegram"></div>
+    <div class="field"><label>Комментарий</label><textarea placeholder="Цвета, размер, пожелания к схеме"></textarea></div>
+    <div style="font-family:var(--font-display);font-weight:800;font-size:.95rem;">Цена: 2 440 ₽ · Срок: 3 дня</div>
+    <div class="m-actions">
+      <button class="btn btn--fill">Отправить</button>
+      <button class="btn btn--line" onclick="document.getElementById('modal').classList.remove('open')">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Footer (расширенный) ===== -->
+<footer class="footer-grid" id="go">
+  <div>
+    <div class="brand">JulCraft<i style="display:inline-block;width:12px;height:12px;background:var(--c3);border-radius:50%;margin-left:6px;"></i></div>
+    <div class="tagline">Геометрия, которую можно надеть</div>
+    <div class="socials">
+      <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="#22242a"><path d="M21.9 4.6 18.8 19c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.3-.5.5-.9.5l.3-4.6L18.2 6c.4-.3-.1-.5-.6-.2L7.3 12.7l-4.5-1.4c-1-.3-1-1 .2-1.5l17.5-6.8c.8-.3 1.5.2 1.4 1.6z"/></svg></a>
+      <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="#22242a" stroke="none"/></svg></a>
+      <a href="#" aria-label="Почта"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2.5"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg></a>
+    </div>
+  </div>
+  <div>
+    <h4>Быстрые ссылки</h4>
+    <a href="catalog.html">Вещи</a>
+    <a href="configurator.html">Собрать</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+  </div>
+  <div>
+    <h4>Контакты</h4>
+    <a href="mailto:go@julcraft.ru">go@julcraft.ru</a>
+    <a href="tel:+79990000000">+7 999 000-00-00</a>
+    <a href="#">@julcraft.play</a>
+    <a href="#">Москва, мастерская «Соты»</a>
+  </div>
+</footer>
+<div class="footer-copy">JulCraft · © 2026 · вебсайт не содержит стразов, но содержит любовь</div>
+
+</body>
+</html>
