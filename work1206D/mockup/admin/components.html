@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Склад комплектующих — JulCraft Админ</title>
+<link rel="stylesheet" href="../assets/css/style-memphis.css">
+<script src="../assets/js/skin-switcher.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="logo" href="dashboard.html">JulCraft<small>панель мастера</small></a>
+  <nav>
+    <a href="dashboard.html">Дашборд</a>
+    <a href="products.html">Товары</a>
+    <a href="components.html" class="is-active">Склад</a>
+    <a href="categories.html">Категории</a>
+    <a href="orders.html">Заявки</a>
+    <a href="settings.html">Настройки</a>
+  </nav>
+  <div class="actions">
+    <a class="icon-btn icon-btn--rust" href="login.html" title="Выйти">⏻</a>
+    <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mm">
+  <div class="mm-head">
+    <b>Панель мастера</b>
+    <button class="icon-btn" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  </div>
+  <a class="mm" href="dashboard.html">Дашборд</a>
+  <a class="mm" href="products.html">Товары</a>
+  <a class="mm" href="components.html">Склад</a>
+  <a class="mm" href="categories.html">Категории</a>
+  <a class="mm" href="orders.html">Заявки</a>
+  <a class="mm" href="settings.html">Настройки</a>
+  <div class="mm-foot"><a href="login.html" style="color:var(--rust);">Выйти →</a></div>
+</div>
+
+<main class="admin-wrap">
+
+  <div class="page-title">
+    <h1>Склад комплектующих</h1>
+    <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+      <span class="doodle">PNG на белом фоне!</span>
+      <button class="btn btn--primary btn--small" onclick="document.getElementById('modal').classList.add('open')">+ Добавить комплектующее</button>
+    </div>
+  </div>
+
+  <!-- тулбар -->
+  <div class="board board--paper mb-20" style="padding:16px 20px;">
+    <div class="filters" style="justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+      <div class="filters">
+        <span class="filter is-active">Все (25)</span>
+        <span class="filter">Камень</span>
+        <span class="filter">Подвеска</span>
+        <span class="filter">Бусина</span>
+        <span class="filter">Шнур и цепь</span>
+        <span class="filter">Застёжка</span>
+        <span class="filter">Основа</span>
+      </div>
+      <div class="field" style="margin:0; min-width:220px;">
+        <select aria-label="Остаток">
+          <option>Остаток: любые</option>
+          <option>Остаток: в наличии</option>
+          <option>Остаток: 0 шт (под заказ)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>Фото</th><th>Название</th><th>Тип</th><th>Цена закупки</th><th>Обработка</th><th>Остаток</th><th>Под заказ</th><th>Срок, дн</th><th>Действия</th></tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#e8b64c" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Камень «Око бакелита»</b><small>type: stone</small></td>
+            <td><span class="tag tag--reserve">Камень</span></td><td class="cell-price">350 ₽</td><td class="cell-price">80 ₽</td>
+            <td class="num">4</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><path d="M12 2l7 7-7 13L5 9z" fill="#f2dfb6" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Камень «Гранёное стекло»</b><small>type: stone</small></td>
+            <td><span class="tag tag--reserve">Камень</span></td><td class="cell-price">180 ₽</td><td class="cell-price">60 ₽</td>
+            <td class="num">12</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="10" fill="#d0785a" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Камень «Хрустальная слеза»</b><small>type: stone</small></td>
+            <td><span class="tag tag--reserve">Камень</span></td><td class="cell-price">420 ₽</td><td class="cell-price">90 ₽</td>
+            <td class="num num--zero">0</td><td><span class="tag tag--order">да</span></td><td>10</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="7" fill="#d0785a" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Камень «Коралловый сон»</b><small>type: stone</small></td>
+            <td><span class="tag tag--reserve">Камень</span></td><td class="cell-price">300 ₽</td><td class="cell-price">70 ₽</td>
+            <td class="num">6</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#22242a" stroke-width="2"/><circle cx="9" cy="9" r="1.5" fill="#22242a"/><circle cx="15" cy="9" r="1.5" fill="#22242a"/></svg></div></td>
+            <td class="cell-name"><b>Камень «Лунный агат»</b><small>type: stone</small></td>
+            <td><span class="tag tag--reserve">Камень</span></td><td class="cell-price">520 ₽</td><td class="cell-price">100 ₽</td>
+            <td class="num num--zero">0</td><td><span class="tag tag--order">да</span></td><td>14</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><path d="M12 3c3 3 3 6 0 9-3-3-3-6 0-9z" fill="#7fae9e" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Камень «Малахитовая капля»</b><small>type: stone</small></td>
+            <td><span class="tag tag--reserve">Камень</span></td><td class="cell-price">480 ₽</td><td class="cell-price">90 ₽</td>
+            <td class="num">3</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#f2dfb6" stroke="#22242a" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="#e8b64c"/></svg></div></td>
+            <td class="cell-name"><b>Подвеска «Ромашка-76»</b><small>type: pendant</small></td>
+            <td><span class="tag tag--new">Подвеска</span></td><td class="cell-price">220 ₽</td><td class="cell-price">50 ₽</td>
+            <td class="num">9</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><path d="M12 21C7 16 4 13 4 9a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 4-3 7-8 12z" fill="#d0785a" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Подвеска «Сердце из латуни»</b><small>type: pendant</small></td>
+            <td><span class="tag tag--new">Подвеска</span></td><td class="cell-price">160 ₽</td><td class="cell-price">40 ₽</td>
+            <td class="num">15</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#faf5ec" stroke="#22242a" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="#22242a" stroke-width="1.5"/></svg></div></td>
+            <td class="cell-name"><b>Подвеска «Пуговица-счастье»</b><small>type: pendant</small></td>
+            <td><span class="tag tag--new">Подвеска</span></td><td class="cell-price">190 ₽</td><td class="cell-price">45 ₽</td>
+            <td class="num">7</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#e8b64c" stroke="#22242a" stroke-width="2"/><rect x="10.5" y="6.5" width="3" height="11" rx="1.5" fill="#22242a"/><circle cx="12" cy="5" r="1" fill="#22242a"/></svg></div></td>
+            <td class="cell-name"><b>Подвеска «Ключик от чулана»</b><small>type: pendant</small></td>
+            <td><span class="tag tag--new">Подвеска</span></td><td class="cell-price">150 ₽</td><td class="cell-price">40 ₽</td>
+            <td class="num">11</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="4" ry="8" fill="#e8b64c" stroke="#22242a" stroke-width="2"/><path d="M12 4v16" stroke="#22242a" stroke-width="1"/></svg></div></td>
+            <td class="cell-name"><b>Подвеска «Рыбка-чешуйка»</b><small>type: pendant</small></td>
+            <td><span class="tag tag--new">Подвеска</span></td><td class="cell-price">210 ₽</td><td class="cell-price">50 ₽</td>
+            <td class="num num--zero">0</td><td><span class="tag tag--order">да</span></td><td>7</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3.5" fill="#e8b64c" stroke="#22242a" stroke-width="2"/><circle cx="18" cy="6" r="3.5" fill="#e8b64c" stroke="#22242a" stroke-width="2"/><circle cx="6" cy="18" r="3.5" fill="#e8b64c" stroke="#22242a" stroke-width="2"/><circle cx="18" cy="18" r="3.5" fill="#e8b64c" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Бусины бакелитовые, 10 шт</b><small>type: bead · набор</small></td>
+            <td><span class="tag tag--mustard">Бусина</span></td><td class="cell-price">240 ₽</td><td class="cell-price">60 ₽</td>
+            <td class="num">20</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="3.5" fill="#f2dfb6" stroke="#22242a" stroke-width="2"/><circle cx="18" cy="12" r="3.5" fill="#f2dfb6" stroke="#22242a" stroke-width="2"/><circle cx="12" cy="6" r="3.5" fill="#f2dfb6" stroke="#22242a" stroke-width="2"/><circle cx="12" cy="18" r="3.5" fill="#f2dfb6" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Бусины стеклярус, 10 шт</b><small>type: bead · набор</small></td>
+            <td><span class="tag tag--mustard">Бусина</span></td><td class="cell-price">120 ₽</td><td class="cell-price">40 ₽</td>
+            <td class="num">30</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3.5" fill="#c9b183" stroke="#22242a" stroke-width="2"/><circle cx="18" cy="6" r="3.5" fill="#c9b183" stroke="#22242a" stroke-width="2"/><circle cx="6" cy="18" r="3.5" fill="#c9b183" stroke="#22242a" stroke-width="2"/><circle cx="18" cy="18" r="3.5" fill="#c9b183" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Бусины деревянные «Ольха», 10 шт</b><small>type: bead · набор</small></td>
+            <td><span class="tag tag--mustard">Бусина</span></td><td class="cell-price">90 ₽</td><td class="cell-price">30 ₽</td>
+            <td class="num">40</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3.5" fill="#e8b64c" stroke="#22242a" stroke-width="2"/><circle cx="18" cy="6" r="3.5" fill="#e8b64c" stroke="#22242a" stroke-width="2"/><circle cx="6" cy="18" r="3.5" fill="#e8b64c" stroke="#22242a" stroke-width="2"/><circle cx="18" cy="18" r="3.5" fill="#e8b64c" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Бусины янтарные, 10 шт</b><small>type: bead · набор</small></td>
+            <td><span class="tag tag--mustard">Бусина</span></td><td class="cell-price">350 ₽</td><td class="cell-price">70 ₽</td>
+            <td class="num">8</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="6" height="10" rx="2" fill="#faf5ec" stroke="#22242a" stroke-width="2"/><rect x="15" y="7" width="6" height="10" rx="2" fill="#faf5ec" stroke="#22242a" stroke-width="2"/><circle cx="9" cy="12" r="1.5" fill="#22242a"/><circle cx="15" cy="12" r="1.5" fill="#22242a"/></svg></div></td>
+            <td class="cell-name"><b>Бусины костяные «Шашки», 10 шт</b><small>type: bead · набор</small></td>
+            <td><span class="tag tag--mustard">Бусина</span></td><td class="cell-price">300 ₽</td><td class="cell-price">65 ₽</td>
+            <td class="num num--zero">0</td><td><span class="tag tag--order">да</span></td><td>9</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><path d="M4 8c2-2 4-2 6 0s4 2 6 0" fill="none" stroke="#7fae9e" stroke-width="3"/></svg></div></td>
+            <td class="cell-name"><b>Шнур вощёный, 1 м</b><small>type: cord</small></td>
+            <td><span class="tag tag--olive">Шнур и цепь</span></td><td class="cell-price">60 ₽</td><td class="cell-price">20 ₽</td>
+            <td class="num">50</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><path d="M4 8c2-2 4-2 6 0s4 2 6 0" fill="none" stroke="#22242a" stroke-width="3"/></svg></div></td>
+            <td class="cell-name"><b>Шнур кожаный, 1 м</b><small>type: cord</small></td>
+            <td><span class="tag tag--olive">Шнур и цепь</span></td><td class="cell-price">140 ₽</td><td class="cell-price">25 ₽</td>
+            <td class="num">22</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="7" fill="none" stroke="#e8b64c" stroke-width="3"/><path d="M12 17v4"/></svg></div></td>
+            <td class="cell-name"><b>Цепь латунная, 50 см</b><small>type: cord</small></td>
+            <td><span class="tag tag--olive">Шнур и цепь</span></td><td class="cell-price">250 ₽</td><td class="cell-price">40 ₽</td>
+            <td class="num">14</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="7" fill="none" stroke="#c0c0c8" stroke-width="3"/><path d="M12 17v4"/></svg></div></td>
+            <td class="cell-name"><b>Цепь серебряная, 45 см</b><small>type: cord</small></td>
+            <td><span class="tag tag--olive">Шнур и цепь</span></td><td class="cell-price">900 ₽</td><td class="cell-price">60 ₽</td>
+            <td class="num num--zero">0</td><td><span class="tag tag--order">да</span></td><td>18</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="#22242a" stroke-width="2"/><path d="M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Замок-карабин латунный</b><small>type: clasp</small></td>
+            <td><span class="tag tag--none">Застёжка</span></td><td class="cell-price">70 ₽</td><td class="cell-price">30 ₽</td>
+            <td class="num">35</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="8" rx="2" fill="none" stroke="#22242a" stroke-width="2"/><path d="M9 12h6M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Замок «торец» антик</b><small>type: clasp</small></td>
+            <td><span class="tag tag--none">Застёжка</span></td><td class="cell-price">110 ₽</td><td class="cell-price">35 ₽</td>
+            <td class="num">10</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="5" height="8" rx="1" fill="#e8b64c" stroke="#22242a" stroke-width="2"/><rect x="16" y="8" width="5" height="8" rx="1" fill="#e8b64c" stroke="#22242a" stroke-width="2"/></svg></div></td>
+            <td class="cell-name"><b>Колпачки для бус, пара</b><small>type: clasp</small></td>
+            <td><span class="tag tag--none">Застёжка</span></td><td class="cell-price">40 ₽</td><td class="cell-price">15 ₽</td>
+            <td class="num">60</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="6" fill="none" stroke="#22242a" stroke-width="2.5"/><path d="M12 16v5M8 19h8"/></svg></div></td>
+            <td class="cell-name"><b>Швензы латунные, пара</b><small>type: base</small></td>
+            <td><span class="tag tag--in_progress">Основа</span></td><td class="cell-price">50 ₽</td><td class="cell-price">20 ₽</td>
+            <td class="num">45</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="#22242a" stroke-width="2"/><path d="M12 12v9M9 18h6"/></svg></div></td>
+            <td class="cell-name"><b>Основа броши-игла, латунь</b><small>type: base</small></td>
+            <td><span class="tag tag--in_progress">Основа</span></td><td class="cell-price">80 ₽</td><td class="cell-price">25 ₽</td>
+            <td class="num">28</td><td><span class="tag tag--none">нет</span></td><td>—</td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pagination" style="justify-content:flex-start;">
+    <span class="page-btn is-active">1</span>
+    <a class="page-btn" href="#">2</a>
+  </div>
+
+</main>
+
+<!-- ===== Модалка: добавление комплектующего ===== -->
+<div class="modal-overlay" id="modal">
+  <div class="modal modal--wide">
+    <div class="m-head">
+      <h3>Новое комплектующее на склад</h3>
+      <button class="icon-btn" onclick="document.getElementById('modal').classList.remove('open')" aria-label="Закрыть">✕</button>
+    </div>
+
+    <div class="dropzone">
+      <div class="dz-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+      <b>Фото для коллажа — PNG</b>
+      <small>прозрачный или белый фон · один ракурс · квадрат · до 2 МБ. Это важно: коллаж собирается сервером (sharp)</small>
+      <div class="dz-example">
+        <div class="thumb"><svg viewBox="0 0 24 24" width="30" height="30"><circle cx="12" cy="12" r="9" fill="#e8b64c" stroke="#22242a" stroke-width="2"/></svg></div>
+        <div class="thumb"><svg viewBox="0 0 24 24" width="30" height="30"><path d="M12 2l7 7-7 13L5 9z" fill="#d0785a" stroke="#22242a" stroke-width="2"/></svg></div>
+        <span>так — хорошо</span>
+      </div>
+    </div>
+
+    <div class="field"><label>Название</label><input type="text" placeholder="Камень «...»"></div>
+    <div class="field--row">
+      <div class="field"><label>Тип (componentType)</label>
+        <select>
+          <option>stone — камень</option>
+          <option>pendant — подвеска</option>
+          <option>bead — бусина</option>
+          <option>cord — шнур и цепь</option>
+          <option>clasp — застёжка</option>
+          <option>base — основа</option>
+        </select>
+      </div>
+      <div class="field"><label>Остаток, шт</label><input type="number" placeholder="0"></div>
+    </div>
+    <div class="field--row">
+      <div class="field"><label>Цена, ₽</label><input type="number" placeholder="200"></div>
+      <div class="field"><label>Обработка, ₽</label><input type="number" placeholder="50"></div>
+      <div class="field"><label>Дни обработки</label><input type="number" placeholder="0"></div>
+    </div>
+    <div class="field" style="display:flex; gap:20px; flex-wrap:wrap;">
+      <label class="checkbox"><input type="checkbox"> Можно заказать у поставщика</label>
+      <label class="checkbox"><input type="checkbox" checked> Активно на складе</label>
+    </div>
+    <div class="field"><label>Срок поставки, дн</label><input type="number" placeholder="7"></div>
+
+    <div class="m-actions">
+      <button class="btn btn--primary">Сохранить на склад</button>
+      <button class="btn btn--secondary" onclick="document.getElementById('modal').classList.remove('open')">Отмена</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
