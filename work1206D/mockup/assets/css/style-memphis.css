@@ -27,12 +27,13 @@
   --err-bg:#fdf0e9;   /* фон ошибочного поля */
   --c1-soft:rgba(232,182,76,.18);
   --c3-soft:rgba(208,120,90,.18);
+  --lshad: var(--muted);
 
   /* алиасы имён 06D → значения 12D (чтобы inline-стили макета работали) */
   --cream:var(--bg);
   --brown:var(--ink);
   --mustard:var(--c1);
-  --rust:var(--c3);
+  --rust:var(--ink);
   --olive:var(--c2);
   --paper:var(--white);
   --paper-2:#f2dfb6;
