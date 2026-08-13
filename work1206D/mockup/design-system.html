@@ -21,6 +21,7 @@
   .swatch--olive { background:var(--olive); color:var(--cream); }
   .swatch--white { background:var(--white); color:var(--brown); }
   .swatch--ink { background:var(--ink); color:var(--cream); }
+  .swatch--muted { background:var(--muted); color:var(--cream); }
   .swatch--paper { background:var(--paper); color:var(--brown); }
   .ds-table { width:100%; border-collapse:collapse; background:var(--white); border:3px solid var(--brown); border-radius:var(--r-item); overflow:hidden; }
   .ds-table th { background:var(--brown); color:var(--mustard); text-align:left; padding:10px 16px; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; font-weight:500; }
@@ -55,16 +56,16 @@
 
   <!-- ============ Палитра ============ -->
   <h2>1 · Палитра</h2>
-  <p class="sec-sub">3 акцентных цвета = 3 категории слотов конфигуратора.</p>
+  <p class="sec-sub">Палитра основана на трёх акцентных цветах.</p>
   <div class="ds-grid">
-    <div class="ds-box"><div class="swatch swatch--cream"></div><code>--cream</code> — фон body</div>
-    <div class="ds-box"><div class="swatch swatch--brown"></div><code>--ink</code> — основной текст, границы, ВСЕ тени</div>
-    <div class="ds-box"><div class="swatch swatch--mustard"></div><code>--c1</code> — акцент 1: CTA fill, тени, бейджи</div>
-    <div class="ds-box"><div class="swatch swatch--olive"></div><code>--c2</code> — акцент 2: CTA line, чипы, тени</div>
-    <div class="ds-box"><div class="swatch swatch--rust"></div><code>--c3</code> — акцент 3: чипы, рамки, doodle</div>
-    <div class="ds-box"><div class="swatch swatch--white"></div><code>--white</code> — карточки, формы</div>
-    <div class="ds-box"><div class="swatch swatch--ink" style="background:#5a5d66;"></div><code>--muted</code> — приглушённый текст</div>
-    <div class="ds-box"><div class="swatch swatch--paper" style="color:#5a5d66;"></div><code>--paper</code> — разделители, текст на тёмном</div>
+    <div class="ds-box"><div class="swatch swatch--cream"></div><code>--cream</code> — фон страницы и секций</div>
+    <div class="ds-box"><div class="swatch swatch--brown"></div><code>--ink</code> — основной текст, границы, тени</div>
+    <div class="ds-box"><div class="swatch swatch--mustard"></div><code>--c1</code> — акцент 1: кнопки, бейджи, тени карточек (1)</div>
+    <div class="ds-box"><div class="swatch swatch--olive"></div><code>--c2</code> — акцент 2: чипы, тени карточек (2), статус in_progress</div>
+    <div class="ds-box"><div class="swatch swatch--rust"></div><code>--c3</code> — акцент 3: тени карточек (3), рамки, статус «закрыто»</div>
+    <div class="ds-box"><div class="swatch swatch--white"></div><code>--white</code> — карточки, формы, подложки</div>
+    <div class="ds-box"><div class="swatch swatch--muted"></div><code>--muted</code> — вторичный текст, подписи</div>
+    <div class="ds-box"><div class="swatch swatch--paper"></div><code>--paper</code> — разделители, фон панелей</div>
   </div>
 
   <!-- ============ Типографика ============ -->
@@ -81,17 +82,17 @@
 
   <!-- ============ Тени ============ -->
   <h2>3 · Тени и глубина (signature)</h2>
-  <p class="sec-sub">Нет blur — только жёсткие box-shadow. Уровни и анимация подъёма <code>translate(-x,-y)</code> + смена тени, <code>transition .25s</code>.</p>
+  <p class="sec-sub">Тени жёсткие (без blur), с разными акцентными цветами. При наведении карточки поднимаются на 3px вверх и влево, а тень усиливается. Анимация: <code>transition: .25s</code>.</p>
   <div class="ds-grid">
-    <div class="ds-box"><b class="t">Обычная</b><div class="shelf" style="grid-template-columns:1fr; gap:0;"><div class="item"><div class="info"><h3>8px 8px 0 --c1/c2/c3</h3></div></div></div></div>
-    <div class="ds-box"><b class="t">Hover</b><div class="shelf" style="grid-template-columns:1fr; gap:0;"><div class="item" style="transform:translate(-4px,-4px) rotate(-1deg); box-shadow:12px 12px 0 var(--c1);"><div class="info"><h3>12px 12px 0 --c1</h3></div></div></div></div>
-    <div class="ds-box"><b class="t">Кнопка</b><div class="h-demo"><a class="btn btn--primary" href="#">6px 6px 0 --c1</a></div></div>
-    <div class="ds-box"><b class="t">Панель / тёмный блок</b><div class="h-demo"><div class="hours-board"><h3 style="margin-bottom:0;">10px 10px 0 --c3</h3></div></div></div>
+    <div class="ds-box"><b class="t">Обычная</b><div class="shelf" style="grid-template-columns:1fr; gap:0;"><div class="item"><div class="info"><h3>6px 6px 0 var(--c1/c2/c3)</h3></div></div></div></div>
+    <div class="ds-box"><b class="t">Hover</b><div class="shelf" style="grid-template-columns:1fr; gap:0;"><div class="item" style="transform:translate(-3px,-3px); box-shadow:12px 12px 0 var(--c1);"><div class="info"><h3>12px 12px 0 var(--c1)</h3></div></div></div></div>
+    <div class="ds-box"><b class="t">Кнопка</b><div class="h-demo"><a class="btn btn--primary" href="#">6px 6px 0 var(--c1)</a></div></div>
+    <div class="ds-box"><b class="t">Панель</b><div class="h-demo"><div class="hours-board"><h3 style="margin-bottom:0;">10px 10px 0 var(--c3)</h3></div></div></div>
   </div>
 
   <!-- ============ Примитивы ============ -->
   <h2>4 · Примитивы (переиспользуемые компоненты)</h2>
-  <p class="sec-sub">Разметка и классы — от 06D, оформление — 12D: .signboard→hero, .item→.card, .receipt→карточка, .board→белая панель, .phone→btn-fill, .zigzag→диагональная полоса.</p>
+  <p class="sec-sub">Переиспользуемые компоненты: вывеска (.signboard), карточки товаров (.item), кассовый чек (.receipt), панели (.board), кнопка-телефон (.phone), диагональная полоса (.zigzag).</p>
   <div class="state-grid">
 
     <div class="ds-box">
@@ -227,7 +228,7 @@
 
   <!-- ============ Иконки ============ -->
   <h2>5 · Иконки</h2>
-  <p class="sec-sub">В макете — линейные «гравировка» (наследие 06D), в скине 12D целевые — жирные filled-фигуры, 24×24 viewBox, толщина 3px. Цвет — --ink, акценты c1/c2/c3.</p>
+  <p class="sec-sub">Иконки линейные (stroke), 24×24 viewBox, толщина обводки 2px. Цвет: --ink (основной), акценты --c1/--c2/--c3.</p>
   <div class="icon-row">
     <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg>телефон</div>
     <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>почта</div>
@@ -249,28 +250,28 @@
 
   <!-- ============ Токены для Tailwind ============ -->
   <h2>6 · Токены → Tailwind config</h2>
-  <p class="sec-sub">spacing-база 8px, радиусы 16/24px, z-index схема: конфетти −1 → контент 0 → header 10 → sticky калькулятор 20 → модалка 50 → бургер 100.</p>
+  <p class="sec-sub">Базовые токены: отступы кратны 8px, радиусы 16px (карточки) и 8px (формы), z-index: контент (0) → header (10) → sticky-элементы (20) → модалки (50) → бургер-меню (100).</p>
   <table class="ds-table">
     <tr><th>CSS</th><th>Tailwind</th><th>Применение</th></tr>
-    <tr><td><code>--bg</code></td><td><code>colors.bg</code></td><td>фон body, фоны секций</td></tr>
-    <tr><td><code>--ink</code></td><td><code>colors.ink</code></td><td>текст, границы, все тени, тёмные блоки</td></tr>
-    <tr><td><code>--c1</code></td><td><code>colors.c1</code></td><td>CTA fill, бейджи «в наличии», тень card(1), doodle hover</td></tr>
-    <tr><td><code>--c2</code></td><td><code>colors.c2</code></td><td>CTA line, чипы, тень card(2), статус in_progress</td></tr>
-    <tr><td><code>--c3</code></td><td><code>colors.c3</code></td><td>тень card(3), doodle, закрыто, cancelled, рамки</td></tr>
+    <tr><td><code>--cream</code></td><td><code>colors.cream</code></td><td>фон body, секций</td></tr>
+    <tr><td><code>--ink</code></td><td><code>colors.ink</code></td><td>текст, границы, тени</td></tr>
+    <tr><td><code>--c1</code></td><td><code>colors.c1</code></td><td>CTA-кнопки, бейджи «в наличии», тени карточек (1)</td></tr>
+    <tr><td><code>--c2</code></td><td><code>colors.c2</code></td><td>чипы, тени карточек (2), статус in_progress</td></tr>
+    <tr><td><code>--c3</code></td><td><code>colors.c3</code></td><td>тени карточек (3), рамки, статус «закрыто»</td></tr>
     <tr><td><code>--white</code></td><td><code>colors.white</code></td><td>карточки, формы, подложки</td></tr>
-    <tr><td><code>--muted</code></td><td><code>colors.muted</code></td><td>приглушённый текст, подписи</td></tr>
-    <tr><td><code>--shadow-item</code></td><td><code>boxShadow.item</code></td><td><code>8px 8px 0</code> c1/c2/c3 (по nth-child)</td></tr>
+    <tr><td><code>--muted</code></td><td><code>colors.muted</code></td><td>вторичный текст, подписи</td></tr>
+    <tr><td><code>--shadow-item</code></td><td><code>boxShadow.item</code></td><td><code>6px 6px 0</code> var(--c1/c2/c3) по nth-child</td></tr>
     <tr><td><code>--shadow-item-hover</code></td><td><code>boxShadow.itemHover</code></td><td><code>12px 12px 0</code> тот же акцент</td></tr>
-    <tr><td><code>--font-display</code></td><td><code>fontFamily.display</code></td><td>Unbounded 400–800</td></tr>
-    <tr><td><code>--font-mono</code></td><td><code>fontFamily.mono</code></td><td>Nunito (заменить default mono)</td></tr>
+    <tr><td><code>--font-display</code></td><td><code>fontFamily.display</code></td><td>Unbounded (заголовки, цены, бейджи)</td></tr>
+    <tr><td><code>--font-mono</code></td><td><code>fontFamily.mono</code></td><td>Nunito (основной текст)</td></tr>
   </table>
 
   <h2>7 · Адаптив (брейкпоинты)</h2>
   <table class="ds-table">
     <tr><th>Ширина</th><th>Изменения</th></tr>
-    <tr><td><code>≥1080px</code></td><td>Макс. 1080px, витрина 3 колонки, полная навигация</td></tr>
-    <tr><td><code>768–1079px</code></td><td>Навигация → бургер, гриды 2 колонки, конфигуратор → табы (Коллаж/Слоты), админ-таблицы со скроллом</td></tr>
-    <tr><td><code>≤820px</code></td><td>Гриды 1 колонка, signboard padding уменьшен, формы full-width, калькулятор — fixed снизу, footer 1 колонка</td></tr>
+    <tr><td><code>≥1080px</code></td><td>Максимальная ширина 1080px, витрина в 3 колонки, полная навигация.</td></tr>
+    <tr><td><code>768–1079px</code></td><td>Навигация сворачивается в бургер, гриды в 2 колонки, админ-таблицы с горизонтальным скроллом.</td></tr>
+    <tr><td><code>≤820px</code></td><td>Гриды в 1 колонку, отступы вывески (.signboard) уменьшены, формы на всю ширину, калькулятор фиксируется снизу.</td></tr>
   </table>
 
 </main>
