@@ -58,19 +58,19 @@
 ## Шаг 2 (T-1.2). Базовый layout из `mockup/home.html` 1:1
 
 1. `lib/settings.ts` — константы дефолтов Settings строго из макета (D-7; подключение к БД — этап 2):
-   - `contacts.phone`: `tel:+79990007676`, отображение `+7 (999) 000-76-76`
-   - `contacts.email`: `hello@julcraft.ru`
-   - `contacts.address`: `ул. Радищева, 16, Самара`
+   - `contacts.phone`: `tel:+380953584811`, отображение `+38 (095) 358 48 11`
+   - `contacts.email`: `julcraft79@gmail.com`
+   - `contacts.address`: `ул. Мстислава Скрипника, 40А`
    - `contacts.hoursWeekdays`: Понедельник — «выходной»; Вторник — Пятница — `11:00 — 20:00`; Суббота — `12:00 — 19:00`; Воскресенье — `12:00 — 17:00`
 2. `components/layout/Header.tsx` (client-компонент) — копия `header.topbar` из home.html:
    - `a.logo` → «JulCraft» (ссылка `/`);
    - `nav`: Главная `/`, Каталог `/catalog`, Конфигуратор `/configurator`, О нас `/about`, Контакты `/contacts`; текущему маршруту — класс `is-active` (как в макете);
-   - `div.actions`: `a.icon-btn` «☎» → `tel:+79990007676` с `title="Позвонить"`; `button.burger` «☰» (`aria-label="Меню"`) — открывает мобильное меню.
-3. `components/layout/MobileMenu.tsx` (client) — копия `div.mobile-menu` из home.html: `mm-head` (бренд «JulCraft» + `button.icon-btn` «✕» закрыть), 5 ссылок `a.mm` (те же маршруты), `div.mm-foot` с текстом `ул. Радищева, 16 · ☎ +7 (999) 000-76-76`. Логика открытия/закрытия — класс `.open`, как в макете (в макете — inline-обработчики, в React — `useState`, поведение то же).
+   - `div.actions`: `a.icon-btn` «☎» → `tel:+380953584811` с `title="Позвонить"`; `button.burger` «☰» (`aria-label="Меню"`) — открывает мобильное меню.
+3. `components/layout/MobileMenu.tsx` (client) — копия `div.mobile-menu` из home.html: `mm-head` (бренд «JulCraft» + `button.icon-btn` «✕» закрыть), 5 ссылок `a.mm` (те же маршруты), `div.mm-foot` с текстом `ул. Мстислава Скрипника, 40А · ☎ +38 095 358 48 11`. Логика открытия/закрытия — класс `.open`, как в макете (в макете — inline-обработчики, в React — `useState`, поведение то же).
 4. `components/layout/Footer.tsx` — копия `footer.footer` из home.html: `f-grid` из трёх колонок:
-   - бренд: «JulCraft» + подпись `ул. Радищева, 16 · мастерская украшений · эст. 1976 (почти)`;
+   - бренд: «JulCraft» + подпись `ул. Мстислава Скрипника, 40А · мастерская украшений · эст. 1976 (почти)`;
    - «Часы работы»: Понедельник — «выходной» (`.closed`), Вт — Пт `11:00 — 20:00`, Суббота `12:00 — 19:00`, Воскресенье `12:00 — 17:00` (подписи дней футера — именно «Вт — Пт», как в футере макета);
-   - «Связаться»: `☎ +7 (999) 000-76-76` (tel), `✉ hello@julcraft.ru` (mailto), `⛭ ул. Радищева, 16, Самара` (ссылка `/contacts`), соц-иконки Instagram и Telegram — inline-SVG **копией из home.html**;
+   - «Связаться»: `☎ +38 095 358 48 11` (tel), `✉ julcraft79@gmail.com` (mailto), `⛭ ул. Мстислава Скрипника, 40А` (ссылка `/contacts`), соц-иконки Instagram и Telegram — inline-SVG **копией из home.html**;
    - `f-copy`: `JulCraft · с 1976 года (почти) · © 2026`.
 5. Корневой `app/layout.tsx`: `<Header/>` (с мобильным меню) + `{children}` + `<Footer/>`, как в макете страницы (topbar → mobile-menu → контент → footer).
 6. Главная: роут-группа `app/(public)/`, страница `app/(public)/page.tsx` — статичная копия «вывески-героя» из home.html (данные не нужны): `div.signboard` (`p.est` «✹ эст. 1976 · открыто снова ✹», `h1` «JulCraft», `p.tag` «украшения · винтажная бижутерия · ремонт бабушкиных бус», `div.cta-row` с «Смотреть каталог» → `/catalog` и «Собрать своё» → `/configurator`) + `div.zigzag`. `<title>` страницы — из макета: `JulCraft — витрина · эст. 1976`.

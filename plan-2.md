@@ -205,7 +205,7 @@ site/
 ### Settings (key-value)
 | Ключ | Назначение (таб в настройках) |
 |---|---|
-| contacts.phone / contacts.email / contacts.address / contacts.telegram / contacts.instagram / contacts.hoursWeekdays / contacts.hoursWeekend | «Контакты» — используются в шапке/футере/бордах/странице контактов (дефолты из макета: +7 999 000-76-76, hello@julcraft.ru, ул. Радищева, 16, Самара) |
+| contacts.phone / contacts.email / contacts.address / contacts.telegram / contacts.instagram / contacts.hoursWeekdays / contacts.hoursWeekend | «Контакты» — используются в шапке/футере/бордах/странице контактов (дефолты из макета: +38 095 358 48 11, julcraft79@gmail.com, ул. Мстислава Скрипника, 40А) |
 | about.short / about.history / about.principles | «Тексты» — чек-тизер, страница «О мастерской» (принципы через «;») |
 | telegram.botToken / telegram.chatId | «Telegram» — уведомления о заявках, кнопка «Тест» |
 
