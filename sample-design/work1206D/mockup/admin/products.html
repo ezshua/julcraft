@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Товары — JulCraft Админ</title>
+<link rel="stylesheet" href="../assets/css/style-memphis.css">
+<script src="../assets/js/skin-switcher.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="logo" href="dashboard.html">JulCraft<small>панель мастера</small></a>
+  <nav>
+    <a href="dashboard.html">Дашборд</a>
+    <a href="products.html" class="is-active">Товары</a>
+    <a href="components.html">Склад</a>
+    <a href="categories.html">Категории</a>
+    <a href="orders.html">Заявки</a>
+    <a href="settings.html">Настройки</a>
+  </nav>
+  <div class="actions">
+    <a class="icon-btn icon-btn--rust" href="login.html" title="Выйти">⏻</a>
+    <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mm">
+  <div class="mm-head">
+    <b>Панель мастера</b>
+    <button class="icon-btn" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  </div>
+  <a class="mm" href="dashboard.html">Дашборд</a>
+  <a class="mm" href="products.html">Товары</a>
+  <a class="mm" href="components.html">Склад</a>
+  <a class="mm" href="categories.html">Категории</a>
+  <a class="mm" href="orders.html">Заявки</a>
+  <a class="mm" href="settings.html">Настройки</a>
+  <div class="mm-foot"><a href="login.html" style="color:var(--rust);">Выйти →</a></div>
+</div>
+
+<main class="admin-wrap">
+
+  <div class="page-title">
+    <h1>Товары</h1>
+    <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+      <span class="doodle">всё в одном экземпляре</span>
+      <button class="btn btn--primary btn--small" onclick="document.getElementById('modal').classList.add('open')">+ Добавить товар</button>
+    </div>
+  </div>
+
+  <!-- тулбар -->
+  <div class="board board--paper mb-20" style="padding:16px 20px;">
+    <div class="filters" style="justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+      <div class="filters">
+        <span class="filter is-active">Все (41)</span>
+        <span class="filter">Новинки</span>
+        <span class="filter">Избранное</span>
+        <span class="filter">В наличии</span>
+        <span class="filter">Под заказ</span>
+      </div>
+      <div class="field" style="margin:0; min-width:220px;">
+        <select aria-label="Категория">
+          <option>Категория: все</option>
+          <option>Броши</option>
+          <option>Кулоны</option>
+          <option>Серьги</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>Фото</th><th>Название</th><th>Категория</th><th>Цена</th><th>Новинка</th><th>Избранное</th><th>Наличие</th><th>Действия</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1630019852942-f89202989a59?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Брошь «Ромашковая»</b><small>slug: brosh-romashkovaya</small></td>
+            <td>Броши</td><td class="cell-price">1 950 ₽</td>
+            <td>—</td><td><span class="tag tag--reserve">да</span></td><td><span class="tag tag--stock">в наличии</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Серьги «Танец-76»</b><small>slug: sergi-tanec-76</small></td>
+            <td>Серьги</td><td class="cell-price">2 300 ₽</td>
+            <td>—</td><td>—</td><td><span class="tag tag--stock">в наличии</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Кулон «Телеграмма»</b><small>slug: kulon-telegramma</small></td>
+            <td>Кулоны</td><td class="cell-price">2 700 ₽</td>
+            <td><span class="tag tag--new">новинка</span></td><td><span class="tag tag--reserve">да</span></td><td><span class="tag tag--reserve">резерв</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Брошь «Грибная поляна»</b><small>slug: brosh-gribnaya-polyana</small></td>
+            <td>Броши</td><td class="cell-price">2 450 ₽</td>
+            <td><span class="tag tag--new">новинка</span></td><td>—</td><td><span class="tag tag--stock">в наличии</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Серьги «Капли дождя»</b><small>slug: sergi-kapli-dozhdya</small></td>
+            <td>Серьги</td><td class="cell-price">1 900 ₽</td>
+            <td>—</td><td>—</td><td><span class="tag tag--stock">в наличии</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Кольцо «Воскресное»</b><small>slug: kolco-voskresnoe</small></td>
+            <td>Кольца</td><td class="cell-price">1 750 ₽</td>
+            <td>—</td><td>—</td><td><span class="tag tag--order">под заказ · 7 дн</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Браслет «Кассета-минус»</b><small>slug: braslet-kasseta-minus</small></td>
+            <td>Браслеты</td><td class="cell-price">2 100 ₽</td>
+            <td>—</td><td>—</td><td><span class="tag tag--stock">в наличии</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Бусы «Капсула времени»</b><small>slug: busy-kapsula-vremeni</small></td>
+            <td>Бусы и ожерелья</td><td class="cell-price">3 200 ₽</td>
+            <td><span class="tag tag--new">новинка</span></td><td>—</td><td><span class="tag tag--stock">в наличии</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Кулон «Письмо из 76-го»</b><small>slug: kulon-pismo-iz-76</small></td>
+            <td>Кулоны</td><td class="cell-price">2 600 ₽</td>
+            <td>—</td><td>—</td><td><span class="tag tag--stock">в наличии</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Клипсы «Паркетный вальс»</b><small>slug: klipsy-parketnyj-vals</small></td>
+            <td>Клипсы и манжеты</td><td class="cell-price">1 600 ₽</td>
+            <td>—</td><td>—</td><td><span class="tag tag--stock">в наличии</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Комплект «Вечер на Радищева»</b><small>slug: komplekt-vecher-na-radishcheva</small></td>
+            <td>Комплекты</td><td class="cell-price">4 200 ₽</td>
+            <td>—</td><td><span class="tag tag--reserve">да</span></td><td><span class="tag tag--order">под заказ · 10 дн</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb"><img src="https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?w=200&q=80" alt=""></div></td>
+            <td class="cell-name"><b>Амулет «Счастливая пуговица»</b><small>slug: amulet-schastlivaya-pugovica</small></td>
+            <td>Амулеты и подвески</td><td class="cell-price">1 450 ₽</td>
+            <td>—</td><td>—</td><td><span class="tag tag--stock">в наличии</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pagination" style="justify-content:flex-start;">
+    <span class="page-btn is-active">1</span>
+    <a class="page-btn" href="#">2</a>
+    <a class="page-btn" href="#">3</a>
+    <a class="page-btn" href="#">4</a>
+  </div>
+
+</main>
+
+<!-- ===== Модалка: добавление товара (табы Основное/Фото/SEO) ===== -->
+<div class="modal-overlay" id="modal">
+  <div class="modal modal--wide">
+    <div class="m-head">
+      <h3>Новый товар на витрину</h3>
+      <button class="icon-btn" onclick="document.getElementById('modal').classList.remove('open')" aria-label="Закрыть">✕</button>
+    </div>
+
+    <div class="tabs">
+      <span class="tab is-active" onclick="switchTab(this,0)">Основное</span>
+      <span class="tab" onclick="switchTab(this,1)">Фото</span>
+      <span class="tab" onclick="switchTab(this,2)">SEO</span>
+    </div>
+
+    <div class="tab-pane">
+      <div class="field"><label>Название</label><input type="text" placeholder="Брошь «...»"></div>
+      <div class="field"><label>Slug</label><input type="text" placeholder="brosh-nazvanie"></div>
+      <div class="field--row">
+        <div class="field"><label>Категория</label>
+          <select><option>Броши</option><option>Кулоны</option><option>Серьги</option></select>
+        </div>
+        <div class="field"><label>Цена, ₽</label><input type="number" placeholder="1 950"></div>
+      </div>
+      <div class="field"><label>Описание</label><textarea placeholder="Что за вещь, из чего, какая история"></textarea></div>
+      <div class="field" style="display:flex; gap:20px; flex-wrap:wrap;">
+        <label class="checkbox"><input type="checkbox"> Новинка</label>
+        <label class="checkbox"><input type="checkbox"> Избранное (на главную)</label>
+        <label class="checkbox"><input type="checkbox" checked> В наличии</label>
+      </div>
+    </div>
+
+    <div class="tab-pane" style="display:none;">
+      <div class="dropzone">
+        <div class="dz-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+        <b>Перетащите фото сюда или нажмите</b>
+        <small>JPG/PNG/WebP до 5 МБ · sharp оптимизирует сам · первое фото — обложка</small>
+        <div class="dz-example">
+          <div class="thumb"><img src="https://images.unsplash.com/photo-1630019852942-f89202989a59?w=100&q=80" alt=""></div>
+          <div class="thumb"><img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=100&q=80" alt=""></div>
+          <span>уже загружено: 2 из 6</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" style="display:none;">
+      <div class="field"><label>Meta title</label><input type="text" placeholder="Брошь «Ромашковая» — JulCraft"></div>
+      <div class="field"><label>Meta description</label><textarea placeholder="Эмаль по меди, ручная роспись, в одном экземпляре."></textarea></div>
+      <div class="field"><label>OG-изображение</label><input type="text" placeholder="/uploads/products/..."></div>
+    </div>
+
+    <div class="m-actions">
+      <button class="btn btn--primary">Сохранить товар</button>
+      <button class="btn btn--secondary" onclick="document.getElementById('modal').classList.remove('open')">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(btn, idx){
+    var tabs = btn.parentElement.querySelectorAll('.tab');
+    var panes = btn.parentElement.parentElement.querySelectorAll('.tab-pane');
+    for (var i=0;i<tabs.length;i++){ tabs[i].classList.toggle('is-active', i===idx); }
+    for (var i=0;i<panes.length;i++){ panes[i].style.display = i===idx ? '' : 'none'; }
+  }
+</script>
+
+</body>
+</html>

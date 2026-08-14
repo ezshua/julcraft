@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — витрина · эст. 1976</title>
+<link rel="stylesheet" href="assets/css/style-memphis.css">
+<script src="assets/js/skin-switcher.js"></script>
+</head>
+<body>
+
+<!-- ===== Sticky-шапка ===== -->
+<header class="topbar">
+  <a class="logo" href="home.html">JulCraft</a>
+  <nav>
+    <a href="home.html" class="is-active">Главная</a>
+    <a href="catalog.html">Каталог</a>
+    <a href="configurator.html">Конфигуратор</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+  </nav>
+  <div class="actions">
+    <a class="icon-btn" href="tel:+79990007676" title="Позвонить">☎</a>
+    <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+  </div>
+</header>
+
+<!-- мобильное меню-чек -->
+<div class="mobile-menu" id="mm">
+  <div class="mm-head">
+    <b>JulCraft</b>
+    <button class="icon-btn" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  </div>
+  <a class="mm" href="home.html">Главная</a>
+  <a class="mm" href="catalog.html">Каталог</a>
+  <a class="mm" href="configurator.html">Конфигуратор</a>
+  <a class="mm" href="about.html">О нас</a>
+  <a class="mm" href="contacts.html">Контакты</a>
+  <div class="mm-foot">ул. Радищева, 16 · ☎ +7 (999) 000-76-76</div>
+</div>
+
+<!-- ===== Вывеска-герой ===== -->
+<div class="signboard">
+  <p class="est">✹ эст. 1976 · открыто снова ✹</p>
+  <h1>JulCraft</h1>
+  <p class="tag">украшения · винтажная бижутерия · ремонт бабушкиных бус</p>
+  <div class="cta-row">
+    <a class="btn btn--primary" href="catalog.html">Смотреть каталог</a>
+    <a class="btn btn--secondary" href="configurator.html">Собрать своё</a>
+  </div>
+</div>
+<div class="zigzag"></div>
+
+<!-- ===== Витрина: 12 изделий ===== -->
+<section class="sect">
+  <h2 class="sec-h2">Сегодня на витрине</h2>
+  <p class="sec-sub">// всё в одном экземпляре · бакелит, стекло, настоящая ностальгия · 12 штук на полке</p>
+  <div class="shelf">
+
+    <a class="item" href="product.html">
+      <span class="badge badge--feat">избранное</span>
+      <div class="photo"><img src="https://images.unsplash.com/photo-1630019852942-f89202989a59?w=800&q=80" alt="Брошь «Ромашковая»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Брошь «Ромашковая»</h3>
+        <p class="desc">эмаль по меди, ручная роспись; застёжка-игла</p>
+        <div class="tag-row"><span class="price">1 950 ₽</span><span class="avail">✔ в наличии</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&q=80" alt="Серьги «Танец-76»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Серьги «Танец-76»</h3>
+        <p class="desc">бакелитовые диски, латунь; вес пером, настроение — паркет</p>
+        <div class="tag-row"><span class="price">2 300 ₽</span><span class="avail">✔ в наличии</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <span class="badge badge--new">новинка</span>
+      <div class="photo"><img src="https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?w=800&q=80" alt="Кулон «Телеграмма»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Кулон «Телеграмма»</h3>
+        <p class="desc">стекло цвета бабушкиной вазы; цепочка латунная, 50 см</p>
+        <div class="tag-row"><span class="price">2 700 ₽</span><span class="avail avail--reserve">⏳ резерв до пт</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <span class="badge badge--new">новинка</span>
+      <div class="photo"><img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=800&q=80" alt="Брошь «Грибная поляна»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Брошь «Грибная поляна»</h3>
+        <p class="desc">бакелит, янтарная крошка; три боровичка и мухомор</p>
+        <div class="tag-row"><span class="price">2 450 ₽</span><span class="avail">✔ в наличии</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80" alt="Серьги «Капли дождя»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Серьги «Капли дождя»</h3>
+        <p class="desc">горный хрусталь, латунь; звонкие, как град по крыше</p>
+        <div class="tag-row"><span class="price">1 900 ₽</span><span class="avail">✔ в наличии</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80" alt="Кольцо «Воскресное»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Кольцо «Воскресное»</h3>
+        <p class="desc">бакелит, латунь 925; сядет как влитое, поверьте</p>
+        <div class="tag-row"><span class="price">1 750 ₽</span><span class="avail avail--order">⏳ под заказ · 7 дн</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=800&q=80" alt="Браслет «Кассета-минус»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Браслет «Кассета-минус»</h3>
+        <p class="desc">винил, кожа, латунная застёжка; играет сингл 1978-го</p>
+        <div class="tag-row"><span class="price">2 100 ₽</span><span class="avail">✔ в наличии</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <span class="badge badge--new">новинка</span>
+      <div class="photo"><img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80" alt="Бусы «Капсула времени»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Бусы «Капсула времени»</h3>
+        <p class="desc">стеклярус, бакелит; вручную, каждая бусина — своя история</p>
+        <div class="tag-row"><span class="price">3 200 ₽</span><span class="avail">✔ в наличии</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=800&q=80" alt="Кулон «Письмо из 76-го»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Кулон «Письмо из 76-го»</h3>
+        <p class="desc">эмаль, латунь; конверт-форма, внутри — секрет</p>
+        <div class="tag-row"><span class="price">2 600 ₽</span><span class="avail">✔ в наличии</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=800&q=80" alt="Клипсы «Паркетный вальс»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Клипсы «Паркетный вальс»</h3>
+        <p class="desc">пластик, перламутр; не отваливаются даже на танцполе</p>
+        <div class="tag-row"><span class="price">1 600 ₽</span><span class="avail">✔ в наличии</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <span class="badge badge--feat">избранное</span>
+      <div class="photo"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80" alt="Комплект «Вечер на Радищева»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Комплект «Вечер на Радищева»</h3>
+        <p class="desc">серьги + брошь, бакелит; для тех самых выходов</p>
+        <div class="tag-row"><span class="price">4 200 ₽</span><span class="avail avail--order">⏳ под заказ · 10 дн</span></div>
+      </div>
+    </a>
+
+    <a class="item" href="product.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80" alt="Амулет «Счастливая пуговица»" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Амулет «Счастливая пуговица»</h3>
+        <p class="desc">перламутр, латунь; от растерянности и скучных дней</p>
+        <div class="tag-row"><span class="price">1 450 ₽</span><span class="avail">✔ в наличии</span></div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===== Плитка категорий ===== -->
+<section class="sect">
+  <h2 class="sec-h2">Разложено по полкам</h2>
+  <p class="sec-sub">// десять отделов, в каждом — своё настроение</p>
+  <div class="shelf">
+
+    <a class="item item--cat" href="catalog.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="6"/><circle cx="12" cy="10" r="2"/><path d="M12 16v5M8 19h8"/></svg></div>
+      <div class="info"><h3>Броши</h3><p class="desc">эмаль, бакелит, перламутр</p><span class="count">12 изделий</span></div>
+    </a>
+
+    <a class="item item--cat" href="category.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><path d="M12 14v7M8 17h8"/></svg></div>
+      <div class="info"><h3>Кулоны</h3><p class="desc">стекло, эмаль, янтарь</p><span class="count">14 изделий</span></div>
+    </a>
+
+    <a class="item item--cat" href="catalog.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round"><path d="M7 3v7a5 5 0 0 0 10 0V3M5 21h14M12 15v6"/></svg></div>
+      <div class="info"><h3>Серьги</h3><p class="desc">хрусталь, бакелит, латунь</p><span class="count">11 изделий</span></div>
+    </a>
+
+    <a class="item item--cat" href="catalog.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6"/><path d="M12 8v4l3 2"/></svg></div>
+      <div class="info"><h3>Кольца</h3><p class="desc">бакелит, латунь 925</p><span class="count">8 изделий</span></div>
+    </a>
+
+    <a class="item item--cat" href="catalog.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round"><path d="M4 17a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3M4 17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2M4 17V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10"/></svg></div>
+      <div class="info"><h3>Браслеты</h3><p class="desc">винил, кожа, стекло</p><span class="count">9 изделий</span></div>
+    </a>
+
+    <a class="item item--cat" href="catalog.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M12 3v18M6 6h12M6 18h12"/><circle cx="12" cy="12" r="4"/></svg></div>
+      <div class="info"><h3>Бусы и ожерелья</h3><p class="desc">стеклярус, бакелит</p><span class="count">7 изделий</span></div>
+    </a>
+
+    <a class="item item--cat" href="catalog.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3"/><circle cx="7" cy="18" r="3"/><circle cx="17" cy="18" r="3"/><path d="M12 12v3M7 15v0M17 15v0"/></svg></div>
+      <div class="info"><h3>Комплекты</h3><p class="desc">серьги + брошь, и не только</p><span class="count">5 комплектов</span></div>
+    </a>
+
+    <a class="item item--cat" href="catalog.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round"><path d="M8 3v7a4 4 0 0 0 8 0V3M10 21h4M12 14v7"/></svg></div>
+      <div class="info"><h3>Клипсы и манжеты</h3><p class="desc">пластик, перламутр</p><span class="count">6 изделий</span></div>
+    </a>
+
+    <a class="item item--cat" href="catalog.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.9 2.9-3-3z"/></svg></div>
+      <div class="info"><h3>Винтажный ремонт</h3><p class="desc">дарим вторую жизнь</p><span class="count">от 300 ₽</span></div>
+    </a>
+
+    <a class="item item--cat" href="catalog.html">
+      <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg></div>
+      <div class="info"><h3>Амулеты и подвески</h3><p class="desc">на удачу и по примете</p><span class="count">10 изделий</span></div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===== CTA в конфигуратор ===== -->
+<section class="sect">
+  <div class="cta-banner">
+    <h2>Соберите своё украшение</h2>
+    <p>Выберите категорию, добавьте камни и подвески со склада — калькулятор сам посчитает цену и срок. Коллаж соберём прямо при вас.</p>
+    <div class="cta-row" style="justify-content:center;">
+      <a class="btn btn--primary" href="configurator.html">Открыть конфигуратор →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Чек-тизер + часы ===== -->
+<div class="receipt-sec" id="about">
+  <div class="receipt">
+    <h2>◍ ЧЕК ЗНАКОМСТВА ◍</h2>
+    <div class="row"><span>ХОЗЯЙКА</span><span class="r">Юля Крафт</span></div>
+    <div class="row"><span>СТАЖ ЗА ВЕРСТАКОМ</span><span class="r">12 лет</span></div>
+    <div class="row"><span>ЛЮБИМАЯ ЭПОХА</span><span class="r">1972–1981</span></div>
+    <div class="row"><span>ЛЮБИМЫЙ МАТЕРИАЛ</span><span class="r">бакелит</span></div>
+    <div class="row"><span>НЕЛЮБИМАЯ ФРАЗА</span><span class="r">«это сейчас не в моде»</span></div>
+    <div class="row"><span>ЧАЙ ПОКУПАТЕЛЯМ</span><span class="r">бесплатно</span></div>
+    <div class="row"><span>РЕМОНТ СТАРИНЫ</span><span class="r">от 300 ₽</span></div>
+    <p class="thanks">*** СПАСИБО ЗА ВИЗИТ. ВОЗВРАЩАЙТЕСЬ ***</p>
+    <div class="barcode"></div>
+  </div>
+</div>
+
+<section class="sect">
+  <div class="hours-grid">
+    <div class="hours-txt">
+      <h2 class="sec-h2">Мастерская работает</h2>
+      <p class="sec-sub">// приходите без спешки — у нас радио на кассете и запах воска</p>
+      <p>Витрина живёт по законам старых лавок: если свет горит — заходите, даже если «закрыто». Юля на месте почти всегда: либо паяет, либо пьёт чай с тем, кто зашёл «просто посмотреть».</p>
+      <p>Приносите бабушкины клипсы и одинокие серьги — половине украшений мы дарим вторую жизнь прямо при вас.</p>
+      <a class="phone" href="tel:+79990007676">☎ +7 (999) 000-76-76</a>
+    </div>
+    <div class="hours-board">
+      <h3>Часы работы</h3>
+      <div class="day"><span>Понедельник</span><span class="closed">выходной</span></div>
+      <div class="day"><span>Вторник — Пятница</span><span>11:00 — 20:00</span></div>
+      <div class="day"><span>Суббота</span><span>12:00 — 19:00</span></div>
+      <div class="day"><span>Воскресенье</span><span>12:00 — 17:00</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="zigzag"></div>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="f-grid">
+    <div>
+      <div class="f-brand">JulCraft<span>ул. Радищева, 16 · мастерская украшений · эст. 1976 (почти)</span></div>
+    </div>
+    <div>
+      <h4>Часы работы</h4>
+      <div class="day"><span>Понедельник</span><span class="closed">выходной</span></div>
+      <div class="day"><span>Вт — Пт</span><span>11:00 — 20:00</span></div>
+      <div class="day"><span>Суббота</span><span>12:00 — 19:00</span></div>
+      <div class="day"><span>Воскресенье</span><span>12:00 — 17:00</span></div>
+    </div>
+    <div class="f-links">
+      <h4>Связаться</h4>
+      <a href="tel:+79990007676">☎ +7 (999) 000-76-76</a>
+      <a href="mailto:hello@julcraft.ru">✉ hello@julcraft.ru</a>
+      <a href="contacts.html">⛭ ул. Радищева, 16, Самара</a>
+      <div class="f-socials">
+        <a href="#" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="#22242a"/></svg></a>
+        <a href="#" aria-label="Telegram" title="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="f-copy">JulCraft · с 1976 года (почти) · © 2026</div>
+</footer>
+
+</body>
+</html>

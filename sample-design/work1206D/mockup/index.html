@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Макеты JulCraft — скин «Геометрия» (work1206D)</title>
+<link rel="stylesheet" href="assets/css/style-memphis.css">
+<script src="assets/js/skin-switcher.js"></script>
+<style>
+  .hub { padding:60px 5vw 90px; max-width:1120px; margin:0 auto; }
+  .hub .lead { max-width:74ch; margin:14px 0 44px; font-size:.92rem; }
+  .hub .lead code { background:var(--paper); border:1.5px solid var(--brown); border-radius:6px; padding:1px 6px; font-size:.82rem; }
+  .hub .group { margin-bottom:44px; }
+  .hub .group > h2 { display:flex; align-items:center; gap:12px; font-size:1.4rem; margin-bottom:18px; }
+  .hub .group > h2 .g-badge {
+    font-family:var(--font-mono); font-size:.66rem; font-weight:500; letter-spacing:.08em;
+    background:var(--mustard); border:2px solid var(--brown); border-radius:999px; padding:3px 12px; color:var(--brown);
+    text-transform:uppercase;
+  }
+  .hub .group--admin > h2 .g-badge { background:var(--brown); color:var(--cream); }
+  .hub-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:26px; }
+  .hub-card {
+    background:var(--white); border:3px solid var(--brown); border-radius:var(--r-item);
+    padding:20px 22px; text-decoration:none; color:var(--brown); display:flex; flex-direction:column; gap:10px;
+    transition:.25s; position:relative; box-shadow:var(--shadow-item);
+  }
+  .hub-card:hover { transform:translate(-3px,-3px); box-shadow:var(--shadow-item-hover); }
+  .hub-card .route {
+    font-family:var(--font-mono); font-size:.66rem; letter-spacing:.08em; background:var(--paper);
+    border:2px solid var(--brown); border-radius:999px; padding:3px 10px; align-self:flex-start; text-transform:lowercase;
+  }
+  .hub-card .t { font-family:var(--font-display); font-size:1.05rem; line-height:1.25; }
+  .hub-card .d { font-size:.78rem; color:var(--muted); flex:1; }
+  .hub-card .go { align-self:flex-start; }
+  .hub-card .badge-mega {
+    position:absolute; top:-12px; right:-10px; background:var(--rust); color:var(--cream);
+    border:2px solid var(--brown); border-radius:999px; font-family:var(--font-mono); font-size:.62rem;
+    font-weight:500; letter-spacing:.1em; text-transform:uppercase; padding:4px 12px; transform:rotate(4deg);
+    box-shadow:var(--shadow-chip);
+  }
+  .hub .foot-note { margin-top:40px; font-size:.78rem; color:var(--muted); }
+  .hub .foot-note code { background:var(--paper); border:1.5px solid var(--brown); border-radius:6px; padding:1px 6px; font-size:.74rem; }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky-шапка ===== -->
+<header class="topbar">
+  <a class="logo" href="home.html">JulCraft<small>макеты 12-on-06</small></a>
+  <nav>
+    <a href="home.html">Витрина</a>
+    <a href="design-system.html">Дизайн-система</a>
+    <a href="admin/login.html">Админка</a>
+  </nav>
+  <div class="actions">
+    <a class="icon-btn" href="https://fonts.google.com/specimen/Shrikhand" target="_blank" rel="noopener" title="Шрифт вывески">S</a>
+  </div>
+</header>
+
+<main class="hub">
+
+  <h1 class="sec-h2">Макеты JulCraft <span class="chip chip--2" style="vertical-align:middle;">Дизайн «Компромис»</span></h1>
+  <p class="lead">
+    Эксперимент <code>work1206D</code>: функционал и разметка — из макета <code>06D</code> (все страницы, конфигуратор, админка),
+    визуальное оформление — по дизайн-системе <code>12D</code> «Геометрия, которую можно надеть» (Unbounded + Nunito, конфетти-фон,
+    жёсткие тени <code>8px 8px 0 --ink</code>, цветовая кодировка c1/c2/c3, pill-навигация).
+    Все страницы свёрстаны на общей дизайн-системе (<code>assets/css/style-memphis.css</code>).
+    Для A/B-сравнения с оригиналом верните в HTML ссылку на <code>assets/css/style.css</code>.
+    Адаптив встроен: сузьте окно до 820px и 375px — навигация сворачивается в бургер, гриды перестраиваются, конфигуратор переключается на табы.
+  </p>
+
+  <!-- ===== Публичные ===== -->
+  <div class="group">
+    <h2>Публичные страницы <span class="g-badge">9 шт</span></h2>
+    <div class="hub-grid">
+
+      <a class="hub-card" href="home.html">
+        <span class="route">/</span>
+        <span class="t">Главная</span>
+        <span class="d">Вывеска-герой с багетами, витрина из 12 изделий (все в одном экземпляре), плитка 10 категорий, CTA в конфигуратор, чек-тизер и часы работы.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="catalog.html">
+        <span class="route">/catalog</span>
+        <span class="t">Каталог категорий</span>
+        <span class="d">10 категорий с иконками-гравировками, количество изделий, статусы (в наличии / пусто / ремонт).</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="category.html">
+        <span class="route">/catalog/[slug]</span>
+        <span class="t">Категория «Кулоны»</span>
+        <span class="d">Хлебные крошки, фильтры в панели-борде (цена, наличие), сортировка, 9 изделий, пагинация.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="product.html">
+        <span class="route">/product/[slug]</span>
+        <span class="t">Карточка изделия</span>
+        <span class="d">Галерея в стиле витрины + превью, ценник-пилюля, теги материалов, модалка заявки (чек), похожие товары.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="configurator.html">
+        <span class="route">/configurator</span>
+        <span class="t">Конфигуратор — выбор категории</span>
+        <span class="d">«Соберите своё»: категории с шаблонами слотов, счётчики слотов, «Винтажный ремонт» без шаблона (disabled).</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="configurator-config.html">
+        <span class="route">/configurator/[slug]</span>
+        <span class="t">Конфигуратор — Кулоны</span>
+        <span class="d">Split-view: канвас-коллаж (пергамент, элементы можно двигать) + аккордеон слотов с мини-карточками комплектующих, qty stepper, sticky-калькулятор, модалка заявки.</span>
+        <span class="badge-mega">ключевая фича</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="about.html">
+        <span class="route">/about</span>
+        <span class="t">О мастерской</span>
+        <span class="d">Вывеска «История на верстаке», развёрнутый чек знакомства с биографией, фото мастерской в рамке-витрине, ценности, часы.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="contacts.html">
+        <span class="route">/contacts</span>
+        <span class="t">Контакты</span>
+        <span class="d">Форма обратной связи в виде чека + карта в рамке витрины, адрес, телефон, почта, соцсети, часы.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="order-success.html">
+        <span class="route">/order-success</span>
+        <span class="t">Успех заявки</span>
+        <span class="d">Вывеска «Чек получен», чек с номером заказа, ценой и сроком, «что дальше» и кнопка на главную.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ===== Админка ===== -->
+  <div class="group group--admin">
+    <h2>Админка <span class="g-badge">7 шт</span></h2>
+    <div class="hub-grid">
+
+      <a class="hub-card" href="admin/login.html">
+        <span class="route">/admin/login</span>
+        <span class="t">Вход</span>
+        <span class="d">Центрированный чек: логин, пароль, демо ошибки, штрих-код вместо лишнего.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/dashboard.html">
+        <span class="route">/admin</span>
+        <span class="t">Дашборд «Панель мастера»</span>
+        <span class="d">Вывеска-компакт, 4 метрики (товары, заявки, в работе, выручка), последние 5 заявок в панели-борде.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/products.html">
+        <span class="route">/admin/products</span>
+        <span class="t">Товары — CRUD</span>
+        <span class="d">Таблица 12 изделий (фото, категория, цена, новинка/избранное, наличие), модалка с табами Основное/Фото/SEO и dropzone.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/components.html">
+        <span class="route">/admin/components</span>
+        <span class="t">Склад комплектующих</span>
+        <span class="d">Таблица 25 позиций: закупка, обработка, остаток, «под заказ», срок поставки. Модалка с требованием «PNG на белом фоне».</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/categories.html">
+        <span class="route">/admin/categories</span>
+        <span class="t">Категории + слоты</span>
+        <span class="d">Две панели: draggable-список 10 категорий + форма категории с редактором слотов (тип, min/max, порядок).</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/orders.html">
+        <span class="route">/admin/orders</span>
+        <span class="t">Заявки</span>
+        <span class="d">Таблица заявок с бейджами статусов (new/in_progress/done/cancelled), модалка: коллаж, состав конфигурации, смена статуса.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/settings.html">
+        <span class="route">/admin/settings</span>
+        <span class="t">Настройки</span>
+        <span class="d">Табы: Контакты (поля из Settings), Тексты (О мастерской в чеках), Telegram (токен, chat_id, статус, кнопка «Тест»).</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ===== Система ===== -->
+  <div class="group">
+    <h2>Основа <span class="g-badge">2 шт</span></h2>
+    <div class="hub-grid">
+      <a class="hub-card" href="design-system.html">
+        <span class="route">/design-system</span>
+        <span class="t">Дизайн-система</span>
+        <span class="d">Палитра и токены, типографика Shrikhand + IBM Plex Mono, все примитивы (signboard, item, receipt, board, phone, zigzag), иконки, состояния, тени, spacing, z-index. Готова к экспорту в Tailwind config.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+      <a class="hub-card" href="error.html">
+        <span class="route">/404</span>
+        <span class="t">Страница не найдена</span>
+        <span class="d">Вывеска с кодом 404, сломанная брошь-иконка, кнопка «На главную». Состояние ошибки.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+    </div>
+  </div>
+
+  <p class="foot-note">
+    Стек: Next.js 14 + Tailwind + shadcn/ui. Токены CSS: <code>--bg</code>, <code>--ink</code>, <code>--c1</code>, <code>--c2</code>, <code>--c3</code>, <code>--white</code>.
+    Имена токенов 06D (<code>--cream/--brown/--mustard/--rust/--olive/--paper</code>) сохранены как алиасы — inline-стили макетов работают без правок.
+    Фото изделий — заглушки Unsplash, фото комплектующих — SVG-заглушки на белом фоне (имитация PNG для коллажа). Тени — только жёсткие, без blur.
+  </p>
+
+</main>
+
+</body>
+</html>
