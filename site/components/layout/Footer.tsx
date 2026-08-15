@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { defaultSettings } from "@/lib/settings";
+import { telHref, type SiteSettings } from "@/lib/settings";
 
-const FOOTER_DAY_LABELS = ["Понедельник", "Вт — Пт", "Суббота", "Воскресенье"];
-
-export default function Footer() {
-  const { contacts } = defaultSettings;
+export default function Footer({ settings }: { settings: SiteSettings }) {
+  const { contacts } = settings;
   return (
     <footer className="footer">
       <div className="f-grid">
@@ -18,20 +16,20 @@ export default function Footer() {
         </div>
         <div>
           <h4>Часы работы</h4>
-          {contacts.hoursWeekdays.map((entry, i) => (
+          {contacts.hours.map((entry, i) => (
             <div className="day" key={i}>
-              <span>{FOOTER_DAY_LABELS[i]}</span>
+              <span>{entry.day}</span>
               {entry.closed ? (
-                <span className="closed">{entry.hours}</span>
+                <span className="closed">{entry.value}</span>
               ) : (
-                <span>{entry.hours}</span>
+                <span>{entry.value}</span>
               )}
             </div>
           ))}
         </div>
         <div className="f-links">
           <h4>Связаться</h4>
-          <a href={contacts.phone}>☎ +38 095 358 48 11</a>
+          <a href={telHref(contacts.phone)}>☎ {contacts.phone}</a>
           <a href={`mailto:${contacts.email}`}>✉ {contacts.email}</a>
           <Link href="/contacts">⛭ {contacts.address}</Link>
           <div className="f-socials">

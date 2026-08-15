@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { defaultSettings } from "@/lib/settings";
+import { telHref, type SiteSettings } from "@/lib/settings";
 import MobileMenu from "./MobileMenu";
 import { NAV_LINKS } from "./nav-links";
 
-export default function Header() {
+export default function Header({ settings }: { settings: SiteSettings }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -32,7 +32,11 @@ export default function Header() {
           ))}
         </nav>
         <div className="actions">
-          <a className="icon-btn" href={defaultSettings.contacts.phone} title="Позвонить">
+          <a
+            className="icon-btn"
+            href={telHref(settings.contacts.phone)}
+            title="Позвонить"
+          >
             ☎
           </a>
           <button
@@ -44,7 +48,11 @@ export default function Header() {
           </button>
         </div>
       </header>
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        settings={settings}
+      />
     </>
   );
 }
