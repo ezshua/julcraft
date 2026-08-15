@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
 
 export const COMPONENT_TYPES = ["stone", "pendant", "bead", "cord", "clasp", "base"] as const;
 export type ComponentType = (typeof COMPONENT_TYPES)[number];
@@ -47,6 +48,14 @@ export const products = sqliteTable("products", {
   description: text("description").notNull(),
   price: integer("price").notNull(),
   images: text("images", { mode: "json" }).$type<string[]>().notNull(),
+  materials: text("materials", { mode: "json" })
+    .$type<string[]>()
+    .notNull()
+    .default(sql`'[]'`),
+  specs: text("specs", { mode: "json" })
+    .$type<string[]>()
+    .notNull()
+    .default(sql`'[]'`),
   isNew: integer("isNew", { mode: "boolean" }).notNull(),
   isFeatured: integer("isFeatured", { mode: "boolean" }).notNull(),
   availability: text("availability").$type<ProductAvailability>().notNull(),

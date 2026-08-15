@@ -1,0 +1,136 @@
+import type { Metadata } from "next";
+import { getSettings } from "@/lib/get-settings";
+import { telHref } from "@/lib/settings";
+import HoursBoard from "@/components/ui/HoursBoard";
+
+export const metadata: Metadata = {
+  title: "О мастерской — JulCraft",
+};
+
+export default function AboutPage() {
+  const settings = getSettings();
+
+  return (
+    <>
+      <div className="signboard">
+        <p className="est">✹ о мастерской ✹</p>
+        <h1>История на верстаке</h1>
+        <p className="tag">Юля Крафт · 12 лет за верстаком · любимая эпоха 1972–1981</p>
+      </div>
+      <div className="zigzag"></div>
+
+      <section className="sect">
+        <div className="hours-grid" style={{ alignItems: "start" }}>
+          <div>
+            <h2 className="sec-h2">Мастерская, где вещи помнят руки</h2>
+            <p className="sec-sub">{"// чек знакомства — полная версия, читается до конца"}</p>
+            <p className="muted mb-10">
+              Юля начинала с ремонта бабушкиных бус в 2014-м — теперь на полках три
+              витрины, четыре ящика бакелита и один очень важный ящик «на потом». Всё
+              делается вручную: пайка, чеканка, вплетение, эмаль. Никаких станков, если
+              не считать верстак деда.
+            </p>
+            <p className="muted mb-10">
+              Половине украшений на витрине мы дарим вторую жизнь: приносите одинокие
+              серьги и клипсы без пары — сядем, посмотрим, придумаем.
+            </p>
+            <p className="muted">К каждой вещи прилагается история, к каждому заказу — чай. Бесплатно.</p>
+          </div>
+          <div className="hours-grid" style={{ display: "block" }}>
+            <div className="item" style={{ overflow: "hidden" }}>
+              <div className="photo" style={{ height: "280px" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=900&q=80"
+                  alt="Мастерская Юли"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Чек знакомства (полный) */}
+      <div className="receipt-sec">
+        <div className="receipt receipt--wide">
+          <h2>◍ ЧЕК ЗНАКОМСТВА · ПОЛНЫЙ ◍</h2>
+          {settings.about.history.rows.map((row, i) => (
+            <div className="row" key={i}>
+              <span>{row.label}</span>
+              <span className="r">{row.value}</span>
+            </div>
+          ))}
+          <p className="thanks">{settings.about.history.thanks}</p>
+          <div className="barcode"></div>
+        </div>
+      </div>
+
+      {/* Ценности */}
+      <section className="sect">
+        <h2 className="sec-h2">На чём стоит мастерская</h2>
+        <p className="sec-sub">
+          {"// четыре правила, записанные на коробке из-под бакелита"}
+        </p>
+        <div className="shelf">
+          {settings.about.principles.map((p, i) => (
+            <div className="item item--cat" key={i}>
+              <div className="cat-icon">
+                {i === 0 && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#22242a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                )}
+                {i === 1 && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#22242a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7v5l3 2" />
+                  </svg>
+                )}
+                {i === 2 && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#22242a" strokeWidth="2" strokeLinecap="round">
+                    <path d="M12 3v18M3 12h18" />
+                  </svg>
+                )}
+                {i === 3 && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#22242a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M8 21h8M12 17v4M7 4h10l1 4a5 5 0 0 1-12 0z" />
+                  </svg>
+                )}
+              </div>
+              <div className="info">
+                <h3>{p.title}</h3>
+                <p className="desc">{p.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Контакты-тизер */}
+      <section className="sect">
+        <div className="hours-grid">
+          <div className="hours-txt">
+            <h2 className="sec-h2">Зайти в гости</h2>
+            <p className="sec-sub">{"// "}{settings.contacts.address} · Солома</p>
+            <p>
+              Мастерская на первом этаже, между «Галантереей» и цветочным. Узнаете по
+              жёлтой вывеске и запаху воска.
+            </p>
+            <p>
+              Лучше позвонить перед визитом — Юля может быть в кладовке, где телефон не
+              ловит.
+            </p>
+            <a className="phone" href={telHref(settings.contacts.phone)}>
+              ☎ {settings.contacts.phone}
+            </a>
+          </div>
+          <HoursBoard hours={settings.contacts.hours} />
+        </div>
+      </section>
+
+      <div className="zigzag"></div>
+    </>
+  );
+}

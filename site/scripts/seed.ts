@@ -206,6 +206,8 @@ type ProductSeed = {
   availability: ProductAvailability;
   orderDays: number | null;
   photoId: string;
+  materials?: string[];
+  specs?: string[];
 };
 
 // Товары — home.html (12) + category.html (7 кулонов); slug'и — admin/products.html
@@ -245,6 +247,13 @@ const productSeed: ProductSeed[] = [
     availability: "reserve",
     orderDays: null,
     photoId: "photo-1596944924616-7b38e7cfac36",
+    materials: ["стекло", "латунь", "гравировка"],
+    specs: [
+      "Размер: 32 × 24 мм, толщина 8 мм",
+      "Цепочка латунная 50 см в комплекте",
+      "Вес: 11 г — лёгкий, как утренние планы",
+      "Уход: протирать фланелью, не ронять на асфальт",
+    ],
   },
   {
     name: "Брошь «Грибная поляна»",
@@ -608,6 +617,8 @@ function main() {
         description: p.description,
         price: p.price,
         images: [`https://images.unsplash.com/${p.photoId}?w=800&q=80`],
+        materials: p.materials ?? [],
+        specs: p.specs ?? [],
         isNew: p.isNew,
         isFeatured: p.isFeatured,
         availability: p.availability,

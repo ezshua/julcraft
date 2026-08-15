@@ -1,26 +1,29 @@
 import type { Metadata } from "next";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import { getSettings } from "@/lib/get-settings";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "JulCraft",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
-  const settings = getSettings();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
       <body>
-        {/* Единственный stylesheet: его подменяет skin-switcher.js (как в макете) */}
+        {/* Единственный stylesheet: его подменяет skin-switcher.js (как в макете).
+            suppressHydrationWarning: скин из localStorage применяется скриптом,
+            поэтому href может отличаться от серверного — иначе React
+            пересоздаёт дерево и сбрасывает выбранный скин */}
         {/* eslint-disable-next-line @next/next/no-css-tags */}
-        <link rel="stylesheet" href="/css/style-memphis.css" />
-        <Header settings={settings} />
+        <link
+          rel="stylesheet"
+          href="/css/style-memphis.css"
+          suppressHydrationWarning
+        />
         {children}
-        <Footer settings={settings} />
-        {/* Копия макета: применяет скин до отрисовки */}
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script src="/js/skin-switcher.js"></script>
+        {/* Копия макета: скин применяется скриптом ПОСЛЕ гидратации —
+            если выполнить его раньше, React увидит лишние DOM-узлы
+            (панель переключателя) и упадёт на hydration mismatch */}
+        <Script src="/js/skin-switcher.js" strategy="afterInteractive" />
       </body>
     </html>
   );

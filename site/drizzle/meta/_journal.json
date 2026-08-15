@@ -8,6 +8,13 @@
       "when": 1786799323045,
       "tag": "0000_amused_bishop",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1786802194960,
+      "tag": "0001_strong_pride",
+      "breakpoints": true
     }
   ]
 }
