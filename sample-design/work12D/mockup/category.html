@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JulCraft — Кулоны</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="confetti"></div>
+
+<!-- ===== Header ===== -->
+<header class="header">
+  <a class="logo" href="home.html">JulCraft<i></i></a>
+  <nav class="nav">
+    <a href="catalog.html">Вещи</a>
+    <a href="configurator.html">Собрать</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+  </nav>
+  <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+</header>
+
+<!-- мобильное меню -->
+<div class="mobile-menu" id="mm">
+  <button class="btn-icon btn-icon--c3 close" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  <a class="mm" href="catalog.html">Вещи</a>
+  <a class="mm" href="configurator.html">Собрать</a>
+  <a class="mm" href="about.html">О нас</a>
+  <a class="mm" href="contacts.html">Контакты</a>
+</div>
+
+<!-- ===== Хлебные крошки ===== -->
+<nav class="crumbs"><a href="home.html">Главная</a> <span class="sep">›</span> <a href="catalog.html">Вещи</a> <span class="sep">›</span> <span class="cur">Кулоны</span></nav>
+
+<!-- ===== Категория: Кулоны ===== -->
+<section class="sect">
+  <div class="sec-title">
+    <h2>Кулоны</h2>
+    <span class="doodle">▲●■ миксуй!</span>
+  </div>
+
+  <!-- тулбар фильтров -->
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:36px;">
+    <div class="filters">
+      <button class="filter is-active">Все</button>
+      <button class="filter">В наличии</button>
+      <button class="filter">Под заказ</button>
+      <button class="filter">Новинки</button>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;">
+      <div class="field" style="margin-bottom:0;min-width:220px;">
+        <select><option>Сортировка: по цене ↑</option><option>Сортировка: по цене ↓</option><option>Сортировка: новинки</option></select>
+      </div>
+      <div class="field" style="margin-bottom:0;min-width:190px;">
+        <select><option>Цена до: 3 000 ₽</option><option>Цена до: 2 000 ₽</option><option>Цена до: 5 000 ₽</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards">
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=800&q=80" alt="Кулон «Зигзаг удачи»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кулон «Зигзаг удачи»</h3>
+        <p>Классический мемфис-зигзаг в терракотовой оправе. Цепочка 45 см в комплекте.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>2 400 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80" alt="Кулон «Круглая луна»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кулон «Круглая луна»</h3>
+        <p>Полупрозрачная смола «под луну», на свету теплеет. Фурнитура — латунь.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>1 800 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=800&q=80" alt="Кулон «Мятная капля»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кулон «Мятная капля»</h3>
+        <p>Капля мятной смолы на вощёном шнуре. Узел держит три года — проверено.</p>
+        <div class="meta"><span class="tag tag--new">новинка</span></div>
+      </div>
+      <div class="foot"><b>2 000 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=800&q=80" alt="Кулон «Ромб желаний»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кулон «Ромб желаний»</h3>
+        <p>Двойной ромб янтарной и мятной смолы. Носится и вверх, и вниз — как удобно.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>2 200 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=800&q=80" alt="Кулон «Звезда на шнуре»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кулон «Звезда на шнуре»</h3>
+        <p>Латунная звезда с точечной гравировкой. Делается под заказ за 5 дней.</p>
+        <div class="meta"><span class="tag tag--order">под заказ · 5 дней</span></div>
+      </div>
+      <div class="foot"><b>2 600 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+    <div class="card">
+      <img class="photo" src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&q=80" alt="Кулон «Медовый круг»" loading="lazy" decoding="async">
+      <div class="body">
+        <h3>Кулон «Медовый круг»</h3>
+        <p>Густой янтарный круг с медовыми разводами. Тёплый, как закат в пятницу.</p>
+        <div class="meta"><span class="tag tag--stock">в наличии</span></div>
+      </div>
+      <div class="foot"><b>1 950 ₽</b><a class="btn-icon" href="product.html" aria-label="Купить">→</a></div>
+    </div>
+
+  </div>
+
+  <!-- пагинация -->
+  <div class="pagination">
+    <button class="page-btn is-disabled" aria-label="Назад">‹</button>
+    <button class="page-btn is-active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn" aria-label="Вперёд">›</button>
+  </div>
+</section>
+
+<!-- ===== Footer (расширенный) ===== -->
+<footer class="footer-grid" id="go">
+  <div>
+    <div class="brand">JulCraft<i style="display:inline-block;width:12px;height:12px;background:var(--c3);border-radius:50%;margin-left:6px;"></i></div>
+    <div class="tagline">Геометрия, которую можно надеть</div>
+    <div class="socials">
+      <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="#22242a"><path d="M21.9 4.6 18.8 19c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.3-.5.5-.9.5l.3-4.6L18.2 6c.4-.3-.1-.5-.6-.2L7.3 12.7l-4.5-1.4c-1-.3-1-1 .2-1.5l17.5-6.8c.8-.3 1.5.2 1.4 1.6z"/></svg></a>
+      <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="#22242a" stroke="none"/></svg></a>
+      <a href="#" aria-label="Почта"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2.5"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg></a>
+    </div>
+  </div>
+  <div>
+    <h4>Быстрые ссылки</h4>
+    <a href="catalog.html">Вещи</a>
+    <a href="configurator.html">Собрать</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+  </div>
+  <div>
+    <h4>Контакты</h4>
+    <a href="mailto:go@julcraft.ru">go@julcraft.ru</a>
+    <a href="tel:+79990000000">+7 999 000-00-00</a>
+    <a href="#">@julcraft.play</a>
+    <a href="#">Москва, мастерская «Соты»</a>
+  </div>
+</footer>
+<div class="footer-copy">JulCraft · © 2026 · вебсайт не содержит стразов, но содержит любовь</div>
+
+</body>
+</html>

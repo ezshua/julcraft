@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дизайн-система — JulCraft</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .ds { padding:50px 5vw 90px; max-width:1240px; margin:0 auto; }
+  .ds h1 { font-size:clamp(1.8rem,4vw,2.6rem); font-weight:800; margin-bottom:6px; }
+  .ds .lead { margin-bottom:40px; }
+  .ds-block { margin-bottom:56px; }
+  .ds-block > h2 { font-size:1.3rem; font-weight:600; margin-bottom:6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .ds-block > p { color:var(--muted); font-size:.9rem; margin-bottom:22px; max-width:70ch; }
+  .ds-block > h2 .ds-n { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; border:2.5px solid var(--ink); background:var(--c1); font-size:.85rem; }
+  .swatches { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
+  .sw { background:#fff; border:3px solid var(--ink); border-radius:20px; overflow:hidden; }
+  .sw .c { height:110px; border-bottom:3px solid var(--ink); }
+  .sw .t { padding:14px 16px; }
+  .sw .t b { font-family:var(--font-display); font-size:.85rem; font-weight:600; display:block; }
+  .sw .t code { font-size:.78rem; color:var(--muted); background:var(--bg); padding:2px 8px; border-radius:6px; border:1.5px solid var(--ink); }
+  .type-row { display:flex; align-items:baseline; gap:18px; padding:16px 0; border-bottom:2px solid var(--bg); flex-wrap:wrap; }
+  .type-row .lbl { font-size:.75rem; font-weight:800; color:var(--muted); width:150px; text-transform:uppercase; }
+  .comp-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:26px; }
+  .comp-demo { background:#fff; border:3px solid var(--ink); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:14px; }
+  .comp-demo h3 { font-size:.9rem; font-weight:600; }
+  .comp-demo .hint { font-size:.75rem; color:var(--muted); }
+  .row-demo { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .icon-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(72px,1fr)); gap:14px; }
+  .icon-cell { background:#fff; border:2.5px solid var(--ink); border-radius:14px; padding:14px 8px; text-align:center; transition:.2s; }
+  .icon-cell:hover { transform:rotate(-2deg) translateY(-2px); box-shadow:6px 6px 0 var(--ink); background:var(--bg); }
+  .icon-cell svg { width:24px; height:24px; margin:0 auto 6px; display:block; }
+  .icon-cell span { font-size:.62rem; font-weight:700; color:var(--muted); }
+  .state-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; }
+  .state-cell { background:#fff; border:2.5px solid var(--ink); border-radius:14px; padding:14px; font-size:.78rem; text-align:center; }
+  .state-cell b { font-family:var(--font-display); font-size:.7rem; display:block; margin-bottom:8px; text-transform:uppercase; }
+  .skeleton-mini { height:70px; }
+  .space-scale { display:flex; align-items:center; gap:0; flex-wrap:wrap; }
+  .space-item { display:flex; flex-direction:column; align-items:center; gap:6px; margin-right:20px; }
+  .space-item .bar { background:var(--c1); border:2px solid var(--ink); }
+  code { font-size:.8rem; }
+  .z-table td { font-size:.85rem; }
+</style>
+</head>
+<body class="page--flat">
+
+<div class="confetti"></div>
+
+<header class="header">
+  <a class="logo" href="index.html">JulCraft<i></i><span style="font-size:.6rem; color:var(--muted); font-family:var(--font-body); font-weight:700;">дизайн-система</span></a>
+  <nav class="nav">
+    <a href="#colors">Цвета</a>
+    <a href="#type">Типографика</a>
+    <a href="#comps">Компоненты</a>
+    <a href="#icons">Иконки</a>
+    <a href="#states">Состояния</a>
+    <a href="#misc">Фон/Тени/Сетка</a>
+  </nav>
+</header>
+
+<main class="ds">
+
+  <h1>Дизайн-система JulCraft</h1>
+  <p class="lead">«Геометрия, которую можно надеть» — мемфис / конструктор / цветная геометрия. Токены названы согласованно с CSS custom properties из 12.html и готовы к переносу в Tailwind config (Next.js 14 + shadcn/ui).</p>
+
+  <!-- ===== 1. Цвета ===== -->
+  <div class="ds-block" id="colors">
+    <h2><span class="ds-n">1</span> Цветовая палитра</h2>
+    <p>3-цветовая система: каждый акцент = категория слота конфигуратора и тип тени. Запрещены холодные синие/серые/фиолетовые.</p>
+    <div class="swatches">
+      <div class="sw"><div class="c" style="background:#faf5ec;border-bottom:3px solid var(--ink);"></div><div class="t"><b>--bg · кремовый фон</b><code>#faf5ec</code></div></div>
+      <div class="sw"><div class="c" style="background:#22242a;"></div><div class="t"><b>--ink · текст/границы/тени</b><code>#22242a</code></div></div>
+      <div class="sw"><div class="c" style="background:#e8b64c;"></div><div class="t"><b>--c1 · горчичный</b><code>#e8b64c</code><br><span class="hint" style="font-size:.72rem;color:var(--muted);">fill-CTA, тень card(1), бейджи, слот «круглое»</span></div></div>
+      <div class="sw"><div class="c" style="background:#7fae9e;"></div><div class="t"><b>--c2 · мятный</b><code>#7fae9e</code><br><span class="hint" style="font-size:.72rem;color:var(--muted);">line-CTA, тень card(2), chip, слот «треугольное»</span></div></div>
+      <div class="sw"><div class="c" style="background:#d0785a;"></div><div class="t"><b>--c3 · терракота</b><code>#d0785a</code><br><span class="hint" style="font-size:.72rem;color:var(--muted);">тень card(3), chip--2, рамки фото, слот «зигзаг»</span></div></div>
+      <div class="sw"><div class="c" style="background:#ffffff;"></div><div class="t"><b>--white · карточки/формы</b><code>#ffffff</code></div></div>
+    </div>
+    <div class="mt-20 row-demo">
+      <span style="font-size:.85rem;font-weight:700;">Дополнительные:</span>
+      <span class="tag tag--info">--muted #5a5d66</span>
+      <span class="tag tag--info">--muted-2 #8b8e97</span>
+      <span class="tag tag--info">--on-dark #d8dae0</span>
+    </div>
+  </div>
+
+  <!-- ===== 2. Типографика ===== -->
+  <div class="ds-block" id="type">
+    <h2><span class="ds-n">2</span> Типографика</h2>
+    <p>Unbounded — только заголовки, цены, бейджи, дудлы. Весь читаемый текст — Nunito.</p>
+    <div class="type-row"><span class="lbl">Display / H1</span><span style="font-family:var(--font-display);font-weight:800;font-size:clamp(2.6rem,6.6vw,5rem);line-height:1.02;">Геометрия</span><span class="hint" style="font-size:.75rem;color:var(--muted);">Unbounded 800 · clamp(2.6rem, 6.6vw, 5rem)</span></div>
+    <div class="type-row"><span class="lbl">H2 секций</span><span style="font-family:var(--font-display);font-weight:800;font-size:2.2rem;">Собери свой набор</span><span class="hint" style="font-size:.75rem;color:var(--muted);">Unbounded 800 · clamp(1.7rem, 4vw, 2.6rem)</span></div>
+    <div class="type-row"><span class="lbl">H3 карточек</span><span style="font-family:var(--font-display);font-weight:600;font-size:1.05rem;">Кулон «Зигзаг удачи»</span><span class="hint" style="font-size:.75rem;color:var(--muted);">Unbounded 600 · 1.05rem</span></div>
+    <div class="type-row"><span class="lbl">Цена</span><span style="font-family:var(--font-display);font-weight:800;font-size:1rem;">2 400 ₽</span><span class="hint" style="font-size:.75rem;color:var(--muted);">Unbounded 800 · 1rem</span></div>
+    <div class="type-row"><span class="lbl">Body</span><span style="font-family:var(--font-body);font-weight:400;font-size:1rem;">Круглое, треугольное, зигзагообразное — украшения из цветной смолы и латуни.</span><span class="hint" style="font-size:.75rem;color:var(--muted);">Nunito 400/600/700 · 0.85–1.12rem · lh 1.6</span></div>
+    <div class="type-row"><span class="lbl">Бейджи/Чипы</span><span><span class="chip">можно</span> <span class="chip chip--2">надеть</span> <span class="doodle" style="margin-left:8px;">▲●■ миксуй!</span></span><span class="hint" style="font-size:.75rem;color:var(--muted);">Unbounded 600 · 0.7–0.8rem · uppercase · rotate ±2°</span></div>
+  </div>
+
+  <!-- ===== 3. Компоненты ===== -->
+  <div class="ds-block" id="comps">
+    <h2><span class="ds-n">3</span> Компоненты</h2>
+    <p>Все примитивы переиспользуются на всех экранах. Паттерны соответствуют классам из style.css.</p>
+    <div class="comp-grid">
+
+      <div class="comp-demo">
+        <h3>Card</h3>
+        <div class="cards" style="grid-template-columns:1fr;">
+          <div class="card" style="max-width:260px;">
+            <div class="body"><h3>Серьги «Полукруг»</h3><p>Тень c1 у первой, c2 — у второй, c3 — у третьей.</p></div>
+            <div class="foot"><b>1 900 ₽</b><a class="btn-icon" href="#" aria-label="→">→</a></div>
+          </div>
+        </div>
+        <span class="hint">border 3px ink · radius 24px · hover: translate(-4,-4) rotate(-1°)</span>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Кнопки</h3>
+        <div class="row-demo">
+          <a class="btn btn--fill" href="#">Заказать</a>
+          <a class="btn btn--line" href="#">В конфигуратор</a>
+        </div>
+        <div class="row-demo">
+          <a class="btn btn--small btn--fill" href="#">Малая</a>
+          <a class="btn btn--c1 btn--small" href="#">Акцент</a>
+          <a class="btn-icon" href="#" aria-label="→">→</a>
+          <a class="btn-icon btn-icon--c2" href="#" aria-label="✕">✕</a>
+          <a class="btn-icon btn-icon--c3" href="#" aria-label="⟲">⟲</a>
+        </div>
+        <span class="hint">fill: ink bg + тень c1 · line: белый + тень c2 · тень 6px→8px на hover</span>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Chip / Doodle / Badge</h3>
+        <div class="row-demo">
+          <span class="chip">можно</span>
+          <span class="chip chip--2">надеть</span>
+          <span class="chip chip--c1">миксуй!</span>
+          <span class="doodle">▲●■ миксуй!</span>
+        </div>
+        <div style="position:relative; width:130px; height:130px; margin:0 auto;">
+          <div class="badge">каждая вещь — не повторяется!</div>
+        </div>
+        <span class="hint">chip: c2/c3 bg, border 3px ink, rotate ±2° · badge: 130px круг c1, rotate 12°</span>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Blob / Frame</h3>
+        <div class="row-demo">
+          <div class="blob" style="width:130px;height:130px;background:var(--c2);"></div>
+          <div class="frame" style="width:130px;height:130px;background:var(--c1);display:flex;align-items:center;justify-content:center;font-weight:800;">frame</div>
+        </div>
+        <span class="hint">blob: organic radius, rotate 3° · frame: radius 30px, rotate -2°, тень c3 10px (на светлом фоне — бейлик inline)</span>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Tag / Status</h3>
+        <div class="row-demo">
+          <span class="tag tag--stock">в наличии</span>
+          <span class="tag tag--order">под заказ 7 дн</span>
+          <span class="tag tag--none">нет</span>
+          <span class="tag tag--new">новая</span>
+          <span class="tag tag--work">в работе</span>
+          <span class="tag tag--done">готово</span>
+          <span class="tag tag--cancel">отменена</span>
+        </div>
+        <span class="hint">Статусы заявок: new=c1 · in_progress=c2 · cancelled=c3 · done=ink bold</span>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Stepper / Mini-card</h3>
+        <div class="mini-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" fill="#e8b64c" stroke="#22242a" stroke-width="2.5"/></svg></div>
+          <div class="info"><b>Смола «Круг»</b><small>Ø 20 мм</small></div>
+          <span class="price">120 ₽</span>
+          <div class="stepper"><button disabled>−</button><span class="val">1</span><button>+</button></div>
+        </div>
+        <span class="hint">компонент конфигуратора: фото 60px, Unbounded название, pill наличия, qty</span>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Слот конфигуратора</h3>
+        <div class="slot is-open">
+          <div class="slot-head"><span class="sq sq--c1">●</span><b>Основной элемент</b><small>от 1 до 1</small><span class="caret">▾</span></div>
+          <div class="slot-body"><div class="comps"><span class="hint">мини-карточки компонентов, фото 60px, цена, pill наличия, qty stepper. Цветовая кодировка слотов: c1/c2/c3.</span></div></div>
+        </div>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Поля форм</h3>
+        <div class="field"><label>Имя</label><input type="text" placeholder="Как к вам обращаться"></div>
+        <div class="field has-error"><label>Контакт</label><input type="tel" value="123"><div class="err">Похоже, не хватает цифр</div></div>
+        <span class="hint">border 3px ink · radius 16px · focus: outline c1 · error: border c3</span>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Dropzone (админка)</h3>
+        <div class="dropzone">
+          <div class="dz-icon"><svg viewBox="0 0 24 24" fill="#22242a"><path d="M11 3v8H7l5 6 5-6h-4V3z"/></svg></div>
+          <b>Перетащите фото</b>
+          <small>PNG / JPG до 5 МБ</small>
+          <div class="dz-example"><span>пример образца:</span><div class="thumb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="#e8b64c" stroke="#22242a" stroke-width="2.5"/></svg></div><div class="thumb"><svg viewBox="0 0 24 24"><polygon points="12,3 21,20 3,20" fill="#7fae9e" stroke="#22242a" stroke-width="2.5"/></svg></div><div class="thumb"><svg viewBox="0 0 24 24"><polygon points="3,7 10,7 13,12 16,17 21,17 18,12 21,7" fill="#d0785a" stroke="#22242a" stroke-width="2.5"/></svg></div></div>
+        </div>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Калькулятор (sticky)</h3>
+        <div class="calc" style="position:static;box-shadow:none;border:none;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);border-radius:0;">
+          <div class="row row--big"><div class="k">Цена</div><div class="v">2 440 ₽</div><div class="breakdown">Работа: 800 ₽ + Компоненты: 1 640 ₽</div></div>
+          <div class="row"><div class="k">Срок</div><div class="v">3 дня</div></div>
+          <a class="btn btn--fill" href="#">Оформить заявку</a>
+        </div>
+        <span class="hint">white bg · border 3px ink · radius 24px · тень 8px ink · z-index 20</span>
+      </div>
+
+      <div class="comp-demo">
+        <h3>Модалка</h3>
+        <div class="modal" style="position:static;max-width:100%;box-shadow:none;max-height:none;">
+          <div class="m-head"><h3>Заявка на «Кулон»</h3><a class="btn-icon btn-icon--c3" href="#">✕</a></div>
+          <div class="m-photo"><div class="thumb" style="background:var(--c2);"></div><div><b>Кулон «Зигзаг удачи»</b><small>2 400 ₽ · в наличии</small></div></div>
+          <div class="m-actions"><a class="btn btn--fill" href="#">Отправить</a><a class="btn btn--line" href="#">Отмена</a></div>
+        </div>
+        <span class="hint">overlay: rgba ink .55 · modal: card-стиль, popIn .25s, z-index 50</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== 4. Иконки ===== -->
+  <div class="ds-block" id="icons">
+    <h2><span class="ds-n">4</span> Иконки</h2>
+    <p>Жирные filled-геометрия, 24×24 viewBox, цвет ink (акценты c1/c2/c3 — для категорий). Каждая категория — своя геометрическая иконка.</p>
+    <div class="icon-grid">
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="#22242a"/></svg><span>круг · серьги</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><polygon points="12,3 21,20 3,20" fill="#22242a"/></svg><span>треугольник · кулоны</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><polygon points="3,6 10,6 13,12 17,18 21,18 18,12 21,6 14,6" fill="#22242a"/></svg><span>зигзаг · броши</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" fill="#22242a"/></svg><span>квадрат · браслеты</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><polygon points="12,2 21,8.5 17.5,20 6.5,20 3,8.5" fill="#22242a"/></svg><span>гексагон · бусы</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><polygon points="12,1.5 15.2,8.2 22,9.4 17,14.2 18.3,21 12,17.7 5.7,21 7,14.2 2,9.4 8.8,8.2" fill="#22242a"/></svg><span>звезда · кольца</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><polygon points="12,2 21,12 12,22 3,12" fill="#22242a"/></svg><span>ромб · ожерелья</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="3"><path d="M2 12c3-5 6-5 9 0s6 5 9 0"/></svg><span>волна · комплекты</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><path d="M15 3a9 9 0 100 18c-4 0-7-3.5-7-9s3-9 7-9z" fill="#22242a"/></svg><span>полукруг · заколки</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z" fill="#22242a"/></svg><span>плюс · клипсы</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="#22242a" stroke-width="3"/><path d="M16 16l5 5" stroke="#22242a" stroke-width="3" stroke-linecap="round"/></svg><span>лупа · поиск</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><path d="M4 7l4 0 2 3 3 3 4 0 2 4H6z" fill="#22242a"/></svg><span>фильтр</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18v-6.5L9.5 12z" fill="#22242a"/><path d="M13 4a9 9 0 017 7h-7z" fill="#22242a"/></svg><span>часы · срок</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><path d="M21.9 4.6 18.8 19c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.3-.5.5-.9.5l.3-4.6L18.2 6c.4-.3-.1-.5-.6-.2L7.3 12.7l-4.5-1.4c-1-.3-1-1 .2-1.5l17.5-6.8c.8-.3 1.5.2 1.4 1.6z"/></svg><span>телеграм</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="3"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg><span>почта</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="3"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5" fill="#22242a" stroke="none"/></svg><span>карта · адрес</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="3"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg><span>телефон</span></div>
+      <div class="icon-cell"><svg viewBox="0 0 24 24"><path d="M5 3h14v3.5l-6 5.5v5l-3 4v-9L5 6.5z" fill="#22242a"/></svg><span>корзина</span></div>
+    </div>
+  </div>
+
+  <!-- ===== 5. Состояния ===== -->
+  <div class="ds-block" id="states">
+    <h2><span class="ds-n">5</span> Состояния</h2>
+    <p>Для всех интерактивных элементов: hover (сдвиг + тень), focus-visible (outline c1), disabled (opacity .4), loading (skeleton), empty (card + doodle), error (card + c3 акцент).</p>
+    <div class="state-row">
+      <div class="state-cell"><b>Loading · skeleton</b><div class="skeleton skeleton-mini"></div><span style="font-size:.68rem;color:var(--muted);">bg + dashed ink + shimmer</span></div>
+      <div class="state-cell"><b>Empty · пусто</b><span style="font-size:1.4rem;">◌</span><span style="display:block;font-size:.75rem;">card + doodle + btn--line CTA</span></div>
+      <div class="state-cell"><b>Error</b><div class="error-card" style="padding:14px;flex-direction:column;gap:8px;"><span class="ec-ico">!</span><span style="font-size:.72rem;text-align:left;">Не удалось загрузить. Попробуйте ещё раз.</span></div></div>
+      <div class="state-cell"><b>Disabled</b><div class="row-demo" style="justify-content:center;"><span class="btn btn--fill is-disabled">Недоступно</span></div><span style="font-size:.68rem;color:var(--muted);">opacity .4 · not-allowed</span></div>
+      <div class="state-cell"><b>Hover · карточка</b><span style="font-size:.75rem;display:block;line-height:1.5;">translate(-4px,-4px) rotate(-1deg) + цветная тень 8px</span></div>
+    </div>
+  </div>
+
+  <!-- ===== 6. Фон / тени / сетка ===== -->
+  <div class="ds-block" id="misc">
+    <h2><span class="ds-n">6</span> Конфетти-фон, тени, сетка, z-index</h2>
+    <p>Конфетти — чистый CSS: 4 radial-gradient круга (c1/c2/c3) + диагональная полоса. На админке и модалках приглушён (.page--flat → opacity .25).</p>
+    <div class="grid-2">
+      <div style="background:#fff;border:3px solid var(--ink);border-radius:20px;padding:20px;position:relative;overflow:hidden;">
+        <div style="position:absolute;inset:0;background-image:radial-gradient(circle 8px at 12% 20%, #e8b64c 98%, transparent),radial-gradient(circle 6px at 86% 12%, #7fae9e 98%, transparent),radial-gradient(circle 5px at 78% 84%, #d0785a 98%, transparent),radial-gradient(circle 7px at 8% 78%, #d0785a 98%, transparent),linear-gradient(45deg, transparent 48%, rgba(127,174,158,.25) 48% 52%, transparent 52%);background-size:340px 340px,380px 380px,300px 300px,420px 420px,48px 48px;"></div>
+        <span style="position:relative;font-family:var(--font-display);font-weight:600;">.confetti — пример паттерна</span>
+      </div>
+      <div>
+        <div class="type-row" style="border:none;padding:8px 0;"><span class="lbl">Тени</span><span style="font-size:.85rem;">6px — кнопки навигации · 8px — карточки и hero · 10px — about frame · 12px — hero blob. Все без blur.</span></div>
+        <div class="type-row" style="border:none;padding:8px 0;"><span class="lbl">Сетка</span><span style="font-size:.85rem;">max-width 1240px · база spacing 8px · gap 34px (cards), 26px (категории)</span></div>
+        <div class="type-row" style="border:none;padding:8px 0;"><span class="lbl">z-index</span><span style="font-size:.85rem;">-1 confetti · 0 контент · 10 header · 20 sticky calc · 50 модалки · 100 burger</span></div>
+        <div class="type-row" style="border:none;padding:8px 0;"><span class="lbl">Адаптив</span><span style="font-size:.85rem;">≥1080 — 3 колонки · 768–1079 — 2 колонки, табы конфигуратора · ≤860 — 1 колонка, burger</span></div>
+      </div>
+    </div>
+    <div class="mt-30 space-scale">
+      <div class="space-item"><div class="bar" style="width:8px;height:16px;"></div><code>8</code></div>
+      <div class="space-item"><div class="bar" style="width:16px;height:16px;"></div><code>16</code></div>
+      <div class="space-item"><div class="bar" style="width:24px;height:16px;"></div><code>24</code></div>
+      <div class="space-item"><div class="bar" style="width:32px;height:16px;"></div><code>32</code></div>
+      <div class="space-item"><div class="bar" style="width:48px;height:16px;"></div><code>48</code></div>
+      <div class="space-item"><div class="bar" style="width:64px;height:16px;"></div><code>64</code></div>
+      <span style="font-size:.85rem;color:var(--muted);font-weight:700;">Spacing scale · база 8px</span>
+    </div>
+  </div>
+
+</main>
+
+<div class="footer-copy">JulCraft · дизайн-система · © 2026 · <a href="index.html" style="color:var(--ink);font-weight:700;">← к макетам</a></div>
+
+</body>
+</html>

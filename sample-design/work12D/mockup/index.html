@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Макеты JulCraft — редизайн «Вариант Б»</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .hub { padding:60px 5vw 90px; max-width:1240px; margin:0 auto; }
+  .hub h1 { font-size:clamp(1.8rem,4.2vw,2.8rem); font-weight:800; }
+  .hub .lead { max-width:70ch; margin:14px 0 44px; }
+  .hub .group { margin-bottom:40px; }
+  .hub .group > h2 { display:flex; align-items:center; gap:12px; font-size:1.15rem; font-weight:600; margin-bottom:18px; }
+  .hub .group > h2 .g-badge { font-family:var(--font-body); font-size:.72rem; font-weight:800; background:var(--c2); border:2.5px solid var(--ink); border-radius:999px; padding:3px 12px; color:var(--ink); }
+  .hub .group--admin > h2 .g-badge { background:var(--ink); color:#fff; }
+  .hub-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:24px; }
+  .hub-card { background:#fff; border:3px solid var(--ink); border-radius:20px; padding:22px; text-decoration:none; color:var(--ink); display:flex; flex-direction:column; gap:10px; transition:.25s; position:relative; }
+  .hub-card:hover { transform:translate(-4px,-4px) rotate(-1deg); box-shadow:8px 8px 0 var(--c1); }
+  .hub-card .route { font-family:var(--font-display); font-weight:600; font-size:.68rem; background:var(--bg); border:2px solid var(--ink); border-radius:999px; padding:3px 10px; align-self:flex-start; }
+  .hub-card .t { font-family:var(--font-display); font-weight:600; font-size:1rem; line-height:1.3; }
+  .hub-card .d { font-size:.82rem; color:var(--muted); flex:1; }
+  .hub-card .go { align-self:flex-start; }
+  .hub-card .badge-mega { position:absolute; top:-10px; right:-10px; background:var(--c3); color:#fff; border:2.5px solid var(--ink); border-radius:999px; font-family:var(--font-display); font-size:.62rem; font-weight:600; padding:3px 10px; transform:rotate(4deg); }
+  .hub .foot-note { margin-top:40px; font-size:.82rem; color:var(--muted); }
+  .hub .foot-note code { background:var(--bg); border:1.5px solid var(--ink); border-radius:6px; padding:1px 6px; }
+</style>
+</head>
+<body>
+
+<div class="confetti"></div>
+
+<header class="header">
+  <a class="logo" href="index.html">JulCraft<i></i></a>
+  <nav class="nav">
+    <a href="home.html">Открыть витрину</a>
+    <a href="design-system.html">Дизайн-система</a>
+    <a href="admin/login.html">Админка</a>
+  </nav>
+</header>
+
+<main class="hub">
+
+  <h1>Макеты JulCraft <span class="chip chip--2">Вариант Б</span></h1>
+  <p class="lead">
+    Полный редизайн по <code>redesign12.md</code>: стиль «Мемфис / конструктор / цветная геометрия».
+    Все страницы свёрстаны на общей дизайн-системе (<code>assets/css/style.css</code>) и готовы к переносу на Next.js 14 + Tailwind + shadcn/ui.
+    Адаптив встроен: сузьте окно до 768px и 375px — header сворачивается в бургер, гриды перестраиваются, конфигуратор переключается на табы.
+  </p>
+
+  <!-- ===== Публичные ===== -->
+  <div class="group">
+    <h2>Публичные страницы <span class="g-badge">9 шт</span></h2>
+    <div class="hub-grid">
+
+      <a class="hub-card" href="home.html">
+        <span class="route">/</span>
+        <span class="t">Главная</span>
+        <span class="d">Hero split + блоб-фото и бейдж «не повторяется», витрина из 12 изделий, плитка 10 категорий, тёмный блок о мастере.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="catalog.html">
+        <span class="route">/catalog</span>
+        <span class="t">Каталог категорий</span>
+        <span class="d">10 категорий с геометрическими иконками (круг/треугольник/зигзаг/…), промо в конфигуратор.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="category.html">
+        <span class="route">/catalog/[slug]</span>
+        <span class="t">Категория «Кулоны»</span>
+        <span class="d">Хлебные крошки, фильтры-пилюли, сортировка, 6 изделий, пагинация.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="product.html">
+        <span class="route">/product/[slug]</span>
+        <span class="t">Карточка изделия</span>
+        <span class="d">Блоб-галерея с превью, чипы материалов, кнопка «Заказать» + модалка заявки, похожие товары.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="configurator.html">
+        <span class="route">/configurator</span>
+        <span class="t">Конфигуратор — выбор категории</span>
+        <span class="d">«Выбери форму»: 10 категорий с количеством слотов шаблона.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="configurator-config.html">
+        <span class="route">/configurator/[slug]</span>
+        <span class="t">Конфигуратор — Кулоны</span>
+        <span class="d">Split-view: canvas-коллаж с guides + аккордеон слотов (цветовая кодировка c1/c2/c3), мини-карточки компонентов с qty, sticky-калькулятор, модалка заявки.</span>
+        <span class="badge-mega">ключевая фича</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="about.html">
+        <span class="route">/about</span>
+        <span class="t">О мастерской</span>
+        <span class="d">Hero с чипом «радость», фото в frame с тенью c3, 4 ценности-чипа, 3 шага производства, тёмный CTA.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="contacts.html">
+        <span class="route">/contacts</span>
+        <span class="t">Контакты</span>
+        <span class="d">Форма обратной связи в карточке + Яндекс.Карта, ряд контактных карточек (адрес/телефон/почта/соцсети).</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="order-success.html">
+        <span class="route">/order-success</span>
+        <span class="t">Успех заявки</span>
+        <span class="d">Геометрический чекмарк-бейдж, «Заявка №108 принята!», детали и кнопки назад.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ===== Админка ===== -->
+  <div class="group group--admin">
+    <h2>Админка <span class="g-badge">7 шт</span></h2>
+    <div class="hub-grid">
+
+      <a class="hub-card" href="admin/login.html">
+        <span class="route">/admin/login</span>
+        <span class="t">Вход</span>
+        <span class="d">Центрированная карточка, конфетти приглушён (page--flat), состояния ошибки валидации.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/dashboard.html">
+        <span class="route">/admin</span>
+        <span class="t">Дашборд</span>
+        <span class="d">4 метрики с цветными полосами (c1/c2/c3/ink), таблица последних 5 заявок.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/products.html">
+        <span class="route">/admin/products</span>
+        <span class="t">Товары — CRUD</span>
+        <span class="d">Таблица 12 изделий (фото, новинка, наличие), фильтр по категориям, модалка с табами Основное/Фото/SEO и dropzone.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/components.html">
+        <span class="route">/admin/components</span>
+        <span class="t">Склад комплектующих</span>
+        <span class="d">Таблица 25 позиций: закупка, обработка, остаток, «под заказ», срок. Модалка с dropzone «PNG на белом фоне» и примерами образцов.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/categories.html">
+        <span class="route">/admin/categories</span>
+        <span class="t">Категории + слоты</span>
+        <span class="d">Two-panel: draggable-список категорий + форма категории с редактором слотов (тип, min/max, сорт. порядок).</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/orders.html">
+        <span class="route">/admin/orders</span>
+        <span class="t">Заявки</span>
+        <span class="d">Таблица заявок с pill-статусами (new/in_progress/done/cancelled), модалка деталей: коллаж, состав, смена статуса.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/settings.html">
+        <span class="route">/admin/settings</span>
+        <span class="t">Настройки</span>
+        <span class="d">Табы Контакты / Тексты / Telegram: токен, chat_id, статус подключения, кнопка «Тест».</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ===== Система ===== -->
+  <div class="group">
+    <h2>Основа <span class="g-badge">1 шт</span></h2>
+    <div class="hub-grid">
+      <a class="hub-card" href="design-system.html">
+        <span class="route">/design-system</span>
+        <span class="t">Дизайн-система</span>
+        <span class="d">Палитра и токены, типографика Unbounded/Nunito, все компоненты, набор иконок, состояния, тени, spacing-шкала, z-index. Готова к экспорту в Tailwind config.</span>
+        <span class="btn btn--line btn--small go">Открыть →</span>
+      </a>
+    </div>
+  </div>
+
+  <p class="foot-note">
+    Стек: Next.js 14 + Tailwind + shadcn/ui. Токены CSS: <code>--bg</code>, <code>--ink</code>, <code>--c1</code>, <code>--c2</code>, <code>--c3</code>, <code>--white</code>.
+    Фото изделий — заглушки Unsplash, фото комплектующих — SVG-геометрия на белом фоне (имитация PNG для коллажа).
+  </p>
+
+</main>
+
+</body>
+</html>
