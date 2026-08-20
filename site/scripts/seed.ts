@@ -546,6 +546,13 @@ function main() {
   db.delete(categories).run();
   db.delete(settings).run();
 
+  // сброс счётчиков AUTOINCREMENT (иначе id «плывут» после пересидов — см. stage1_3review.md §4.4).
+  // Таблица sqlite_sequence создаётся SQLite сама; проверка существования — защита на всякий случай.
+  const seqTable = sqlite
+    .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='sqlite_sequence'")
+    .get();
+  if (seqTable) sqlite.exec("DELETE FROM sqlite_sequence");
+
   // 1. Категории
   const categoryIds = new Map<string, number>();
   categorySeed.forEach((c, i) => {
