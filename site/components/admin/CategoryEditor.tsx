@@ -129,7 +129,7 @@ export default function CategoryEditor({ category }: Props) {
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
       </div>
       <div className="field">
-        <label>Slug</label>
+        <label>ID (URL)</label>
         <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} />
       </div>
       <div className="field">

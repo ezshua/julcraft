@@ -11,6 +11,23 @@ const FULL_DAYS = [
   "суббота",
 ];
 
+const TRANSLIT: Record<string, string> = {
+  а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e",
+  ж: "zh", з: "z", и: "i", й: "j", к: "k", л: "l", м: "m",
+  н: "n", о: "o", п: "p", р: "r", с: "s", т: "t", у: "u",
+  ф: "f", х: "kh", ц: "c", ч: "ch", ш: "sh", щ: "sch",
+  ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya",
+};
+
+/** Транслитерация русского названия в slug (в стиле seed-данных: й→j, ы→y, ц→c) */
+export function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[а-яё]/g, (ch) => TRANSLIT[ch] ?? ch)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 /** 1950 → "1 950 ₽" (разделитель тысяч — неразрывный пробел, ru-RU) */
 export function formatPrice(n: number): string {
   return `${n.toLocaleString("ru-RU")} ₽`;

@@ -75,7 +75,7 @@ export default function NewCategoryModal() {
             />
           </div>
           <div className="field">
-            <label>Slug</label>
+            <label>ID (URL)</label>
             <input
               type="text"
               placeholder="brs"

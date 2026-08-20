@@ -173,7 +173,7 @@ export default async function AdminProductsPage(props: {
                   </td>
                   <td className="cell-name">
                     <b>{p.name}</b>
-                    <small>slug: {p.slug}</small>
+                    <small>ID (URL): {p.slug}</small>
                   </td>
                   <td>{catById.get(p.categoryId)?.name ?? "—"}</td>
                   <td className="cell-price">{formatPrice(p.price)}</td>

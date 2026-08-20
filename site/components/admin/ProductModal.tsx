@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "./ImageUploader";
+import { slugify } from "@/lib/format";
 import type { Product, ProductAvailability } from "@/drizzle/schema";
 
 const AVAILABILITY_OPTIONS = [
@@ -65,6 +66,20 @@ export default function ProductModal({ categories, product }: Props) {
     setError("");
     setTab(0);
     setOpen(true);
+  };
+
+  const autoSlug = async () => {
+    if (slug) return;
+    const base = slugify(name);
+    if (!base) return;
+    const res = await fetch("/api/admin/products/slugs");
+    if (!res.ok) return;
+    const { slugs } = (await res.json()) as { slugs: string[] };
+    const taken = new Set(slugs.filter((s) => s !== product?.slug));
+    let candidate = base;
+    let n = 2;
+    while (taken.has(candidate)) candidate = `${base}-${n++}`;
+    setSlug((prev) => (prev !== "" ? prev : candidate));
   };
 
   const save = async () => {
@@ -164,10 +179,11 @@ export default function ProductModal({ categories, product }: Props) {
                 placeholder="Брошь «...»"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onBlur={() => void autoSlug()}
               />
             </div>
             <div className="field">
-              <label>Slug</label>
+              <label>ID (URL)</label>
               <input
                 type="text"
                 placeholder="brosh-nazvanie"
