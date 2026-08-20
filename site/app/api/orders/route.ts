@@ -2,6 +2,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { orders, products } from "@/drizzle/schema";
+import { sendTelegram } from "@/lib/telegram";
 
 const orderSchema = z.object({
   type: z.literal("product"),
@@ -55,11 +56,11 @@ export async function POST(request: Request) {
 
   const id = Number(res.lastInsertRowid);
 
-  // Уведомление мастеру (заглушка; реальная отправка — Этапы 4.6/5.4)
-  console.log(
-    `[заявка ${id}] товар: ${product.name}; клиент: ${customerName} (${contact}); ` +
-      `цена: ${product.price} ₽; сообщение: ${message || "—"}`,
-  );
+  // Уведомление мастеру в Telegram; без токенов — лог (поведение не меняется).
+  const notice = `[заявка ${id}] товар: ${product.name}; клиент: ${customerName} (${contact}); ` +
+    `цена: ${product.price} ₽; сообщение: ${message || "—"}`;
+  const sent = await sendTelegram(notice);
+  if (!sent.ok) console.log(notice);
 
   return Response.json({ id });
 }

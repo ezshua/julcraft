@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { orders } from "@/drizzle/schema";
+import { sendTelegram } from "@/lib/telegram";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Укажите имя"),
@@ -47,10 +48,10 @@ export async function POST(request: Request) {
 
   const id = Number(res.lastInsertRowid);
 
-  // Уведомление мастеру (заглушка; реальная отправка — Этапы 4.6/5.4)
-  console.log(
-    `[контакт ${id}] клиент: ${name} (${contact}); сообщение: ${message}`,
-  );
+  // Уведомление мастеру в Telegram; без токенов — лог (поведение не меняется).
+  const notice = `[контакт ${id}] клиент: ${name} (${contact}); сообщение: ${message}`;
+  const sent = await sendTelegram(notice);
+  if (!sent.ok) console.log(notice);
 
   return Response.json({ id });
 }
