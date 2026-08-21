@@ -550,8 +550,20 @@ export default function SettingsPanel({
             по курсу рубля 85).
           </small>
 
-          <div className="sec-h2" style={{ fontSize: "1rem", margin: "20px 0 10px" }}>
-            Список валют
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              margin: "20px 0 10px",
+            }}
+          >
+            <h3 className="sec-h2" style={{ fontSize: "1.1rem", margin: 0 }}>
+              Список валют
+            </h3>
+            <button className="btn btn--secondary btn--small" onClick={addCurrency}>
+              + Добавить валюту
+            </button>
           </div>
           {currencies.map((c, i) => (
             <div
@@ -562,6 +574,7 @@ export default function SettingsPanel({
               <div className="field" style={{ margin: 0 }}>
                 <label>Код</label>
                 <input
+                  type="text"
                   value={c.code}
                   disabled={c.code === "USD"}
                   maxLength={3}
@@ -571,6 +584,7 @@ export default function SettingsPanel({
               <div className="field" style={{ margin: 0 }}>
                 <label>Название</label>
                 <input
+                  type="text"
                   value={c.name}
                   onChange={(e) => patchCurrency(i, { name: e.target.value })}
                 />
@@ -578,6 +592,7 @@ export default function SettingsPanel({
               <div className="field" style={{ margin: 0 }}>
                 <label>Символ</label>
                 <input
+                  type="text"
                   value={c.symbol}
                   style={{ maxWidth: 70 }}
                   onChange={(e) => patchCurrency(i, { symbol: e.target.value })}
@@ -604,13 +619,8 @@ export default function SettingsPanel({
               </button>
             </div>
           ))}
-          <div style={{ marginTop: "4px" }}>
-            <button className="btn btn--secondary btn--small" onClick={addCurrency}>
-              + Добавить валюту
-            </button>
-          </div>
 
-          <div className="form-actions" style={{ marginTop: "18px" }}>
+          <div className="form-actions" style={{ marginTop: "48px" }}>
             <button className="btn btn--primary" onClick={saveFinance} disabled={busy}>
               Сохранить финансы
             </button>
