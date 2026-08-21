@@ -3,8 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "./ImageUploader";
-import { amountToUsdCents, usdCentsToAmount, type FinanceSettings } from "@/lib/currency";
-import { useCurrency } from "@/lib/use-currency";
+import {
+  amountToMinor,
+  minorToAmount,
+  convertPriced,
+  asPriced,
+  findCurrency,
+  type FinanceSettings,
+} from "@/lib/currency";
 import type { Component, ComponentType } from "@/drizzle/schema";
 
 export const TYPE_OPTIONS = [
@@ -24,10 +30,24 @@ type Props = {
 };
 
 // Модалка комплектующего — копия div.modal-overlay#modal из mockup/admin/components.html.
-// Цены — в выбранной валюте (D-24), в БД сохраняются USD-центы.
+// Цена и обработка — в НЕЗАВИСИМЫХ валютах (Q-10/D-24): у каждого поля свой
+// селект валюты; при смене валюты число пересчитывается в неё.
 export default function ComponentModal({ component, finance, currencyCode }: Props) {
   const router = useRouter();
-  const { currency } = useCurrency(finance, currencyCode);
+
+  // Пересчёт числа поля при смене его валюты (полная точность, округление на выводе)
+  const reprice = (
+    amountStr: string,
+    fromCode: string,
+    toCode: string,
+  ): string => {
+    const amt = Number(amountStr) || 0;
+    if (!fromCode || fromCode === toCode) return String(amt);
+    const to = findCurrency(finance, toCode);
+    return String(
+      minorToAmount(convertPriced(asPriced(amountToMinor(amt), fromCode), to, finance).priceMinor),
+    );
+  };
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(component?.name ?? "");
   const [componentType, setComponentType] = useState(
@@ -37,7 +57,13 @@ export default function ComponentModal({ component, finance, currencyCode }: Pro
     component ? String(component.stockQty) : "0",
   );
   const [price, setPrice] = useState("");
+  const [priceCurrency, setPriceCurrency] = useState(
+    component?.priceCurrency || currencyCode,
+  );
   const [processingPrice, setProcessingPrice] = useState("");
+  const [processingPriceCurrency, setProcessingPriceCurrency] = useState(
+    component?.processingPriceCurrency || currencyCode,
+  );
   const [processingDays, setProcessingDays] = useState(
     component ? String(component.processingDays) : "0",
   );
@@ -59,8 +85,10 @@ export default function ComponentModal({ component, finance, currencyCode }: Pro
       const payload = {
         name,
         componentType,
-        price: amountToUsdCents(Number(price) || 0, currency.ratePerUsd),
-        processingPrice: amountToUsdCents(Number(processingPrice) || 0, currency.ratePerUsd),
+        price: amountToMinor(Number(price) || 0),
+        priceCurrency,
+        processingPrice: amountToMinor(Number(processingPrice) || 0),
+        processingPriceCurrency,
         processingDays: Number(processingDays || 0),
         stockQty: Number(stockQty || 0),
         isOrderable,
@@ -99,10 +127,10 @@ export default function ComponentModal({ component, finance, currencyCode }: Pro
           title="Редактировать"
           onClick={() => {
             setError("");
-            setPrice(String(usdCentsToAmount(component.price, currency.ratePerUsd)));
-            setProcessingPrice(
-              String(usdCentsToAmount(component.processingPrice, currency.ratePerUsd)),
-            );
+            setPrice(String(minorToAmount(component.price)));
+            setPriceCurrency(component.priceCurrency);
+            setProcessingPrice(String(minorToAmount(component.processingPrice)));
+            setProcessingPriceCurrency(component.processingPriceCurrency);
             setOpen(true);
           }}
         >
@@ -197,9 +225,9 @@ export default function ComponentModal({ component, finance, currencyCode }: Pro
               />
             </div>
           </div>
-          <div className="field--row">
+           <div className="field--row">
             <div className="field">
-              <label>Цена, {currency.symbol}</label>
+              <label>Цена</label>
               <input
                 type="number"
                 step="0.01"
@@ -209,7 +237,24 @@ export default function ComponentModal({ component, finance, currencyCode }: Pro
               />
             </div>
             <div className="field">
-              <label>Обработка, {currency.symbol}</label>
+              <label>Валюта цены</label>
+              <select
+                value={priceCurrency}
+                onChange={(e) => {
+                  const to = e.target.value;
+                  setPrice(reprice(price, priceCurrency, to));
+                  setPriceCurrency(to);
+                }}
+              >
+                {finance.currencies.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="field">
+              <label>Обработка</label>
               <input
                 type="number"
                 step="0.01"
@@ -217,6 +262,23 @@ export default function ComponentModal({ component, finance, currencyCode }: Pro
                 value={processingPrice}
                 onChange={(e) => setProcessingPrice(e.target.value)}
               />
+            </div>
+            <div className="field">
+              <label>Валюта обработки</label>
+              <select
+                value={processingPriceCurrency}
+                onChange={(e) => {
+                  const to = e.target.value;
+                  setProcessingPrice(reprice(processingPrice, processingPriceCurrency, to));
+                  setProcessingPriceCurrency(to);
+                }}
+              >
+                {finance.currencies.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="field">
               <label>Дни обработки</label>

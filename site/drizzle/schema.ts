@@ -20,6 +20,7 @@ export const categories = sqliteTable("categories", {
   description: text("description").notNull(),
   image: text("image"),
   workPrice: integer("workPrice").notNull(),
+  workPriceCurrency: text("workPriceCurrency").notNull().default("USD"),
   baseWorkDays: integer("baseWorkDays").notNull(),
   hasSlotTemplate: integer("hasSlotTemplate", { mode: "boolean" }).notNull(),
   isActive: integer("isActive", { mode: "boolean" }).notNull(),
@@ -47,6 +48,7 @@ export const products = sqliteTable("products", {
   slug: text("slug").notNull().unique(),
   description: text("description").notNull(),
   price: integer("price").notNull(),
+  priceCurrency: text("priceCurrency").notNull().default("USD"),
   images: text("images", { mode: "json" }).$type<string[]>().notNull(),
   materials: text("materials", { mode: "json" })
     .$type<string[]>()
@@ -77,7 +79,9 @@ export const components = sqliteTable("components", {
   name: text("name").notNull(),
   componentType: text("componentType").$type<ComponentType>().notNull(),
   price: integer("price").notNull(),
+  priceCurrency: text("priceCurrency").notNull().default("USD"),
   processingPrice: integer("processingPrice").notNull(),
+  processingPriceCurrency: text("processingPriceCurrency").notNull().default("USD"),
   processingDays: integer("processingDays").notNull(),
   stockQty: integer("stockQty").notNull(),
   isOrderable: integer("isOrderable", { mode: "boolean" }).notNull(),
@@ -96,6 +100,7 @@ export const orders = sqliteTable("orders", {
   configJson: text("configJson").notNull(),
   collagePath: text("collagePath"),
   calcPrice: integer("calcPrice").notNull(),
+  calcPriceCurrency: text("calcPriceCurrency").notNull().default("USD"),
   calcDays: integer("calcDays").notNull(),
   status: text("status").$type<OrderStatus>().notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" })

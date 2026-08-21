@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatPrice, imgWith } from "@/lib/format";
+import { formatPrice, asPriced, imgWith } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
 import type { FinanceSettings } from "@/lib/currency";
 import { availFullText } from "@/components/ui/Avail";
@@ -80,7 +80,7 @@ export default function OrderModal({
             <div>
               <b>{product.name}</b>
               <small>
-                {formatPrice(product.price, currency)} · {availFullText(product)} · мастер свяжется сама
+                {formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)} · {availFullText(product)} · мастер свяжется сама
               </small>
             </div>
           </div>

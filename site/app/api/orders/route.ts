@@ -3,6 +3,9 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { orders, products } from "@/drizzle/schema";
 import { sendTelegram } from "@/lib/telegram";
+import { getSettings } from "@/lib/get-settings";
+import { getDisplayCurrency } from "@/lib/currency-server";
+import { formatPrice, asPriced } from "@/lib/format";
 
 const orderSchema = z.object({
   type: z.literal("product"),
@@ -47,6 +50,7 @@ export async function POST(request: Request) {
       configJson: JSON.stringify({ productId: product.id }),
       collagePath: null,
       calcPrice: product.price,
+      calcPriceCurrency: product.priceCurrency,
       calcDays: 0,
       status: "new",
       createdAt: now,
@@ -57,9 +61,11 @@ export async function POST(request: Request) {
   const id = Number(res.lastInsertRowid);
 
   // Уведомление мастеру в Telegram; без токенов — лог (поведение не меняется).
-  // Сумма — всегда в долларах (Q-5, plan-finances.md шаг 9).
+  // Сумма — в валюте отображения мастера (Q-5, plan-finances2.md).
+  const { finance } = getSettings();
+  const currency = await getDisplayCurrency();
   const notice = `[заявка ${id}] товар: ${product.name}; клиент: ${customerName} (${contact}); ` +
-    `цена: ${(product.price / 100).toFixed(2)} $; сообщение: ${message || "—"}`;
+    `цена: ${formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)}; сообщение: ${message || "—"}`;
   const sent = await sendTelegram(notice);
   if (!sent.ok) console.log(notice);
 

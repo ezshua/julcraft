@@ -5,7 +5,8 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { orders, products } from "@/drizzle/schema";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice, plural } from "@/lib/format";
+import { getSettings } from "@/lib/get-settings";
+import { formatPrice, asPriced, plural } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Заявка принята — JulCraft",
@@ -31,10 +32,12 @@ function receiptRows(
 ) {
   const rows: { label: string; value: string }[] = [];
 
+  const { finance } = getSettings();
+
   if (order.type === "product") {
     rows.push({ label: "ТИП", value: "товар" });
     rows.push({ label: "СОСТАВ", value: order.productName ?? "—" });
-    rows.push({ label: "ЦЕНА", value: formatPrice(order.calcPrice, currency) });
+    rows.push({ label: "ЦЕНА", value: formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance) });
     rows.push({ label: "КОНТАКТ", value: order.contact });
     rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
   } else if (order.type === "custom") {
@@ -59,7 +62,7 @@ function receiptRows(
             .join(" + ")
         : "—",
     });
-    rows.push({ label: "ЦЕНА", value: formatPrice(order.calcPrice, currency) });
+    rows.push({ label: "ЦЕНА", value: formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance) });
     rows.push({ label: "СРОК", value: `${order.calcDays} ${plural(order.calcDays, ["день", "дня", "дней"])}` });
     rows.push({ label: "КОНТАКТ", value: order.contact });
     rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });

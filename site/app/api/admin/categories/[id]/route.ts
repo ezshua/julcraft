@@ -98,6 +98,7 @@ export async function PUT(
       slug: data.slug,
       description: data.description,
       workPrice: data.workPrice,
+      workPriceCurrency: data.workPriceCurrency,
       baseWorkDays: data.baseWorkDays,
       isActive: data.isActive,
       hasSlotTemplate: data.hasSlotTemplate,

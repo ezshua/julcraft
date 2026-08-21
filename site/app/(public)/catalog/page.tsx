@@ -3,7 +3,8 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice, plural } from "@/lib/format";
+import { getSettings } from "@/lib/get-settings";
+import { formatPrice, asPriced, plural } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import CategoryCard from "@/components/category/CategoryCard";
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 
 export default async function CatalogPage() {
   const currency = await getDisplayCurrency();
+  const { finance } = getSettings();
   const cats = db
     .select()
     .from(categories)
@@ -26,7 +28,7 @@ export default async function CatalogPage() {
   }
   const countLabel = (cat: (typeof cats)[number], n: number) => {
     if (cat.slug === "komplekty") return `${n} ${plural(n, ["комплект", "комплекта", "комплектов"])}`;
-    if (cat.slug === "vintazhnyj-remont") return `услуга · от ${formatPrice(cat.workPrice, currency)}`;
+    if (cat.slug === "vintazhnyj-remont") return `услуга · от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)}`;
     return `${n} ${plural(n, ["изделие", "изделия", "изделий"])}`;
   };
 

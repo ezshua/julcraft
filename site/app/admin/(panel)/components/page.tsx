@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { components } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, asPriced } from "@/lib/format";
 import ComponentModal from "@/components/admin/ComponentModal";
 import DeleteButton from "@/components/admin/DeleteButton";
 import StockFilter from "@/components/admin/StockFilter";
@@ -165,8 +165,8 @@ export default async function AdminComponentsPage(props: {
                       {TYPE_FILTERS.find((x) => x.value === c.componentType)?.label}
                     </span>
                   </td>
-                  <td className="cell-price">{formatPrice(c.price, currency)}</td>
-                  <td className="cell-price">{formatPrice(c.processingPrice, currency)}</td>
+                  <td className="cell-price">{formatPrice(asPriced(c.price, c.priceCurrency), currency, finance)}</td>
+                  <td className="cell-price">{formatPrice(asPriced(c.processingPrice, c.processingPriceCurrency), currency, finance)}</td>
                   <td className={c.stockQty === 0 ? "num num--zero" : "num"}>
                     {c.stockQty}
                   </td>

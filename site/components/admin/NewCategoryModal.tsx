@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { amountToUsdCents, type FinanceSettings } from "@/lib/currency";
+import { amountToMinor, type FinanceSettings } from "@/lib/currency";
 import { useCurrency } from "@/lib/use-currency";
 
 // Модалка «Новая категория» — копия div.modal-overlay#modal-cat из mockup/admin/categories.html.
-// «Работа мастера» — в выбранной валюте (D-24), в БД сохраняются USD-центы.
+// «Работа мастера» — в текущей валюте «Вид» (D-24): сохраняем «как ввели» + workPriceCurrency.
 export default function NewCategoryModal({
   finance,
   currencyCode,
@@ -36,7 +36,8 @@ export default function NewCategoryModal({
         body: JSON.stringify({
           name,
           slug,
-          workPrice: amountToUsdCents(Number(workPrice) || 0, currency.ratePerUsd),
+          workPrice: amountToMinor(Number(workPrice) || 0),
+          workPriceCurrency: currency.code,
           baseWorkDays: Number(baseWorkDays || 0),
         }),
       });

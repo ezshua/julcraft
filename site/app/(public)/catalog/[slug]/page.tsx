@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, asPriced, toUsdAmount } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import ProductCard from "@/components/product/ProductCard";
 import EmptyState from "@/components/ui/EmptyState";
@@ -52,19 +52,27 @@ export default async function CategoryPage(props: {
   const cat = db.select().from(categories).where(eq(categories.slug, slug)).get();
   if (!cat) notFound();
 
-  // Границы фильтра цены — из настроек (finance.filterLow/filterHigh, USD-центы, Q-4);
-  // метки рендерим в выбранной валюте.
+  // Границы фильтра цены — из настроек как Priced (минора + валюта, D-23b);
+  // метки и сравнение — через их валюту, сравниваем в USD.
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
-  const { filterLow, filterHigh } = finance;
+  const { filterLow, filterLowCurrency, filterHigh, filterHighCurrency } = finance;
+  const usdFilterLow = toUsdAmount(asPriced(filterLow, filterLowCurrency), finance) * 100;
+  const usdFilterHigh = toUsdAmount(asPriced(filterHigh, filterHighCurrency), finance) * 100;
   const PRICE_FILTERS = [
     { value: "0", label: "Все" },
-    { value: "1", label: `Цена до ${formatPrice(filterLow, currency)}` },
+    {
+      value: "1",
+      label: `Цена до ${formatPrice(asPriced(filterLow, filterLowCurrency), currency, finance)}`,
+    },
     {
       value: "2",
-      label: `${formatPrice(filterLow, currency)} — ${formatPrice(filterHigh, currency)}`,
+      label: `${formatPrice(asPriced(filterLow, filterLowCurrency), currency, finance)} — ${formatPrice(asPriced(filterHigh, filterHighCurrency), currency, finance)}`,
     },
-    { value: "3", label: `От ${formatPrice(filterHigh, currency)}` },
+    {
+      value: "3",
+      label: `От ${formatPrice(asPriced(filterHigh, filterHighCurrency), currency, finance)}`,
+    },
   ];
 
   const price = ["1", "2", "3"].includes(sp.price ?? "") ? sp.price! : "0";
@@ -72,19 +80,8 @@ export default async function CategoryPage(props: {
   const sort = ["cheap", "expensive"].includes(sp.sort ?? "") ? sp.sort! : "new";
   const page = Math.max(1, Number.parseInt(sp.page ?? "1", 10) || 1);
 
-  // Фильтрация (цены в БД — USD-центы)
-  const priceCond = (() => {
-    switch (price) {
-      case "1":
-        return lte(products.price, filterLow);
-      case "2":
-        return and(gte(products.price, filterLow), lte(products.price, filterHigh));
-      case "3":
-        return gte(products.price, filterHigh);
-      default:
-        return undefined;
-    }
-  })();
+  // Фильтрация/сортировка: наличие — в SQL, цена — в памяти (валюты разные,
+  // сравнение через USD, D-28). Границы фильтра — Priced, сводим к USD для сравнения.
   const availCond = (() => {
     switch (avail) {
       case "in":
@@ -98,29 +95,25 @@ export default async function CategoryPage(props: {
     }
   })();
 
-  const cond = and(
-    eq(products.categoryId, cat.id),
-    priceCond,
-    availCond,
-  );
+  const cond = and(eq(products.categoryId, cat.id), availCond);
 
-  const orderBy = (() => {
-    switch (sort) {
-      case "cheap":
-        return [asc(products.price), asc(products.id)];
-      case "expensive":
-        return [desc(products.price), asc(products.id)];
-      default:
-        return [desc(products.isNew), asc(products.id)];
-    }
-  })();
+  const priceUsdCents = (p: (typeof products.$inferSelect)): number =>
+    toUsdAmount(asPriced(p.price, p.priceCurrency), finance) * 100;
 
-  const all = db
-    .select()
-    .from(products)
-    .where(cond)
-    .orderBy(...orderBy)
-    .all();
+  let all = db.select().from(products).where(cond).all();
+
+  if (price === "1") all = all.filter((p) => priceUsdCents(p) <= usdFilterLow);
+  else if (price === "2")
+    all = all.filter(
+      (p) => priceUsdCents(p) >= usdFilterLow && priceUsdCents(p) <= usdFilterHigh,
+    );
+  else if (price === "3") all = all.filter((p) => priceUsdCents(p) >= usdFilterHigh);
+
+  if (sort === "cheap")
+    all = [...all].sort((a, b) => priceUsdCents(a) - priceUsdCents(b) || a.id - b.id);
+  else if (sort === "expensive")
+    all = [...all].sort((a, b) => priceUsdCents(b) - priceUsdCents(a) || a.id - b.id);
+  else all = [...all].sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0) || a.id - b.id);
 
   const found = all.length;
   const pages = Math.max(1, Math.ceil(found / PAGE_SIZE));

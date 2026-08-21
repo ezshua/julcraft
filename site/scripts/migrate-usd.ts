@@ -91,7 +91,9 @@ function upsertSetting(key: string, value: string): void {
 upsertSetting("finance.currencies", JSON.stringify(defaultFinance.currencies));
 upsertSetting("finance.defaultCurrency", defaultFinance.defaultCurrency);
 upsertSetting("finance.filterLow", String(defaultFinance.filterLow));
+upsertSetting("finance.filterLowCurrency", defaultFinance.filterLowCurrency);
 upsertSetting("finance.filterHigh", String(defaultFinance.filterHigh));
+upsertSetting("finance.filterHighCurrency", defaultFinance.filterHighCurrency);
 upsertSetting("finance.migratedToUsd", "1");
 
 console.log(

@@ -29,7 +29,16 @@ export function slugify(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export { formatPrice, formatMoney, formatSnapshot } from "./currency";
+export {
+  formatPrice,
+  formatMoney,
+  formatSnapshot,
+  asPriced,
+  toUsdAmount,
+  sumPriced,
+  convertPriced,
+} from "./currency";
+export type { Priced, Currency, FinanceSettings } from "./currency";
 
 /** Склонение: plural(3, ["день","дня","дней"]) → "дня" */
 export function plural(

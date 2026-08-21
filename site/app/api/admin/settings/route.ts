@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { settings as settingsTable } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
@@ -21,7 +21,9 @@ const KNOWN_KEYS = new Set([
   "finance.currencies",
   "finance.defaultCurrency",
   "finance.filterLow",
+  "finance.filterLowCurrency",
   "finance.filterHigh",
+  "finance.filterHighCurrency",
 ]);
 
 // JSON-поля валидируются парсингом при сохранении.
@@ -100,11 +102,58 @@ export async function PUT(request: Request) {
   const financeErr = validateFinanceSettings(
     currencies,
     map.get("finance.defaultCurrency"),
-    map.has("finance.filterLow") ? Number(map.get("finance.filterLow")) : undefined,
-    map.has("finance.filterHigh") ? Number(map.get("finance.filterHigh")) : undefined,
+    map.has("finance.filterLow")
+      ? {
+          priceMinor: Number(map.get("finance.filterLow")),
+          priceCurrency: map.get("finance.filterLowCurrency") ?? "USD",
+        }
+      : undefined,
+    map.has("finance.filterHigh")
+      ? {
+          priceMinor: Number(map.get("finance.filterHigh")),
+          priceCurrency: map.get("finance.filterHighCurrency") ?? "USD",
+        }
+      : undefined,
   );
   if (financeErr) {
     return Response.json({ error: financeErr }, { status: 400 });
+  }
+
+  // D-27: если из списка валют удалили код (не USD) — пересчитываем все цены
+  // в этой валюте в доллары (USD) перед сохранением списка.
+  if (map.has("finance.currencies")) {
+    const oldCurrencies = (() => {
+      const raw = currentRows.find((r) => r.key === "finance.currencies")?.value;
+      try {
+        return (raw ? JSON.parse(raw) : []) as { code: string; ratePerUsd: number }[];
+      } catch {
+        return [] as { code: string; ratePerUsd: number }[];
+      }
+    })();
+    const newCurrencies = (currencies as { code: string; ratePerUsd: number }[]) ?? [];
+    const newCodes = new Set(newCurrencies.map((c) => c.code));
+    const removed = oldCurrencies.filter(
+      (c) => c.code !== "USD" && !newCodes.has(c.code),
+    );
+    for (const rem of removed) {
+      const rate = rem.ratePerUsd;
+      if (!rate) continue;
+      const pairs: [string, string][] = [
+        ["products", "priceCurrency"],
+        ["categories", "workPriceCurrency"],
+        ["components", "priceCurrency"],
+        ["components", "processingPriceCurrency"],
+        ["orders", "calcPriceCurrency"],
+      ];
+      for (const [table, curCol] of pairs) {
+        const priceCol = curCol.replace("Currency", "");
+        db.run(
+          sql.raw(
+            `UPDATE ${table} SET ${priceCol} = CAST(ROUND(${priceCol} / ${rate}) AS INTEGER), ${curCol} = 'USD' WHERE ${curCol} = '${rem.code}'`,
+          ),
+        );
+      }
+    }
   }
 
   for (const raw of items) {

@@ -43,6 +43,7 @@ export async function POST(request: Request) {
       categoryId: data.categoryId,
       description: data.description,
       price: data.price,
+      priceCurrency: data.priceCurrency,
       images: data.images,
       materials: [],
       specs: [],

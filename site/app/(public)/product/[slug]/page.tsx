@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, asPriced } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
@@ -67,7 +67,9 @@ export default async function ProductPage(props: {
 
         <div className="product-info mt-40" style={{ maxWidth: "640px" }}>
           <h1>{product.name}</h1>
-          <span className="price">{formatPrice(product.price, currency)}</span>
+          <span className="price">
+            {formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)}
+          </span>
           <p className="p-desc">{product.description}</p>
           <p className="p-desc muted">{MUTED_DESC}</p>
 

@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, asPriced } from "@/lib/format";
 import ProductModal from "@/components/admin/ProductModal";
 import DeleteButton from "@/components/admin/DeleteButton";
 import CatFilter from "@/components/admin/CatFilter";
@@ -186,7 +186,7 @@ export default async function AdminProductsPage(props: {
                     <small>ID (URL): {p.slug}</small>
                   </td>
                   <td>{catById.get(p.categoryId)?.name ?? "—"}</td>
-                  <td className="cell-price">{formatPrice(p.price, currency)}</td>
+                  <td className="cell-price">{formatPrice(asPriced(p.price, p.priceCurrency), currency, finance)}</td>
                   <td>{p.isNew ? <span className="tag tag--new">новинка</span> : "—"}</td>
                   <td>
                     {p.isFeatured ? <span className="tag tag--reserve">да</span> : "—"}

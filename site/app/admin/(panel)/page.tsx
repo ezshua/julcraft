@@ -3,7 +3,9 @@ import { and, desc, eq, gte, lt } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { components, orders, products } from "@/drizzle/schema";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice, plural } from "@/lib/format";
+import { getSettings } from "@/lib/get-settings";
+import { formatPrice, asPriced, plural } from "@/lib/format";
+import { sumPriced } from "@/lib/currency";
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const SHORT_DAYS = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
@@ -42,6 +44,7 @@ function typeLabel(type: string, productName: string | null, configJson: string)
 
 export default async function DashboardPage() {
   const currency = await getDisplayCurrency();
+  const { finance } = getSettings();
   const now = new Date();
   const weekAgo = new Date(now.getTime() - WEEK_MS);
   const twoWeeksAgo = new Date(now.getTime() - 2 * WEEK_MS);
@@ -69,10 +72,18 @@ export default async function DashboardPage() {
     .all();
 
   const doneWeek = weekOrders.filter((o) => o.status === "done");
-  const revenue = doneWeek.reduce((s, o) => s + o.calcPrice, 0);
-  const revenueCustom = doneWeek
-    .filter((o) => o.type === "custom")
-    .reduce((s, o) => s + o.calcPrice, 0);
+  const revenuePriced = sumPriced(
+    doneWeek.map((o) => asPriced(o.calcPrice, o.calcPriceCurrency)),
+    currency,
+    finance,
+  );
+  const revenueCustomPriced = sumPriced(
+    doneWeek
+      .filter((o) => o.type === "custom")
+      .map((o) => asPriced(o.calcPrice, o.calcPriceCurrency)),
+    currency,
+    finance,
+  );
 
   const lastOrders = db
     .select()
@@ -117,10 +128,10 @@ export default async function DashboardPage() {
             <div className="sub">в работе: {inProgress.length}</div>
           </div>
           <div className="stat-card stat-card--brown">
-            <div className="num">{formatPrice(revenue, currency)}</div>
+            <div className="num">{formatPrice(revenuePriced, currency, finance)}</div>
             <div className="lbl">Выручка за неделю</div>
             <div className="sub">
-              из них {formatPrice(revenueCustom, currency)} — конфигуратор
+              из них {formatPrice(revenueCustomPriced, currency, finance)} — конфигуратор
             </div>
           </div>
         </div>
@@ -160,7 +171,7 @@ export default async function DashboardPage() {
                         <small>{o.contact}</small>
                       </td>
                       <td className="cell-price">
-                        {o.type === "contact" ? "—" : formatPrice(o.calcPrice, currency)}
+                        {o.type === "contact" ? "—" : formatPrice(asPriced(o.calcPrice, o.calcPriceCurrency), currency, finance)}
                       </td>
                       <td>{o.type === "custom" ? `${o.calcDays} дн` : "—"}</td>
                       <td>

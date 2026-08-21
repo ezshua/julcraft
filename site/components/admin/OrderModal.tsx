@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatPrice, formatSnapshot } from "@/lib/format";
+import { formatPrice, asPriced, formatSnapshot } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
 import type { FinanceSettings } from "@/lib/currency";
 import type { OrderStatus, OrderType } from "@/drizzle/schema";
@@ -18,6 +18,7 @@ export type OrderRow = {
   collagePath: string | null;
   configJson: string;
   calcPrice: number;
+  calcPriceCurrency: string;
   calcDays: number;
   status: OrderStatus;
   createdAt: Date;
@@ -263,7 +264,7 @@ export default function OrderModal({
                     <b>Итого</b>
                   </span>
                   <span className="r">
-                    <b>{formatPrice(order.calcPrice, currency)}</b>
+                    <b>{formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance)}</b>
                   </span>
                 </div>
                 <div className="row">

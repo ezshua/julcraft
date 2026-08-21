@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatPrice, plural } from "@/lib/format";
+import { formatPrice, asPriced, plural } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
 import type { FinanceSettings } from "@/lib/currency";
 
@@ -11,6 +11,7 @@ export type CategoryListItem = {
   name: string;
   productCount: number;
   workPrice: number;
+  workPriceCurrency: string;
   baseWorkDays: number;
   hasSlotTemplate: boolean;
 };
@@ -83,7 +84,7 @@ export default function CategoryList({ categories, finance, currencyCode }: Prop
               ⣿ {c.name}
               <small>
                 {c.hasSlotTemplate
-                  ? `${plural(c.productCount, ["изделие", "изделия", "изделий"])} ${c.productCount} · работа ${formatPrice(c.workPrice, currency)} · ${c.baseWorkDays} дн`
+                   ? `${plural(c.productCount, ["изделие", "изделия", "изделий"])} ${c.productCount} · работа ${formatPrice(asPriced(c.workPrice, c.workPriceCurrency), currency, finance)} · ${c.baseWorkDays} дн`
                   : "без шаблона слотов"}
               </small>
             </div>

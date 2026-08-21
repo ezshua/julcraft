@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { SiteSettings } from "@/lib/settings";
-import { amountToUsdCents, usdCentsToAmount, type Currency } from "@/lib/currency";
+import {
+  amountToMinor,
+  minorToAmount,
+  convertPriced,
+  asPriced,
+  type Currency,
+} from "@/lib/currency";
 import { useCurrency } from "@/lib/use-currency";
 import TelegramTestButton from "./TelegramTestButton";
 
@@ -26,7 +32,7 @@ export default function SettingsPanel({
 }) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
-  const { currency } = useCurrency(settings.finance, currencyCode);
+  const { currency, finance } = useCurrency(settings.finance, currencyCode);
 
   // Контакты
   const [phone, setPhone] = useState(settings.contacts.phone);
@@ -56,25 +62,60 @@ export default function SettingsPanel({
   // Финансы
   const [currencies, setCurrencies] = useState<Currency[]>(settings.finance.currencies);
   const [defaultCurrency, setDefaultCurrency] = useState(settings.finance.defaultCurrency);
+  // Границы фильтра хранятся как Priced в текущей валюте «Вид» (D-23b): показываем
+  // сумму в валюте отображения, при сохранении пишем миноры + код валюты.
+  const filterLowMinor = () =>
+    convertPriced(
+      asPriced(settings.finance.filterLow, settings.finance.filterLowCurrency),
+      currency,
+      finance,
+    ).priceMinor;
+  const filterHighMinor = () =>
+    convertPriced(
+      asPriced(settings.finance.filterHigh, settings.finance.filterHighCurrency),
+      currency,
+      finance,
+    ).priceMinor;
   const [filterLowDisp, setFilterLowDisp] = useState(
-    String(usdCentsToAmount(settings.finance.filterLow, currency.ratePerUsd)),
+    String(minorToAmount(filterLowMinor())),
   );
   const [filterHighDisp, setFilterHighDisp] = useState(
-    String(usdCentsToAmount(settings.finance.filterHigh, currency.ratePerUsd)),
+    String(minorToAmount(filterHighMinor())),
   );
-  // При смене валюты отображения переводим границы фильтра заново (из USD-центов)
+  // При смене валюты отображения переводим границы фильтра заново (из нативной валюты)
   const [lastCurrencyCode, setLastCurrencyCode] = useState(currency.code);
   if (currency.code !== lastCurrencyCode) {
     setLastCurrencyCode(currency.code);
-    setFilterLowDisp(String(usdCentsToAmount(settings.finance.filterLow, currency.ratePerUsd)));
-    setFilterHighDisp(String(usdCentsToAmount(settings.finance.filterHigh, currency.ratePerUsd)));
+    setFilterLowDisp(String(minorToAmount(filterLowMinor())));
+    setFilterHighDisp(String(minorToAmount(filterHighMinor())));
   }
 
   const patchCurrency = (i: number, patch: Partial<Currency>) =>
     setCurrencies((prev) => prev.map((c, j) => (j === i ? { ...c, ...patch } : c)));
 
-  const removeCurrency = (i: number) =>
+  // Удаление валюты (D-27): предупреждаем о затронутых ценах и небыстрой
+  // конверсии в USD. Сама конверсия выполняется на сервере при сохранении
+  // (route api/admin/settings обнаружит удалённый код и пересчитает цены).
+  const removeCurrency = async (i: number) => {
+    const target = currencies[i];
+    if (!target || target.code === "USD") return;
+    let count = 0;
+    try {
+      const res = await fetch(`/api/admin/finance/usage?code=${target.code}`);
+      if (res.ok) {
+        const data = (await res.json()) as { count: number };
+        count = data.count;
+      }
+    } catch {
+      // игнорируем — покажем общее предупреждение
+    }
+    const warn =
+      count > 0
+        ? `Валюта ${target.code} используется в ${count} ценах. При удалении они будут пересчитаны в доллары (USD). Это может занять некоторое время. Удалить валюту?`
+        : `Удалить валюту ${target.code}? Цены в ней (если есть) будут пересчитаны в доллары (USD).`;
+    if (!window.confirm(warn)) return;
     setCurrencies((prev) => prev.filter((_, j) => j !== i));
+  };
 
   const addCurrency = () =>
     setCurrencies((prev) => [
@@ -88,12 +129,14 @@ export default function SettingsPanel({
       { key: "finance.defaultCurrency", value: defaultCurrency },
       {
         key: "finance.filterLow",
-        value: String(amountToUsdCents(Number(filterLowDisp) || 0, currency.ratePerUsd)),
+        value: String(amountToMinor(Number(filterLowDisp) || 0)),
       },
+      { key: "finance.filterLowCurrency", value: currency.code },
       {
         key: "finance.filterHigh",
-        value: String(amountToUsdCents(Number(filterHighDisp) || 0, currency.ratePerUsd)),
+        value: String(amountToMinor(Number(filterHighDisp) || 0)),
       },
+      { key: "finance.filterHighCurrency", value: currency.code },
     ]);
 
   const [busy, setBusy] = useState(false);
@@ -463,7 +506,8 @@ export default function SettingsPanel({
             Финансы (Settings.finance.*)
           </h3>
           <div className="notice notice--olive" style={{ marginBottom: "18px" }}>
-            Цены в БД хранятся только в долларах (USD-центы). Курсы влияют на отображение.
+            Каждая цена хранится в валюте, в которой она задана (маркер валюты).
+            При удалении валюты все цены в ней пересчитываются в доллары (USD) — это может занять время.
             USD обязателен: удалить его нельзя, курс всегда 1.
           </div>
 

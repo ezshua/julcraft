@@ -39,6 +39,8 @@ export function getSettings(): SiteSettings {
       map.get("finance.defaultCurrency"),
       map.get("finance.filterLow"),
       map.get("finance.filterHigh"),
+      map.get("finance.filterLowCurrency"),
+      map.get("finance.filterHighCurrency"),
     ),
   };
 }

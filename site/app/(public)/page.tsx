@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice, plural } from "@/lib/format";
+import { formatPrice, asPriced, plural } from "@/lib/format";
 import { telHref } from "@/lib/settings";
 import ProductCard from "@/components/product/ProductCard";
 import CategoryCard from "@/components/category/CategoryCard";
@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const settings = getSettings();
+  const { finance } = settings;
   const currency = await getDisplayCurrency();
 
   // Витрина: правило R-1 — сначала избранное, затем новинки, затем остальные
@@ -43,7 +44,7 @@ export default async function HomePage() {
   }
   const countLabel = (cat: (typeof cats)[number], n: number) => {
     if (cat.slug === "komplekty") return `${n} ${plural(n, ["комплект", "комплекта", "комплектов"])}`;
-    if (cat.slug === "vintazhnyj-remont") return `от ${formatPrice(cat.workPrice, currency)}`;
+    if (cat.slug === "vintazhnyj-remont") return `от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)}`;
     return `${n} ${plural(n, ["изделие", "изделия", "изделий"])}`;
   };
 

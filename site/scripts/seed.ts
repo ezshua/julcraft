@@ -11,17 +11,13 @@ import {
   slotTemplates,
 } from "../drizzle/schema";
 import type { ComponentType, ProductAvailability } from "../drizzle/schema";
+import { amountToMinor } from "../lib/currency";
 
 // ============================================================
 // Данные — точная копия макета mockup/ (источник истины, D-11)
 // ============================================================
 
-// Цены в макете — в рублях. В БД хранятся только USD-центы (plan-finances.md D-15):
-// конвертация по курсу рубля на момент миграции (D-23), как в scripts/migrate-usd.ts.
-const RUB_TO_USD_CENTS = 85;
-function usdCents(rubles: number): number {
-  return Math.round((rubles * 100) / RUB_TO_USD_CENTS);
-}
+// Цены в макете — в рублях. В БД хранятся как Priced: минора в рублях + код "RUB".
 
 type CategorySeed = {
   name: string;
@@ -520,9 +516,11 @@ const settingsSeed: Record<string, string> = {
     { code: "EUR", name: "Евро", symbol: "€", ratePerUsd: 0.92 },
   ]),
   "finance.defaultCurrency": "UAH",
-  // Границы фильтра цены каталога (USD-центы): было «до 2 000 ₽ / от 2 500 ₽» по курсу 85
-  "finance.filterLow": String(usdCents(2000)),
-  "finance.filterHigh": String(usdCents(2500)),
+  // Границы фильтра цены каталога как Priced в рублях (D-23b): «до 2 000 ₽ / от 2 500 ₽»
+  "finance.filterLow": String(amountToMinor(2000)),
+  "finance.filterLowCurrency": "RUB",
+  "finance.filterHigh": String(amountToMinor(2500)),
+  "finance.filterHighCurrency": "RUB",
 };
 
 // ============================================================
@@ -581,7 +579,8 @@ function main() {
         slug: c.slug,
         description: c.description,
         image: null,
-        workPrice: usdCents(c.workPrice),
+        workPrice: amountToMinor(c.workPrice),
+        workPriceCurrency: "RUB",
         baseWorkDays: c.baseWorkDays,
         hasSlotTemplate: c.slug !== "vintazhnyj-remont",
         isActive: true,
@@ -619,8 +618,10 @@ function main() {
       .values({
         name: c.name,
         componentType: c.componentType,
-        price: usdCents(c.price),
-        processingPrice: usdCents(c.processingPrice),
+        price: amountToMinor(c.price),
+        priceCurrency: "RUB",
+        processingPrice: amountToMinor(c.processingPrice),
+        processingPriceCurrency: "RUB",
         processingDays: 0,
         stockQty: c.stockQty,
         isOrderable: c.isOrderable,
@@ -640,7 +641,8 @@ function main() {
         name: p.name,
         slug: p.slug,
         description: p.description,
-        price: usdCents(p.price),
+        price: amountToMinor(p.price),
+        priceCurrency: "RUB",
         images: [`https://images.unsplash.com/${p.photoId}?w=800&q=80`],
         materials: p.materials ?? [],
         specs: p.specs ?? [],

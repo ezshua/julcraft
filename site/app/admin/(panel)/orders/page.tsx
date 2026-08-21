@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { categories, orders, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, asPriced } from "@/lib/format";
 import OrderModal, { type OrderRow } from "@/components/admin/OrderModal";
 
 export const metadata: Metadata = {
@@ -104,6 +104,7 @@ export default async function AdminOrdersPage(props: {
       configJson: o.configJson,
       collagePath: o.collagePath,
       calcPrice: o.calcPrice,
+      calcPriceCurrency: o.calcPriceCurrency,
       calcDays: o.calcDays,
       status: o.status,
       createdAt: o.createdAt,
@@ -203,7 +204,7 @@ export default async function AdminOrdersPage(props: {
                       <small>{r.contact}</small>
                     </td>
                     <td className="cell-price">
-                      {r.type === "contact" ? "—" : formatPrice(r.calcPrice, currency)}
+                      {r.type === "contact" ? "—" : formatPrice(asPriced(r.calcPrice, r.calcPriceCurrency), currency, finance)}
                     </td>
                     <td className="num">
                       {r.type === "custom" && r.calcDays > 0 ? `${r.calcDays} дн` : "—"}

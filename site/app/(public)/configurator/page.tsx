@@ -3,7 +3,8 @@ import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories } from "@/drizzle/schema";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice } from "@/lib/format";
+import { getSettings } from "@/lib/get-settings";
+import { formatPrice, asPriced } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import CategoryCard from "@/components/category/CategoryCard";
 import { CONFIGURATOR_SLOT_DESC } from "@/components/category/category-captions";
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 
 export default async function ConfiguratorPage() {
   const currency = await getDisplayCurrency();
+  const { finance } = getSettings();
   const cats = db
     .select()
     .from(categories)
@@ -50,7 +52,7 @@ export default async function ConfiguratorPage() {
               slug={cat.slug}
               name={cat.name}
               desc={CONFIGURATOR_SLOT_DESC[cat.slug] ?? ""}
-              count={`работа от ${formatPrice(cat.workPrice, currency)} · ${cat.baseWorkDays} дн`}
+              count={`работа от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)} · ${cat.baseWorkDays} дн`}
               href={`/configurator/${cat.slug}`}
             />
           ))}

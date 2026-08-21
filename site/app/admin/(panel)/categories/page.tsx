@@ -37,6 +37,7 @@ export default async function AdminCategoriesPage(props: {
     name: c.name,
     productCount: productCount(c.id),
     workPrice: c.workPrice,
+    workPriceCurrency: c.workPriceCurrency,
     baseWorkDays: c.baseWorkDays,
     hasSlotTemplate: c.hasSlotTemplate,
   }));
@@ -53,6 +54,7 @@ export default async function AdminCategoriesPage(props: {
         slug: active.slug,
         description: active.description,
         workPrice: active.workPrice,
+        workPriceCurrency: active.workPriceCurrency,
         baseWorkDays: active.baseWorkDays,
         isActive: active.isActive,
         hasSlotTemplate: active.hasSlotTemplate,

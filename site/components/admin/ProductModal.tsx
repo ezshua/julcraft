@@ -4,7 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "./ImageUploader";
 import { slugify } from "@/lib/format";
-import { amountToUsdCents, usdCentsToAmount, type FinanceSettings } from "@/lib/currency";
+import {
+  amountToMinor,
+  minorToAmount,
+  convertPriced,
+  asPriced,
+  type FinanceSettings,
+} from "@/lib/currency";
 import { useCurrency } from "@/lib/use-currency";
 import type { Product, ProductAvailability } from "@/drizzle/schema";
 
@@ -33,8 +39,8 @@ function fromDateInput(s: string): string | null {
 
 // Модалка товара — копия div.modal-overlay#modal из mockup/admin/products.html
 // (табы Основное/Фото/SEO + D-13: select «Наличие», «Резерв до», «Дней под заказ»).
-// Цена — в выбранной валюте (D-24): при открытии конвертируется из USD, при
-// сохранении — обратно в USD-центы.
+// Цена — в текущей валюте «Вид» (D-24): при открытии конвертируется из хранимой
+// валюты в текущую, при сохранении — сохраняется «как ввели» + priceCurrency.
 export default function ProductModal({ categories, product, finance, currencyCode }: Props) {
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
@@ -100,7 +106,8 @@ export default function ProductModal({ categories, product, finance, currencyCod
         slug,
         description,
         categoryId: Number(categoryId),
-        price: amountToUsdCents(Number(price) || 0, currency.ratePerUsd),
+        price: amountToMinor(Number(price) || 0),
+        priceCurrency: currency.code,
         isNew,
         isFeatured,
         availability,
@@ -143,7 +150,17 @@ export default function ProductModal({ categories, product, finance, currencyCod
           onClick={() => {
             setError("");
             setTab(0);
-            setPrice(String(usdCentsToAmount(product.price, currency.ratePerUsd)));
+            setPrice(
+              String(
+                minorToAmount(
+                  convertPriced(
+                    asPriced(product.price, product.priceCurrency),
+                    currency,
+                    finance,
+                  ).priceMinor,
+                ),
+              ),
+            );
             setOpen(true);
           }}
         >
