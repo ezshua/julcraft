@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "./ImageUploader";
+import { amountToUsdCents, usdCentsToAmount, type FinanceSettings } from "@/lib/currency";
+import { useCurrency } from "@/lib/use-currency";
 import type { Component, ComponentType } from "@/drizzle/schema";
 
 export const TYPE_OPTIONS = [
@@ -17,11 +19,15 @@ export const TYPE_OPTIONS = [
 type Props = {
   /** Без component — режим «Новое комплектующее» */
   component?: Component;
+  finance: FinanceSettings;
+  currencyCode: string;
 };
 
 // Модалка комплектующего — копия div.modal-overlay#modal из mockup/admin/components.html.
-export default function ComponentModal({ component }: Props) {
+// Цены — в выбранной валюте (D-24), в БД сохраняются USD-центы.
+export default function ComponentModal({ component, finance, currencyCode }: Props) {
   const router = useRouter();
+  const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(component?.name ?? "");
   const [componentType, setComponentType] = useState(
@@ -30,10 +36,8 @@ export default function ComponentModal({ component }: Props) {
   const [stockQty, setStockQty] = useState(
     component ? String(component.stockQty) : "0",
   );
-  const [price, setPrice] = useState(component ? String(component.price) : "");
-  const [processingPrice, setProcessingPrice] = useState(
-    component ? String(component.processingPrice) : "",
-  );
+  const [price, setPrice] = useState("");
+  const [processingPrice, setProcessingPrice] = useState("");
   const [processingDays, setProcessingDays] = useState(
     component ? String(component.processingDays) : "0",
   );
@@ -55,8 +59,8 @@ export default function ComponentModal({ component }: Props) {
       const payload = {
         name,
         componentType,
-        price: Number(price),
-        processingPrice: Number(processingPrice),
+        price: amountToUsdCents(Number(price) || 0, currency.ratePerUsd),
+        processingPrice: amountToUsdCents(Number(processingPrice) || 0, currency.ratePerUsd),
         processingDays: Number(processingDays || 0),
         stockQty: Number(stockQty || 0),
         isOrderable,
@@ -95,13 +99,24 @@ export default function ComponentModal({ component }: Props) {
           title="Редактировать"
           onClick={() => {
             setError("");
+            setPrice(String(usdCentsToAmount(component.price, currency.ratePerUsd)));
+            setProcessingPrice(
+              String(usdCentsToAmount(component.processingPrice, currency.ratePerUsd)),
+            );
             setOpen(true);
           }}
         >
           ✎
         </button>
       ) : (
-        <button className="btn btn--primary btn--small" onClick={() => setOpen(true)}>
+        <button
+          className="btn btn--primary btn--small"
+          onClick={() => {
+            setPrice("");
+            setProcessingPrice("");
+            setOpen(true);
+          }}
+        >
           + Добавить комплектующее
         </button>
       )}
@@ -184,18 +199,20 @@ export default function ComponentModal({ component }: Props) {
           </div>
           <div className="field--row">
             <div className="field">
-              <label>Цена, ₽</label>
+              <label>Цена, {currency.symbol}</label>
               <input
                 type="number"
+                step="0.01"
                 placeholder="200"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
               />
             </div>
             <div className="field">
-              <label>Обработка, ₽</label>
+              <label>Обработка, {currency.symbol}</label>
               <input
                 type="number"
+                step="0.01"
                 placeholder="50"
                 value={processingPrice}
                 onChange={(e) => setProcessingPrice(e.target.value)}

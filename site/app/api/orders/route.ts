@@ -57,8 +57,9 @@ export async function POST(request: Request) {
   const id = Number(res.lastInsertRowid);
 
   // Уведомление мастеру в Telegram; без токенов — лог (поведение не меняется).
+  // Сумма — всегда в долларах (Q-5, plan-finances.md шаг 9).
   const notice = `[заявка ${id}] товар: ${product.name}; клиент: ${customerName} (${contact}); ` +
-    `цена: ${product.price} ₽; сообщение: ${message || "—"}`;
+    `цена: ${(product.price / 100).toFixed(2)} $; сообщение: ${message || "—"}`;
   const sent = await sendTelegram(notice);
   if (!sent.ok) console.log(notice);
 

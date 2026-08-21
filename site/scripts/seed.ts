@@ -16,6 +16,13 @@ import type { ComponentType, ProductAvailability } from "../drizzle/schema";
 // Данные — точная копия макета mockup/ (источник истины, D-11)
 // ============================================================
 
+// Цены в макете — в рублях. В БД хранятся только USD-центы (plan-finances.md D-15):
+// конвертация по курсу рубля на момент миграции (D-23), как в scripts/migrate-usd.ts.
+const RUB_TO_USD_CENTS = 85;
+function usdCents(rubles: number): number {
+  return Math.round((rubles * 100) / RUB_TO_USD_CENTS);
+}
+
 type CategorySeed = {
   name: string;
   slug: string;
@@ -505,6 +512,17 @@ const settingsSeed: Record<string, string> = {
   "about.short": JSON.stringify(shortReceiptSeed),
   "about.history": JSON.stringify(historyReceiptSeed),
   "about.principles": JSON.stringify(principlesSeed),
+  // plan-finances.md: мультивалютность. USD обязателен, курс 1; дефолт — гривна.
+  "finance.currencies": JSON.stringify([
+    { code: "USD", name: "Доллар", symbol: "$", ratePerUsd: 1 },
+    { code: "UAH", name: "Гривна", symbol: "₴", ratePerUsd: 44 },
+    { code: "RUB", name: "Рубль", symbol: "₽", ratePerUsd: 85 },
+    { code: "EUR", name: "Евро", symbol: "€", ratePerUsd: 0.92 },
+  ]),
+  "finance.defaultCurrency": "UAH",
+  // Границы фильтра цены каталога (USD-центы): было «до 2 000 ₽ / от 2 500 ₽» по курсу 85
+  "finance.filterLow": String(usdCents(2000)),
+  "finance.filterHigh": String(usdCents(2500)),
 };
 
 // ============================================================
@@ -563,7 +581,7 @@ function main() {
         slug: c.slug,
         description: c.description,
         image: null,
-        workPrice: c.workPrice,
+        workPrice: usdCents(c.workPrice),
         baseWorkDays: c.baseWorkDays,
         hasSlotTemplate: c.slug !== "vintazhnyj-remont",
         isActive: true,
@@ -601,8 +619,8 @@ function main() {
       .values({
         name: c.name,
         componentType: c.componentType,
-        price: c.price,
-        processingPrice: c.processingPrice,
+        price: usdCents(c.price),
+        processingPrice: usdCents(c.processingPrice),
         processingDays: 0,
         stockQty: c.stockQty,
         isOrderable: c.isOrderable,
@@ -622,7 +640,7 @@ function main() {
         name: p.name,
         slug: p.slug,
         description: p.description,
-        price: p.price,
+        price: usdCents(p.price),
         images: [`https://images.unsplash.com/${p.photoId}?w=800&q=80`],
         materials: p.materials ?? [],
         specs: p.specs ?? [],

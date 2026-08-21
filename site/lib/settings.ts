@@ -1,3 +1,5 @@
+import { defaultFinance, type FinanceSettings } from "./currency";
+
 export type HoursEntry = {
   day: string;
   value: string;
@@ -37,6 +39,7 @@ export type SiteSettings = {
     botToken: string;
     chatId: string;
   };
+  finance: FinanceSettings;
 };
 
 export const defaultSettings: SiteSettings = {
@@ -107,6 +110,7 @@ export const defaultSettings: SiteSettings = {
     botToken: "",
     chatId: "",
   },
+  finance: defaultFinance,
 };
 
 export function telHref(phone: string): string {

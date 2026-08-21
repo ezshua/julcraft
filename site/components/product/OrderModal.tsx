@@ -3,13 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice, imgWith } from "@/lib/format";
+import { useCurrency } from "@/lib/use-currency";
+import type { FinanceSettings } from "@/lib/currency";
 import { availFullText } from "@/components/ui/Avail";
 import type { Product } from "@/drizzle/schema";
 
 // Модалка заявки на товар — копия div.modal-overlay#modal из mockup/product.html.
 // Кнопка «Заказать» открывает модалку (класс .open, как в макете).
-export default function OrderModal({ product }: { product: Product }) {
+export default function OrderModal({
+  product,
+  finance,
+  currencyCode,
+}: {
+  product: Product;
+  finance: FinanceSettings;
+  currencyCode: string;
+}) {
   const router = useRouter();
+  const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
@@ -69,7 +80,7 @@ export default function OrderModal({ product }: { product: Product }) {
             <div>
               <b>{product.name}</b>
               <small>
-                {formatPrice(product.price)} · {availFullText(product)} · мастер свяжется сама
+                {formatPrice(product.price, currency)} · {availFullText(product)} · мастер свяжется сама
               </small>
             </div>
           </div>

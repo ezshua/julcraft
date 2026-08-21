@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TYPE_OPTIONS } from "./ComponentModal";
 import { plural } from "@/lib/format";
+import { amountToUsdCents, usdCentsToAmount, type FinanceSettings } from "@/lib/currency";
+import { useCurrency } from "@/lib/use-currency";
 import type { ComponentType } from "@/drizzle/schema";
 
 export type EditorSlot = {
@@ -30,23 +32,36 @@ type SlotState = EditorSlot & { key: number };
 
 type Props = {
   category: EditorCategory;
+  finance: FinanceSettings;
+  currencyCode: string;
 };
 
 // Правая панель: форма категории + редактор слотов (копия mockup/admin/categories.html).
 // Серверный page рендерит компонент с key={category.id} — при смене категории состояние сбрасывается.
-export default function CategoryEditor({ category }: Props) {
+// Работа мастера — в выбранной валюте (D-24), в БД сохраняются USD-центы.
+export default function CategoryEditor({ category, finance, currencyCode }: Props) {
   const router = useRouter();
+  const { currency } = useCurrency(finance, currencyCode);
   const keyCounter = useRef(1000);
   const [name, setName] = useState(category.name);
   const [slug, setSlug] = useState(category.slug);
   const [description, setDescription] = useState(category.description);
-  const [workPrice, setWorkPrice] = useState(String(category.workPrice));
+  const [workPrice, setWorkPrice] = useState(
+    String(usdCentsToAmount(category.workPrice, currency.ratePerUsd)),
+  );
   const [baseWorkDays, setBaseWorkDays] = useState(String(category.baseWorkDays));
   const [isActive, setIsActive] = useState(category.isActive);
   const [hasSlotTemplate, setHasSlotTemplate] = useState(category.hasSlotTemplate);
   const [slots, setSlots] = useState<SlotState[]>(
     category.slots.map((s, i) => ({ ...s, key: i + 1 })),
   );
+
+  // При смене валюты отображения переводим «работу» заново (из USD-центов)
+  const [lastCurrencyCode, setLastCurrencyCode] = useState(currency.code);
+  if (currency.code !== lastCurrencyCode) {
+    setLastCurrencyCode(currency.code);
+    setWorkPrice(String(usdCentsToAmount(category.workPrice, currency.ratePerUsd)));
+  }
 
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -91,7 +106,7 @@ export default function CategoryEditor({ category }: Props) {
           name,
           slug,
           description,
-          workPrice: Number(workPrice),
+          workPrice: amountToUsdCents(Number(workPrice) || 0, currency.ratePerUsd),
           baseWorkDays: Number(baseWorkDays || 0),
           isActive,
           hasSlotTemplate,
@@ -142,9 +157,10 @@ export default function CategoryEditor({ category }: Props) {
       </div>
       <div className="field--row">
         <div className="field">
-          <label>Работа мастера, ₽</label>
+          <label>Работа мастера, {currency.symbol}</label>
           <input
             type="number"
+            step="0.01"
             value={workPrice}
             onChange={(e) => setWorkPrice(e.target.value)}
           />

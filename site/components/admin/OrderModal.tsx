@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, formatSnapshot } from "@/lib/format";
+import { useCurrency } from "@/lib/use-currency";
+import type { FinanceSettings } from "@/lib/currency";
 import type { OrderStatus, OrderType } from "@/drizzle/schema";
 
 export type OrderRow = {
@@ -34,11 +36,16 @@ type SnapshotItem = {
 export default function OrderModal({
   order,
   collageOnly = false,
+  finance,
+  currencyCode,
 }: {
   order: OrderRow;
   collageOnly?: boolean;
+  finance: FinanceSettings;
+  currencyCode: string;
 }) {
   const router = useRouter();
+  const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<OrderStatus>(order.status);
   const [busy, setBusy] = useState(false);
@@ -232,22 +239,23 @@ export default function OrderModal({
 
             {order.type === "custom" && snap && snap.items.length > 0 ? (
               <div className="receipt" style={{ maxWidth: "100%", margin: "0 0 16px", padding: "26px 24px" }}>
+                {/* Q-6: снимок configJson — исторический факт, суммы как сохранены (₽) */}
                 {snap.items.map((item, i) => (
                   <div key={i}>
                     <div className="row">
                       <span>{item.name} ×{item.qty}</span>
-                      <span className="r">{formatPrice(item.price * item.qty)}</span>
+                      <span className="r">{formatSnapshot(item.price * item.qty)}</span>
                     </div>
                     <div className="row">
                       <span>&nbsp;&nbsp;обработка ×{item.qty}</span>
-                      <span className="r">{formatPrice(item.processingPrice * item.qty)}</span>
+                      <span className="r">{formatSnapshot(item.processingPrice * item.qty)}</span>
                     </div>
                   </div>
                 ))}
                 {snap.workPrice != null && snap.categoryName != null && (
                   <div className="row">
                     <span>Работа мастера ({snap.categoryName})</span>
-                    <span className="r">{formatPrice(snap.workPrice)}</span>
+                    <span className="r">{formatSnapshot(snap.workPrice)}</span>
                   </div>
                 )}
                 <div className="row" style={{ fontWeight: 500 }}>
@@ -255,7 +263,7 @@ export default function OrderModal({
                     <b>Итого</b>
                   </span>
                   <span className="r">
-                    <b>{formatPrice(order.calcPrice)}</b>
+                    <b>{formatPrice(order.calcPrice, currency)}</b>
                   </span>
                 </div>
                 <div className="row">

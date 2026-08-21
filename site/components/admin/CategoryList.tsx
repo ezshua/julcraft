@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice, plural } from "@/lib/format";
+import { useCurrency } from "@/lib/use-currency";
+import type { FinanceSettings } from "@/lib/currency";
 
 export type CategoryListItem = {
   id: number;
@@ -15,11 +17,14 @@ export type CategoryListItem = {
 
 type Props = {
   categories: CategoryListItem[];
+  finance: FinanceSettings;
+  currencyCode: string;
 };
 
 // Левая панель: категории с drag&drop (Решение 5б). Клик по строке — открыть в редакторе.
-export default function CategoryList({ categories }: Props) {
+export default function CategoryList({ categories, finance, currencyCode }: Props) {
   const router = useRouter();
+  const { currency } = useCurrency(finance, currencyCode);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [items, setItems] = useState(categories);
 
@@ -78,7 +83,7 @@ export default function CategoryList({ categories }: Props) {
               ⣿ {c.name}
               <small>
                 {c.hasSlotTemplate
-                  ? `${plural(c.productCount, ["изделие", "изделия", "изделий"])} ${c.productCount} · работа ${formatPrice(c.workPrice)} · ${c.baseWorkDays} дн`
+                  ? `${plural(c.productCount, ["изделие", "изделия", "изделий"])} ${c.productCount} · работа ${formatPrice(c.workPrice, currency)} · ${c.baseWorkDays} дн`
                   : "без шаблона слотов"}
               </small>
             </div>

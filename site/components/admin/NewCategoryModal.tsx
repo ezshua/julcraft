@@ -2,10 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { amountToUsdCents, type FinanceSettings } from "@/lib/currency";
+import { useCurrency } from "@/lib/use-currency";
 
 // Модалка «Новая категория» — копия div.modal-overlay#modal-cat из mockup/admin/categories.html.
-export default function NewCategoryModal() {
+// «Работа мастера» — в выбранной валюте (D-24), в БД сохраняются USD-центы.
+export default function NewCategoryModal({
+  finance,
+  currencyCode,
+}: {
+  finance: FinanceSettings;
+  currencyCode: string;
+}) {
   const router = useRouter();
+  const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -26,7 +36,7 @@ export default function NewCategoryModal() {
         body: JSON.stringify({
           name,
           slug,
-          workPrice: Number(workPrice),
+          workPrice: amountToUsdCents(Number(workPrice) || 0, currency.ratePerUsd),
           baseWorkDays: Number(baseWorkDays || 0),
         }),
       });
@@ -85,9 +95,10 @@ export default function NewCategoryModal() {
           </div>
           <div className="field--row">
             <div className="field">
-              <label>Работа мастера, ₽</label>
+              <label>Работа мастера, {currency.symbol}</label>
               <input
                 type="number"
+                step="0.01"
                 placeholder="500"
                 value={workPrice}
                 onChange={(e) => setWorkPrice(e.target.value)}

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
-import { plural } from "@/lib/format";
+import { getDisplayCurrency } from "@/lib/currency-server";
+import { formatPrice, plural } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import CategoryCard from "@/components/category/CategoryCard";
 
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
   title: "Каталог — JulCraft",
 };
 
-export default function CatalogPage() {
+export default async function CatalogPage() {
+  const currency = await getDisplayCurrency();
   const cats = db
     .select()
     .from(categories)
@@ -22,9 +24,9 @@ export default function CatalogPage() {
   for (const p of allProducts) {
     perCategory.set(p.categoryId, (perCategory.get(p.categoryId) ?? 0) + 1);
   }
-  const countLabel = (slug: string, n: number) => {
-    if (slug === "komplekty") return `${n} ${plural(n, ["комплект", "комплекта", "комплектов"])}`;
-    if (slug === "vintazhnyj-remont") return "услуга · от 300 ₽";
+  const countLabel = (cat: (typeof cats)[number], n: number) => {
+    if (cat.slug === "komplekty") return `${n} ${plural(n, ["комплект", "комплекта", "комплектов"])}`;
+    if (cat.slug === "vintazhnyj-remont") return `услуга · от ${formatPrice(cat.workPrice, currency)}`;
     return `${n} ${plural(n, ["изделие", "изделия", "изделий"])}`;
   };
 
@@ -52,7 +54,7 @@ export default function CatalogPage() {
               slug={cat.slug}
               name={cat.name}
               desc={cat.description}
-              count={countLabel(cat.slug, perCategory.get(cat.id) ?? 0)}
+              count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
               href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
             />
           ))}

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { SiteSettings } from "@/lib/settings";
+import { amountToUsdCents, usdCentsToAmount, type Currency } from "@/lib/currency";
+import { useCurrency } from "@/lib/use-currency";
 import TelegramTestButton from "./TelegramTestButton";
 
 type Row = { label: string; value: string };
@@ -14,10 +16,17 @@ function closedFrom(value: string): boolean {
   return value.trim() === "" || /выходн/i.test(value);
 }
 
-// Табы «Контакты / Тексты / Telegram» + три формы (копия mockup/admin/settings.html).
-export default function SettingsPanel({ settings }: { settings: SiteSettings }) {
+// Табы «Контакты / Тексты / Telegram / Финансы» + четыре формы.
+export default function SettingsPanel({
+  settings,
+  currencyCode,
+}: {
+  settings: SiteSettings;
+  currencyCode: string;
+}) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
+  const { currency } = useCurrency(settings.finance, currencyCode);
 
   // Контакты
   const [phone, setPhone] = useState(settings.contacts.phone);
@@ -43,6 +52,49 @@ export default function SettingsPanel({ settings }: { settings: SiteSettings }) 
   // Telegram
   const [botToken, setBotToken] = useState(settings.telegram.botToken);
   const [chatId, setChatId] = useState(settings.telegram.chatId);
+
+  // Финансы
+  const [currencies, setCurrencies] = useState<Currency[]>(settings.finance.currencies);
+  const [defaultCurrency, setDefaultCurrency] = useState(settings.finance.defaultCurrency);
+  const [filterLowDisp, setFilterLowDisp] = useState(
+    String(usdCentsToAmount(settings.finance.filterLow, currency.ratePerUsd)),
+  );
+  const [filterHighDisp, setFilterHighDisp] = useState(
+    String(usdCentsToAmount(settings.finance.filterHigh, currency.ratePerUsd)),
+  );
+  // При смене валюты отображения переводим границы фильтра заново (из USD-центов)
+  const [lastCurrencyCode, setLastCurrencyCode] = useState(currency.code);
+  if (currency.code !== lastCurrencyCode) {
+    setLastCurrencyCode(currency.code);
+    setFilterLowDisp(String(usdCentsToAmount(settings.finance.filterLow, currency.ratePerUsd)));
+    setFilterHighDisp(String(usdCentsToAmount(settings.finance.filterHigh, currency.ratePerUsd)));
+  }
+
+  const patchCurrency = (i: number, patch: Partial<Currency>) =>
+    setCurrencies((prev) => prev.map((c, j) => (j === i ? { ...c, ...patch } : c)));
+
+  const removeCurrency = (i: number) =>
+    setCurrencies((prev) => prev.filter((_, j) => j !== i));
+
+  const addCurrency = () =>
+    setCurrencies((prev) => [
+      ...prev,
+      { code: "", name: "", symbol: "", ratePerUsd: 1 },
+    ]);
+
+  const saveFinance = () =>
+    void save([
+      { key: "finance.currencies", value: JSON.stringify(currencies) },
+      { key: "finance.defaultCurrency", value: defaultCurrency },
+      {
+        key: "finance.filterLow",
+        value: String(amountToUsdCents(Number(filterLowDisp) || 0, currency.ratePerUsd)),
+      },
+      {
+        key: "finance.filterHigh",
+        value: String(amountToUsdCents(Number(filterHighDisp) || 0, currency.ratePerUsd)),
+      },
+    ]);
 
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
@@ -128,6 +180,9 @@ export default function SettingsPanel({ settings }: { settings: SiteSettings }) 
         </span>
         <span className={tab === 2 ? "tab is-active" : "tab"} onClick={() => setTab(2)}>
           Telegram
+        </span>
+        <span className={tab === 3 ? "tab is-active" : "tab"} onClick={() => setTab(3)}>
+          Финансы
         </span>
       </div>
 
@@ -396,6 +451,125 @@ export default function SettingsPanel({ settings }: { settings: SiteSettings }) 
               Сохранить
             </button>
             <TelegramTestButton />
+            {msg && <span style={{ fontSize: ".8rem", color: "var(--muted)" }}>{msg}</span>}
+          </div>
+        </div>
+      </div>
+
+      {/* Таб: Финансы */}
+      <div className="tab-pane" style={{ display: tab === 3 ? "" : "none" }}>
+        <div className="board board--paper" style={{ padding: "22px 24px" }}>
+          <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
+            Финансы (Settings.finance.*)
+          </h3>
+          <div className="notice notice--olive" style={{ marginBottom: "18px" }}>
+            Цены в БД хранятся только в долларах (USD-центы). Курсы влияют на отображение.
+            USD обязателен: удалить его нельзя, курс всегда 1.
+          </div>
+
+          <div className="field">
+            <label>Валюта отображения по умолчанию</label>
+            <select
+              value={defaultCurrency}
+              onChange={(e) => setDefaultCurrency(e.target.value)}
+            >
+              {currencies.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.code} — {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field--row">
+            <div className="field">
+              <label>Фильтр каталога: «до» (в {currency.symbol})</label>
+              <input
+                type="number"
+                step="0.01"
+                value={filterLowDisp}
+                onChange={(e) => setFilterLowDisp(e.target.value)}
+              />
+            </div>
+            <div className="field">
+              <label>Фильтр каталога: «от» (в {currency.symbol})</label>
+              <input
+                type="number"
+                step="0.01"
+                value={filterHighDisp}
+                onChange={(e) => setFilterHighDisp(e.target.value)}
+              />
+            </div>
+          </div>
+          <small className="muted">
+            Границы фильтра цены на странице категории (по умолчанию: до 2 000 ₽ / от 2 500 ₽
+            по курсу рубля 85).
+          </small>
+
+          <div className="sec-h2" style={{ fontSize: "1rem", margin: "20px 0 10px" }}>
+            Список валют
+          </div>
+          {currencies.map((c, i) => (
+            <div
+              className="field--row"
+              key={`${c.code}-${i}`}
+              style={{ marginBottom: "8px", alignItems: "flex-end" }}
+            >
+              <div className="field" style={{ margin: 0 }}>
+                <label>Код</label>
+                <input
+                  value={c.code}
+                  disabled={c.code === "USD"}
+                  maxLength={3}
+                  onChange={(e) => patchCurrency(i, { code: e.target.value.toUpperCase() })}
+                />
+              </div>
+              <div className="field" style={{ margin: 0 }}>
+                <label>Название</label>
+                <input
+                  value={c.name}
+                  onChange={(e) => patchCurrency(i, { name: e.target.value })}
+                />
+              </div>
+              <div className="field" style={{ margin: 0 }}>
+                <label>Символ</label>
+                <input
+                  value={c.symbol}
+                  style={{ maxWidth: 70 }}
+                  onChange={(e) => patchCurrency(i, { symbol: e.target.value })}
+                />
+              </div>
+              <div className="field" style={{ margin: 0 }}>
+                <label>За 1 $</label>
+                <input
+                  type="number"
+                  step="any"
+                  value={c.ratePerUsd}
+                  disabled={c.code === "USD"}
+                  onChange={(e) => patchCurrency(i, { ratePerUsd: Number(e.target.value) })}
+                />
+              </div>
+              <button
+                className="icon-btn"
+                style={{ width: 24, height: 24, alignSelf: "center" }}
+                title={c.code === "USD" ? "USD удалить нельзя" : "Удалить валюту"}
+                disabled={c.code === "USD"}
+                onClick={() => removeCurrency(i)}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+          <div style={{ marginTop: "4px" }}>
+            <button className="btn btn--secondary btn--small" onClick={addCurrency}>
+              + Добавить валюту
+            </button>
+          </div>
+
+          <div className="form-actions" style={{ marginTop: "18px" }}>
+            <button className="btn btn--primary" onClick={saveFinance} disabled={busy}>
+              Сохранить финансы
+            </button>
             {msg && <span style={{ fontSize: ".8rem", color: "var(--muted)" }}>{msg}</span>}
           </div>
         </div>

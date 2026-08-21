@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories } from "@/drizzle/schema";
+import { getDisplayCurrency } from "@/lib/currency-server";
+import { formatPrice } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import CategoryCard from "@/components/category/CategoryCard";
 import { CONFIGURATOR_SLOT_DESC } from "@/components/category/category-captions";
@@ -10,7 +12,8 @@ export const metadata: Metadata = {
   title: "Конфигуратор — JulCraft",
 };
 
-export default function ConfiguratorPage() {
+export default async function ConfiguratorPage() {
+  const currency = await getDisplayCurrency();
   const cats = db
     .select()
     .from(categories)
@@ -47,7 +50,7 @@ export default function ConfiguratorPage() {
               slug={cat.slug}
               name={cat.name}
               desc={CONFIGURATOR_SLOT_DESC[cat.slug] ?? ""}
-              count={`работа от ${cat.workPrice.toLocaleString("ru-RU")} ₽ · ${cat.baseWorkDays} дн`}
+              count={`работа от ${formatPrice(cat.workPrice, currency)} · ${cat.baseWorkDays} дн`}
               href={`/configurator/${cat.slug}`}
             />
           ))}

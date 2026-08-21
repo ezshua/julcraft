@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products, slotTemplates } from "@/drizzle/schema";
+import { getSettings } from "@/lib/get-settings";
+import { getDisplayCurrency } from "@/lib/currency-server";
 import CategoryList from "@/components/admin/CategoryList";
 import CategoryEditor from "@/components/admin/CategoryEditor";
 import NewCategoryModal from "@/components/admin/NewCategoryModal";
@@ -14,6 +16,10 @@ export default async function AdminCategoriesPage(props: {
   searchParams: Promise<{ id?: string }>;
 }) {
   const sp = await props.searchParams;
+
+  const { finance } = getSettings();
+  const currency = await getDisplayCurrency();
+  const currencyCode = currency.code;
 
   const allCategories = db
     .select()
@@ -69,15 +75,24 @@ export default async function AdminCategoriesPage(props: {
         <h1>Категории и слоты</h1>
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
           <span className="doodle">порядок = drag&drop</span>
-          <NewCategoryModal />
+          <NewCategoryModal finance={finance} currencyCode={currencyCode} />
         </div>
       </div>
 
       <div className="admin-2col">
-        <CategoryList categories={listItems} />
+        <CategoryList
+          categories={listItems}
+          finance={finance}
+          currencyCode={currencyCode}
+        />
 
         {editorCategory ? (
-          <CategoryEditor key={editorCategory.id} category={editorCategory} />
+          <CategoryEditor
+            key={editorCategory.id}
+            category={editorCategory}
+            finance={finance}
+            currencyCode={currencyCode}
+          />
         ) : (
           <div className="board board--paper" style={{ padding: "18px 20px" }}>
             <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>

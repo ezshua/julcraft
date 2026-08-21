@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { settings as settingsTable } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
 import { getSettings } from "@/lib/get-settings";
+import { validateFinanceSettings } from "@/lib/currency";
 
 const KNOWN_KEYS = new Set([
   "contacts.phone",
@@ -17,6 +18,10 @@ const KNOWN_KEYS = new Set([
   "about.principles",
   "telegram.botToken",
   "telegram.chatId",
+  "finance.currencies",
+  "finance.defaultCurrency",
+  "finance.filterLow",
+  "finance.filterHigh",
 ]);
 
 // JSON-поля валидируются парсингом при сохранении.
@@ -25,6 +30,7 @@ const JSON_KEYS = new Set([
   "about.short",
   "about.history",
   "about.principles",
+  "finance.currencies",
 ]);
 
 const itemSchema = z.object({
@@ -74,6 +80,31 @@ export async function PUT(request: Request) {
         return Response.json({ error: `Ключ «${key}» должен быть JSON` }, { status: 400 });
       }
     }
+  }
+
+  // Кросс-валидация finance.*: применяем элементы к текущим настройкам в памяти
+  const currentRows = db.select().from(settingsTable).all();
+  const map = new Map(currentRows.map((r) => [r.key, r.value]));
+  for (const raw of items) {
+    const { key, value } = itemSchema.parse(raw);
+    map.set(key, value);
+  }
+  let currencies: unknown;
+  try {
+    currencies = map.has("finance.currencies")
+      ? (JSON.parse(map.get("finance.currencies")!) as unknown)
+      : undefined;
+  } catch {
+    currencies = undefined;
+  }
+  const financeErr = validateFinanceSettings(
+    currencies,
+    map.get("finance.defaultCurrency"),
+    map.has("finance.filterLow") ? Number(map.get("finance.filterLow")) : undefined,
+    map.has("finance.filterHigh") ? Number(map.get("finance.filterHigh")) : undefined,
+  );
+  if (financeErr) {
+    return Response.json({ error: financeErr }, { status: 400 });
   }
 
   for (const raw of items) {

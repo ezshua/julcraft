@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "./ImageUploader";
 import { slugify } from "@/lib/format";
+import { amountToUsdCents, usdCentsToAmount, type FinanceSettings } from "@/lib/currency";
+import { useCurrency } from "@/lib/use-currency";
 import type { Product, ProductAvailability } from "@/drizzle/schema";
 
 const AVAILABILITY_OPTIONS = [
@@ -17,6 +19,8 @@ type Props = {
   categories: { id: number; name: string }[];
   /** Без product — режим «Новый товар» */
   product?: Product;
+  finance: FinanceSettings;
+  currencyCode: string;
 };
 
 function toDateInput(d: Date | null): string {
@@ -29,8 +33,11 @@ function fromDateInput(s: string): string | null {
 
 // Модалка товара — копия div.modal-overlay#modal из mockup/admin/products.html
 // (табы Основное/Фото/SEO + D-13: select «Наличие», «Резерв до», «Дней под заказ»).
-export default function ProductModal({ categories, product }: Props) {
+// Цена — в выбранной валюте (D-24): при открытии конвертируется из USD, при
+// сохранении — обратно в USD-центы.
+export default function ProductModal({ categories, product, finance, currencyCode }: Props) {
   const router = useRouter();
+  const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState(0);
 
@@ -39,7 +46,7 @@ export default function ProductModal({ categories, product }: Props) {
   const [categoryId, setCategoryId] = useState(
     product ? String(product.categoryId) : "",
   );
-  const [price, setPrice] = useState(product ? String(product.price) : "");
+  const [price, setPrice] = useState("");
   const [description, setDescription] = useState(product?.description ?? "");
   const [isNew, setIsNew] = useState(product?.isNew ?? false);
   const [isFeatured, setIsFeatured] = useState(product?.isFeatured ?? false);
@@ -65,6 +72,7 @@ export default function ProductModal({ categories, product }: Props) {
   const openCreate = () => {
     setError("");
     setTab(0);
+    setPrice("");
     setOpen(true);
   };
 
@@ -92,7 +100,7 @@ export default function ProductModal({ categories, product }: Props) {
         slug,
         description,
         categoryId: Number(categoryId),
-        price: Number(price),
+        price: amountToUsdCents(Number(price) || 0, currency.ratePerUsd),
         isNew,
         isFeatured,
         availability,
@@ -135,6 +143,7 @@ export default function ProductModal({ categories, product }: Props) {
           onClick={() => {
             setError("");
             setTab(0);
+            setPrice(String(usdCentsToAmount(product.price, currency.ratePerUsd)));
             setOpen(true);
           }}
         >
@@ -207,9 +216,10 @@ export default function ProductModal({ categories, product }: Props) {
                 </select>
               </div>
               <div className="field">
-                <label>Цена, ₽</label>
+                <label>Цена, {currency.symbol}</label>
                 <input
                   type="number"
+                  step="0.01"
                   placeholder="1 950"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}

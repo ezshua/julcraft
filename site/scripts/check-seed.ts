@@ -35,7 +35,8 @@ console.log(`ключей settings: ${allSettings.length}: ${allSettings.map((s)
 console.log("--- Сверка с макетом (D-11) ---");
 
 const kulony = allCategories.find((c) => c.slug === "kulony");
-assert(!!kulony && kulony.workPrice === 1000, "Кулоны workPrice = 1000");
+// 1000 ₽ по курсу рубля 85 (D-11 сверка с макетом; в БД — USD-центы)
+assert(!!kulony && kulony.workPrice === Math.round((1000 * 100) / 85), "Кулоны workPrice = 1000 ₽ (1176 ¢)");
 assert(!!kulony && kulony.baseWorkDays === 3, "Кулоны baseWorkDays = 3");
 assert(!!kulony && kulony.hasSlotTemplate === true, "Кулоны hasSlotTemplate = true");
 
@@ -119,7 +120,7 @@ assert(
 console.log("--- Сэмплы товаров ---");
 for (const p of allProducts) {
   const cat = allCategories.find((c) => c.id === p.categoryId);
-  console.log(`  ${p.slug} [${cat?.slug}] ${p.price} ₽ · ${p.availability}${p.orderDays ? ` · ${p.orderDays} дн` : ""}${p.isNew ? " · NEW" : ""}${p.isFeatured ? " · FEAT" : ""}`);
+  console.log(`  ${p.slug} [${cat?.slug}] ${(p.price / 100).toFixed(2)} $ · ${p.availability}${p.orderDays ? ` · ${p.orderDays} дн` : ""}${p.isNew ? " · NEW" : ""}${p.isFeatured ? " · FEAT" : ""}`);
 }
 
 console.log("Проверка завершена.");

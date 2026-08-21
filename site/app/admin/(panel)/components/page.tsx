@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { components } from "@/drizzle/schema";
+import { getSettings } from "@/lib/get-settings";
+import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice } from "@/lib/format";
 import ComponentModal from "@/components/admin/ComponentModal";
 import DeleteButton from "@/components/admin/DeleteButton";
@@ -45,6 +47,10 @@ export default async function AdminComponentsPage(props: {
   searchParams: Promise<{ t?: string; st?: string; page?: string }>;
 }) {
   const sp = await props.searchParams;
+
+  const { finance } = getSettings();
+  const currency = await getDisplayCurrency();
+  const currencyCode = currency.code;
 
   const t = TYPE_FILTERS.some((x) => x.value === sp.t) ? sp.t! : "";
   const st = ["any", "in", "zero"].includes(sp.st ?? "") ? sp.st! : "any";
@@ -92,7 +98,7 @@ export default async function AdminComponentsPage(props: {
         <h1>Склад комплектующих</h1>
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
           <span className="doodle">PNG на белом фоне!</span>
-          <ComponentModal />
+          <ComponentModal finance={finance} currencyCode={currencyCode} />
         </div>
       </div>
 
@@ -159,8 +165,8 @@ export default async function AdminComponentsPage(props: {
                       {TYPE_FILTERS.find((x) => x.value === c.componentType)?.label}
                     </span>
                   </td>
-                  <td className="cell-price">{formatPrice(c.price)}</td>
-                  <td className="cell-price">{formatPrice(c.processingPrice)}</td>
+                  <td className="cell-price">{formatPrice(c.price, currency)}</td>
+                  <td className="cell-price">{formatPrice(c.processingPrice, currency)}</td>
                   <td className={c.stockQty === 0 ? "num num--zero" : "num"}>
                     {c.stockQty}
                   </td>
@@ -174,7 +180,7 @@ export default async function AdminComponentsPage(props: {
                   <td>{c.deliveryDays ?? "—"}</td>
                   <td>
                     <div className="actions">
-                      <ComponentModal component={c} />
+                      <ComponentModal component={c} finance={finance} currencyCode={currencyCode} />
                       <DeleteButton
                         url={`/api/admin/components/${c.id}`}
                         confirmText={`Удалить комплектующее «${c.name}»?`}

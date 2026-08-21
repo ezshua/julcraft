@@ -1,6 +1,7 @@
 import { db } from "./db";
 import { settings as settingsTable } from "../drizzle/schema";
 import { defaultSettings, type SiteSettings } from "./settings";
+import { parseFinance } from "./currency";
 
 function parse<T>(raw: string | undefined, fallback: T): T {
   if (!raw) return fallback;
@@ -33,5 +34,11 @@ export function getSettings(): SiteSettings {
       botToken: map.get("telegram.botToken") ?? "",
       chatId: map.get("telegram.chatId") ?? "",
     },
+    finance: parseFinance(
+      map.get("finance.currencies"),
+      map.get("finance.defaultCurrency"),
+      map.get("finance.filterLow"),
+      map.get("finance.filterHigh"),
+    ),
   };
 }

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
+import { getSettings } from "@/lib/get-settings";
+import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice } from "@/lib/format";
 import ProductModal from "@/components/admin/ProductModal";
 import DeleteButton from "@/components/admin/DeleteButton";
@@ -36,6 +38,10 @@ export default async function AdminProductsPage(props: {
   searchParams: Promise<{ f?: string; cat?: string; page?: string }>;
 }) {
   const sp = await props.searchParams;
+
+  const { finance } = getSettings();
+  const currency = await getDisplayCurrency();
+  const currencyCode = currency.code;
 
   const f: FilterValue = FILTERS.some((x) => x.value === sp.f)
     ? (sp.f as FilterValue)
@@ -108,7 +114,11 @@ export default async function AdminProductsPage(props: {
         <h1>Товары</h1>
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
           <span className="doodle">всё в одном экземпляре</span>
-          <ProductModal categories={allCats.map((c) => ({ id: c.id, name: c.name }))} />
+          <ProductModal
+            categories={allCats.map((c) => ({ id: c.id, name: c.name }))}
+            finance={finance}
+            currencyCode={currencyCode}
+          />
         </div>
       </div>
 
@@ -176,7 +186,7 @@ export default async function AdminProductsPage(props: {
                     <small>ID (URL): {p.slug}</small>
                   </td>
                   <td>{catById.get(p.categoryId)?.name ?? "—"}</td>
-                  <td className="cell-price">{formatPrice(p.price)}</td>
+                  <td className="cell-price">{formatPrice(p.price, currency)}</td>
                   <td>{p.isNew ? <span className="tag tag--new">новинка</span> : "—"}</td>
                   <td>
                     {p.isFeatured ? <span className="tag tag--reserve">да</span> : "—"}
@@ -187,6 +197,8 @@ export default async function AdminProductsPage(props: {
                       <ProductModal
                         categories={allCats.map((c) => ({ id: c.id, name: c.name }))}
                         product={p}
+                        finance={finance}
+                        currencyCode={currencyCode}
                       />
                       <DeleteButton
                         url={`/api/admin/products/${p.id}`}

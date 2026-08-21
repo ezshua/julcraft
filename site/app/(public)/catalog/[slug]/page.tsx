@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
+import { getSettings } from "@/lib/get-settings";
+import { getDisplayCurrency } from "@/lib/currency-server";
+import { formatPrice } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import ProductCard from "@/components/product/ProductCard";
 import EmptyState from "@/components/ui/EmptyState";
@@ -22,13 +25,6 @@ export async function generateMetadata(props: {
 }
 
 const PAGE_SIZE = 9;
-
-const PRICE_FILTERS = [
-  { value: "0", label: "Все" },
-  { value: "1", label: "Цена до 2 000 ₽" },
-  { value: "2", label: "2 000 — 2 500 ₽" },
-  { value: "3", label: "От 2 500 ₽" },
-];
 
 const AVAIL_FILTERS = [
   { value: "any", label: "Любое наличие" },
@@ -56,20 +52,35 @@ export default async function CategoryPage(props: {
   const cat = db.select().from(categories).where(eq(categories.slug, slug)).get();
   if (!cat) notFound();
 
+  // Границы фильтра цены — из настроек (finance.filterLow/filterHigh, USD-центы, Q-4);
+  // метки рендерим в выбранной валюте.
+  const { finance } = getSettings();
+  const currency = await getDisplayCurrency();
+  const { filterLow, filterHigh } = finance;
+  const PRICE_FILTERS = [
+    { value: "0", label: "Все" },
+    { value: "1", label: `Цена до ${formatPrice(filterLow, currency)}` },
+    {
+      value: "2",
+      label: `${formatPrice(filterLow, currency)} — ${formatPrice(filterHigh, currency)}`,
+    },
+    { value: "3", label: `От ${formatPrice(filterHigh, currency)}` },
+  ];
+
   const price = ["1", "2", "3"].includes(sp.price ?? "") ? sp.price! : "0";
   const avail = ["in", "order", "new"].includes(sp.avail ?? "") ? sp.avail! : "any";
   const sort = ["cheap", "expensive"].includes(sp.sort ?? "") ? sp.sort! : "new";
   const page = Math.max(1, Number.parseInt(sp.page ?? "1", 10) || 1);
 
-  // Фильтрация
+  // Фильтрация (цены в БД — USD-центы)
   const priceCond = (() => {
     switch (price) {
       case "1":
-        return lte(products.price, 2000);
+        return lte(products.price, filterLow);
       case "2":
-        return and(gte(products.price, 2000), lte(products.price, 2500));
+        return and(gte(products.price, filterLow), lte(products.price, filterHigh));
       case "3":
-        return gte(products.price, 2500);
+        return gte(products.price, filterHigh);
       default:
         return undefined;
     }

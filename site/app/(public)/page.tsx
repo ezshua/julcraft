@@ -4,7 +4,8 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
-import { plural } from "@/lib/format";
+import { getDisplayCurrency } from "@/lib/currency-server";
+import { formatPrice, plural } from "@/lib/format";
 import { telHref } from "@/lib/settings";
 import ProductCard from "@/components/product/ProductCard";
 import CategoryCard from "@/components/category/CategoryCard";
@@ -15,8 +16,9 @@ export const metadata: Metadata = {
   title: "JulCraft — витрина · эст. 1976",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
   const settings = getSettings();
+  const currency = await getDisplayCurrency();
 
   // Витрина: правило R-1 — сначала избранное, затем новинки, затем остальные
   const allProducts = db.select().from(products).all();
@@ -39,9 +41,9 @@ export default function HomePage() {
   for (const p of allProducts) {
     perCategory.set(p.categoryId, (perCategory.get(p.categoryId) ?? 0) + 1);
   }
-  const countLabel = (slug: string, n: number) => {
-    if (slug === "komplekty") return `${n} ${plural(n, ["комплект", "комплекта", "комплектов"])}`;
-    if (slug === "vintazhnyj-remont") return "от 300 ₽";
+  const countLabel = (cat: (typeof cats)[number], n: number) => {
+    if (cat.slug === "komplekty") return `${n} ${plural(n, ["комплект", "комплекта", "комплектов"])}`;
+    if (cat.slug === "vintazhnyj-remont") return `от ${formatPrice(cat.workPrice, currency)}`;
     return `${n} ${plural(n, ["изделие", "изделия", "изделий"])}`;
   };
 
@@ -86,7 +88,7 @@ export default function HomePage() {
               slug={cat.slug}
               name={cat.name}
               desc={HOME_CAT_DESC[cat.slug] ?? cat.description}
-              count={countLabel(cat.slug, perCategory.get(cat.id) ?? 0)}
+              count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
               href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
             />
           ))}

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { orders, products } from "@/drizzle/schema";
+import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, plural } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -24,13 +25,16 @@ type ConfigItem = {
   processingPrice?: number;
 };
 
-function receiptRows(order: (typeof orders.$inferSelect) & { productName?: string | null }) {
+function receiptRows(
+  order: (typeof orders.$inferSelect) & { productName?: string | null },
+  currency: Awaited<ReturnType<typeof getDisplayCurrency>>,
+) {
   const rows: { label: string; value: string }[] = [];
 
   if (order.type === "product") {
     rows.push({ label: "ТИП", value: "товар" });
     rows.push({ label: "СОСТАВ", value: order.productName ?? "—" });
-    rows.push({ label: "ЦЕНА", value: formatPrice(order.calcPrice) });
+    rows.push({ label: "ЦЕНА", value: formatPrice(order.calcPrice, currency) });
     rows.push({ label: "КОНТАКТ", value: order.contact });
     rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
   } else if (order.type === "custom") {
@@ -55,7 +59,7 @@ function receiptRows(order: (typeof orders.$inferSelect) & { productName?: strin
             .join(" + ")
         : "—",
     });
-    rows.push({ label: "ЦЕНА", value: formatPrice(order.calcPrice) });
+    rows.push({ label: "ЦЕНА", value: formatPrice(order.calcPrice, currency) });
     rows.push({ label: "СРОК", value: `${order.calcDays} ${plural(order.calcDays, ["день", "дня", "дней"])}` });
     rows.push({ label: "КОНТАКТ", value: order.contact });
     rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
@@ -82,13 +86,15 @@ export default async function OrderSuccessPage(props: {
   const order = db.select().from(orders).where(eq(orders.id, orderId)).get();
   if (!order) notFound();
 
+  const currency = await getDisplayCurrency();
+
   let productName: string | null = null;
   if (order.productId) {
     const product = db.select().from(products).where(eq(products.id, order.productId)).get();
     productName = product?.name ?? null;
   }
 
-  const rows = receiptRows({ ...order, productName });
+  const rows = receiptRows({ ...order, productName }, currency);
 
   return (
     <>

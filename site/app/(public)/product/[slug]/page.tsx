@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
+import { getSettings } from "@/lib/get-settings";
+import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import ProductCard from "@/components/product/ProductCard";
@@ -31,6 +33,9 @@ export default async function ProductPage(props: {
   const { slug } = await props.params;
   const product = db.select().from(products).where(eq(products.slug, slug)).get();
   if (!product) notFound();
+
+  const { finance } = getSettings();
+  const currency = await getDisplayCurrency();
 
   const category = db
     .select()
@@ -62,7 +67,7 @@ export default async function ProductPage(props: {
 
         <div className="product-info mt-40" style={{ maxWidth: "640px" }}>
           <h1>{product.name}</h1>
-          <span className="price">{formatPrice(product.price)}</span>
+          <span className="price">{formatPrice(product.price, currency)}</span>
           <p className="p-desc">{product.description}</p>
           <p className="p-desc muted">{MUTED_DESC}</p>
 
@@ -87,7 +92,11 @@ export default async function ProductPage(props: {
           <AvailProduct product={product} />
 
           <div className="cta-row mt-30">
-            <OrderModal product={product} />
+            <OrderModal
+              product={product}
+              finance={finance}
+              currencyCode={currency.code}
+            />
             <a className="btn btn--secondary" href={`/configurator/${category?.slug ?? ""}`}>
               Собрать похожий →
             </a>

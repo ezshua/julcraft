@@ -1,4 +1,5 @@
-// Утилиты форматирования (этап 3). Форматы — как в макете: "1 950 ₽", "3 дня" и т.п.
+// Утилиты форматирования (этап 3). Форматы — как в макете: "1 950.00 ₴", "3 дня" и т.п.
+// Цены (formatPrice) — мультивалютные, см. lib/currency.ts (plan-finances.md).
 
 const SHORT_DAYS = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
 const FULL_DAYS = [
@@ -28,10 +29,7 @@ export function slugify(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/** 1950 → "1 950 ₽" (разделитель тысяч — неразрывный пробел, ru-RU) */
-export function formatPrice(n: number): string {
-  return `${n.toLocaleString("ru-RU")} ₽`;
-}
+export { formatPrice, formatMoney, formatSnapshot } from "./currency";
 
 /** Склонение: plural(3, ["день","дня","дней"]) → "дня" */
 export function plural(

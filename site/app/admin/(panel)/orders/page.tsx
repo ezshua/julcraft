@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { categories, orders, products } from "@/drizzle/schema";
+import { getSettings } from "@/lib/get-settings";
+import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice } from "@/lib/format";
 import OrderModal, { type OrderRow } from "@/components/admin/OrderModal";
 
@@ -55,6 +57,10 @@ export default async function AdminOrdersPage(props: {
   searchParams: Promise<{ st?: string; ty?: string; page?: string }>;
 }) {
   const sp = await props.searchParams;
+
+  const { finance } = getSettings();
+  const currency = await getDisplayCurrency();
+  const currencyCode = currency.code;
 
   const st = STATUS_FILTERS.some((x) => x.value === sp.st) ? sp.st! : "all";
   const ty = TYPE_FILTERS.some((x) => x.value === sp.ty) ? sp.ty! : "all";
@@ -197,19 +203,19 @@ export default async function AdminOrdersPage(props: {
                       <small>{r.contact}</small>
                     </td>
                     <td className="cell-price">
-                      {r.type === "contact" ? "—" : formatPrice(r.calcPrice)}
+                      {r.type === "contact" ? "—" : formatPrice(r.calcPrice, currency)}
                     </td>
                     <td className="num">
                       {r.type === "custom" && r.calcDays > 0 ? `${r.calcDays} дн` : "—"}
                     </td>
-                    <td>{r.collagePath ? <OrderModal order={r} collageOnly /> : "—"}</td>
+                    <td>{r.collagePath ? <OrderModal order={r} collageOnly finance={finance} currencyCode={currencyCode} /> : "—"}</td>
                     <td>
                       <span className={`tag tag--${r.status}`}>{r.status}</span>
                     </td>
                     <td className="num">{fmtDate(r.createdAt)}</td>
                     <td>
                       <div className="actions">
-                        <OrderModal order={r} />
+                        <OrderModal order={r} finance={finance} currencyCode={currencyCode} />
                       </div>
                     </td>
                   </tr>

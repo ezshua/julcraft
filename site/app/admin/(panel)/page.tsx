@@ -2,6 +2,7 @@ import Link from "next/link";
 import { and, desc, eq, gte, lt } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { components, orders, products } from "@/drizzle/schema";
+import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, plural } from "@/lib/format";
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -40,6 +41,7 @@ function typeLabel(type: string, productName: string | null, configJson: string)
 }
 
 export default async function DashboardPage() {
+  const currency = await getDisplayCurrency();
   const now = new Date();
   const weekAgo = new Date(now.getTime() - WEEK_MS);
   const twoWeeksAgo = new Date(now.getTime() - 2 * WEEK_MS);
@@ -115,10 +117,10 @@ export default async function DashboardPage() {
             <div className="sub">в работе: {inProgress.length}</div>
           </div>
           <div className="stat-card stat-card--brown">
-            <div className="num">{formatPrice(revenue)}</div>
+            <div className="num">{formatPrice(revenue, currency)}</div>
             <div className="lbl">Выручка за неделю</div>
             <div className="sub">
-              из них {formatPrice(revenueCustom)} — конфигуратор
+              из них {formatPrice(revenueCustom, currency)} — конфигуратор
             </div>
           </div>
         </div>
@@ -158,7 +160,7 @@ export default async function DashboardPage() {
                         <small>{o.contact}</small>
                       </td>
                       <td className="cell-price">
-                        {o.type === "contact" ? "—" : formatPrice(o.calcPrice)}
+                        {o.type === "contact" ? "—" : formatPrice(o.calcPrice, currency)}
                       </td>
                       <td>{o.type === "custom" ? `${o.calcDays} дн` : "—"}</td>
                       <td>
