@@ -13,7 +13,7 @@ import { HOME_CAT_DESC } from "@/components/category/category-captions";
 import HoursBoard from "@/components/ui/HoursBoard";
 
 export const metadata: Metadata = {
-  title: "JulCraft — витрина · эст. 1976",
+  title: "JulCraft — витрина · эст. 2026",
 };
 
 export default async function HomePage() {
@@ -51,7 +51,7 @@ export default async function HomePage() {
   return (
     <>
       <div className="signboard">
-        <p className="est">✹ эст. 1976 · открыто снова ✹</p>
+        <p className="est">✹ эст. 2026 · открыто снова ✹</p>
         <h1>JulCraft</h1>
         <p className="tag">украшения · винтажная бижутерия · ремонт бабушкиных бус</p>
         <div className="cta-row">

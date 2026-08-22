@@ -56,7 +56,7 @@ export default function NotFound() {
             <span>ул. Мстислава Скрипника, 40А — на пятачке</span>
           </div>
           <div className="f-copy">
-            <span>© 2026 JulCraft · с 1976 года (почти)</span>
+            <span>© 2026 JulCraft · с 2002 года (почти)</span>
           </div>
           <div className="f-socials">
             <a href="/contacts" aria-label="Контакты">

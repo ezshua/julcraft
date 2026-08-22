@@ -12,7 +12,7 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
           <div className="f-brand">
             JulCraft
             <span>
-              {contacts.address} · мастерская украшений · эст. 1976 (почти)
+              {contacts.address} · мастерская украшений · эст. 2002 (почти)
             </span>
           </div>
         </div>
@@ -51,7 +51,7 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
           </div>
         </div>
       </div>
-      <div className="f-copy">JulCraft · с 1976 года (почти) · © 2026</div>
+      <div className="f-copy">JulCraft · с 2002 года (почти) · © 2026</div>
     </footer>
   );
 }
