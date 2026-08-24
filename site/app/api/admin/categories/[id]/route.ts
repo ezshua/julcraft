@@ -2,6 +2,7 @@ import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, slotTemplates } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
+import { isValidComponentTypeCode } from "@/lib/component-types";
 import { categorySchema, type CategoryInput } from "@/lib/schemas";
 
 // Категория + слоты (редактор правой панели)
@@ -80,6 +81,12 @@ export async function PUT(
   for (const s of data.slots) {
     if (s.minQty > s.maxQty) {
       return Response.json({ error: "Min не может быть больше Max" }, { status: 400 });
+    }
+    if (!isValidComponentTypeCode(s.componentType)) {
+      return Response.json(
+        { error: `Неизвестный тип слота: ${s.componentType}` },
+        { status: 400 },
+      );
     }
   }
 

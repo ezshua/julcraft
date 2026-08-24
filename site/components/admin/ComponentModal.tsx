@@ -11,28 +11,30 @@ import {
   findCurrency,
   type FinanceSettings,
 } from "@/lib/currency";
-import type { Component, ComponentType } from "@/drizzle/schema";
+import type { Component } from "@/drizzle/schema";
 
-export const TYPE_OPTIONS = [
-  { value: "stone", label: "stone — камень" },
-  { value: "pendant", label: "pendant — подвеска" },
-  { value: "bead", label: "bead — бусина" },
-  { value: "cord", label: "cord — шнур и цепь" },
-  { value: "clasp", label: "clasp — застёжка" },
-  { value: "base", label: "base — основа" },
-] as const;
+// Опция выбора типа — данные из таблицы componentTypes (план componentsExt).
+export type ComponentTypeOption = { value: string; label: string };
+
 
 type Props = {
   /** Без component — режим «Новое комплектующее» */
   component?: Component;
   finance: FinanceSettings;
   currencyCode: string;
+  /** Активные типы из БД; первый по sortOrder — дефолт для новой записи. */
+  typeOptions: ComponentTypeOption[];
 };
 
 // Модалка комплектующего — копия div.modal-overlay#modal из mockup/admin/components.html.
 // Цена и обработка — в НЕЗАВИСИМЫХ валютах (Q-10/D-24): у каждого поля свой
 // селект валюты; при смене валюты число пересчитывается в неё.
-export default function ComponentModal({ component, finance, currencyCode }: Props) {
+export default function ComponentModal({
+  component,
+  finance,
+  currencyCode,
+  typeOptions,
+}: Props) {
   const router = useRouter();
 
   // Пересчёт числа поля при смене его валюты (полная точность, округление на выводе)
@@ -51,8 +53,25 @@ export default function ComponentModal({ component, finance, currencyCode }: Pro
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(component?.name ?? "");
   const [componentType, setComponentType] = useState(
-    component?.componentType ?? "stone",
+    component?.componentType ?? "",
   );
+
+  // У новой записи — первый активный тип из БД. У существующей храним
+  // сохранённый код даже если его нет в списке (тип могли деактивировать),
+  // чтобы открытие модалки не подменяло данные; такой код показываем первой
+  // опцией с пометкой.
+  const typeKnown = typeOptions.some((o) => o.value === componentType);
+  const selectValue =
+    component && !typeKnown
+      ? componentType
+      : componentType || typeOptions[0]?.value || "";
+  const selectOptions =
+    component && !typeKnown
+      ? [
+          { value: componentType, label: componentType + " (текущий тип)" },
+          ...typeOptions,
+        ]
+      : typeOptions;
   const [stockQty, setStockQty] = useState(
     component ? String(component.stockQty) : "0",
   );
@@ -203,12 +222,10 @@ export default function ComponentModal({ component, finance, currencyCode }: Pro
             <div className="field">
               <label>Тип (componentType)</label>
               <select
-                value={componentType}
-                onChange={(e) =>
-                  setComponentType(e.target.value as ComponentType)
-                }
+                value={selectValue}
+                onChange={(e) => setComponentType(e.target.value)}
               >
-                {TYPE_OPTIONS.map((o) => (
+                {selectOptions.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}
                   </option>

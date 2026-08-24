@@ -2,15 +2,13 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { TYPE_OPTIONS } from "./ComponentModal";
+import type { ComponentTypeOption } from "./ComponentModal";
 import { plural } from "@/lib/format";
 import {
   amountToMinor,
   minorToAmount,
   type FinanceSettings,
 } from "@/lib/currency";
-
-import type { ComponentType } from "@/drizzle/schema";
 
 export type EditorSlot = {
   id: number | null;
@@ -39,12 +37,19 @@ type Props = {
   category: EditorCategory;
   finance: FinanceSettings;
   currencyCode: string;
+  /** Активные типы из БД; первый по sortOrder — для нового слота. */
+  typeOptions: ComponentTypeOption[];
 };
 
 // Правая панель: форма категории + редактор слотов (копия mockup/admin/categories.html).
 // Серверный page рендерит компонент с key={category.id} — при смене категории состояние сбрасывается.
 // Работа мастера — в выбранной валюте (D-24): у поля свой селект валюты.
-export default function CategoryEditor({ category, finance, currencyCode }: Props) {
+export default function CategoryEditor({
+  category,
+  finance,
+  currencyCode,
+  typeOptions,
+}: Props) {
   const router = useRouter();
   const keyCounter = useRef(1000);
   const [name, setName] = useState(category.name);
@@ -242,14 +247,21 @@ export default function CategoryEditor({ category, finance, currencyCode }: Prop
                 <div className="field">
                   <label>Тип комплектующих</label>
                   <select
-                    value={s.componentType}
+                    value={
+                      typeOptions.some((o) => o.value === s.componentType)
+                        ? s.componentType
+                        : ""
+                    }
                     onChange={(e) =>
-                      patchSlot(s.key, {
-                        componentType: e.target.value as ComponentType,
-                      })
+                      patchSlot(s.key, { componentType: e.target.value })
                     }
                   >
-                    {TYPE_OPTIONS.map((o) => (
+                    {!typeOptions.some((o) => o.value === s.componentType) && (
+                      <option value="">
+                        {s.componentType || "—"} (текущий тип)
+                      </option>
+                    )}
+                    {typeOptions.map((o) => (
                       <option key={o.value} value={o.value}>
                         {o.label}
                       </option>

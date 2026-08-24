@@ -4,6 +4,9 @@ import { db } from "@/lib/db";
 import { categories, products, slotTemplates } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
+import { getComponentTypes } from "@/lib/component-types";
+import AdminTabs from "@/components/admin/AdminTabs";
+import ComponentTypesManager from "@/components/admin/ComponentTypesManager";
 import CategoryList from "@/components/admin/CategoryList";
 import CategoryEditor from "@/components/admin/CategoryEditor";
 import NewCategoryModal from "@/components/admin/NewCategoryModal";
@@ -28,6 +31,13 @@ export default async function AdminCategoriesPage(props: {
     .all();
   const allProducts = db.select().from(products).all();
   const allSlots = db.select().from(slotTemplates).all();
+
+  // Типы комплектующих (план componentsExt): активные — для выпадающих списков,
+  // все — для менеджера на вкладке «Типы комплектующих».
+  const allTypes = getComponentTypes();
+  const activeTypeOptions = allTypes
+    .filter((ty) => ty.isActive)
+    .map((ty) => ({ value: ty.code, label: ty.name }));
 
   const productCount = (categoryId: number) =>
     allProducts.filter((p) => p.categoryId === categoryId).length;
@@ -71,6 +81,45 @@ export default async function AdminCategoriesPage(props: {
       }
     : null;
 
+  const typesTab = (
+    <ComponentTypesManager
+      types={allTypes.map((ty) => ({
+        id: ty.id,
+        code: ty.code,
+        name: ty.name,
+        sortOrder: ty.sortOrder,
+        isActive: ty.isActive,
+      }))}
+    />
+  );
+
+  const categoriesTab = (
+    <div className="admin-2col">
+      <CategoryList
+        categories={listItems}
+        finance={finance}
+        currencyCode={currencyCode}
+      />
+
+      {editorCategory ? (
+        <CategoryEditor
+          key={editorCategory.id}
+          category={editorCategory}
+          finance={finance}
+          currencyCode={currencyCode}
+          typeOptions={activeTypeOptions}
+        />
+      ) : (
+        <div className="board board--paper" style={{ padding: "18px 20px" }}>
+          <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
+            Редактор категории
+          </h3>
+          <small className="muted">Выберите категорию слева</small>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
       <div className="page-title">
@@ -81,29 +130,12 @@ export default async function AdminCategoriesPage(props: {
         </div>
       </div>
 
-      <div className="admin-2col">
-        <CategoryList
-          categories={listItems}
-          finance={finance}
-          currencyCode={currencyCode}
-        />
-
-        {editorCategory ? (
-          <CategoryEditor
-            key={editorCategory.id}
-            category={editorCategory}
-            finance={finance}
-            currencyCode={currencyCode}
-          />
-        ) : (
-          <div className="board board--paper" style={{ padding: "18px 20px" }}>
-            <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
-              Редактор категории
-            </h3>
-            <small className="muted">Выберите категорию слева</small>
-          </div>
-        )}
-      </div>
+      <AdminTabs
+        firstLabel="Категории"
+        secondLabel="Типы комплектующих"
+        first={categoriesTab}
+        second={typesTab}
+      />
     </>
   );
 }

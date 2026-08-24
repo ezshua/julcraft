@@ -3,6 +3,7 @@ import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { components } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
+import { getActiveComponentTypes, getComponentTypes } from "@/lib/component-types";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, asPriced } from "@/lib/format";
 import ComponentModal from "@/components/admin/ComponentModal";
@@ -15,24 +16,15 @@ export const metadata: Metadata = {
 
 const PAGE_SIZE = 12;
 
-const TYPE_FILTERS = [
-  { value: "", label: "Все" },
-  { value: "stone", label: "Камень" },
-  { value: "pendant", label: "Подвеска" },
-  { value: "bead", label: "Бусина" },
-  { value: "cord", label: "Шнур и цепь" },
-  { value: "clasp", label: "Застёжка" },
-  { value: "base", label: "Основа" },
+// Палитра тегов по кругу (sortOrder): цвета из style-memphis.css.
+const TAG_CYCLE = [
+  "tag--reserve",
+  "tag--new",
+  "tag--mustard",
+  "tag--olive",
+  "tag--in_progress",
+  "tag--stock",
 ] as const;
-
-const TYPE_TAGS: Record<string, string> = {
-  stone: "tag--reserve",
-  pendant: "tag--new",
-  bead: "tag--mustard",
-  cord: "tag--olive",
-  clasp: "tag--none",
-  base: "tag--in_progress",
-};
 
 function buildUrl(params: Record<string, string | undefined>): string {
   const url = new URLSearchParams();
@@ -52,7 +44,15 @@ export default async function AdminComponentsPage(props: {
   const currency = await getDisplayCurrency();
   const currencyCode = currency.code;
 
-  const t = TYPE_FILTERS.some((x) => x.value === sp.t) ? sp.t! : "";
+  // Активные типы из БД: фильтры тулбара и опции модалок (план componentsExt).
+  // Все типы (включая неактивные) — для подписей/палитры существующих строк.
+  const activeTypes = getActiveComponentTypes();
+  const allTypes = getComponentTypes();
+  const typeFilters = [
+    { value: "", label: "Все" },
+    ...activeTypes.map((ty) => ({ value: ty.code, label: ty.name })),
+  ];
+  const t = typeFilters.some((x) => x.value === sp.t) ? sp.t! : "";
   const st = ["any", "in", "zero"].includes(sp.st ?? "") ? sp.st! : "any";
   const page = Math.max(1, Number.parseInt(sp.page ?? "1", 10) || 1);
 
@@ -98,7 +98,14 @@ export default async function AdminComponentsPage(props: {
         <h1>Склад комплектующих</h1>
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
           <span className="doodle">PNG на белом фоне!</span>
-          <ComponentModal finance={finance} currencyCode={currencyCode} />
+          <ComponentModal
+            finance={finance}
+            currencyCode={currencyCode}
+            typeOptions={activeTypes.map((ty) => ({
+              value: ty.code,
+              label: ty.name,
+            }))}
+          />
         </div>
       </div>
 
@@ -114,7 +121,7 @@ export default async function AdminComponentsPage(props: {
           }}
         >
           <div className="filters">
-            {TYPE_FILTERS.map((x) => (
+            {typeFilters.map((x) => (
               <a
                 key={x.value || "all"}
                 className={t === x.value ? "filter is-active" : "filter"}
@@ -161,8 +168,19 @@ export default async function AdminComponentsPage(props: {
                     <small>type: {c.componentType}</small>
                   </td>
                   <td>
-                    <span className={`tag ${TYPE_TAGS[c.componentType]}`}>
-                      {TYPE_FILTERS.find((x) => x.value === c.componentType)?.label}
+                    <span
+                      className={`tag ${
+                        TAG_CYCLE[
+                          Math.abs(allTypes.findIndex((ty) => ty.code === c.componentType)) %
+                            TAG_CYCLE.length
+                        ]
+                      }`}
+                      title={allTypes.find((ty) => ty.code === c.componentType)?.isActive === false ? "тип деактивирован" : undefined}
+                    >
+                      {
+                        allTypes.find((ty) => ty.code === c.componentType)?.name ??
+                        c.componentType
+                      }
                     </span>
                   </td>
                   <td className="cell-price">{formatPrice(asPriced(c.price, c.priceCurrency), currency, finance)}</td>
@@ -180,7 +198,15 @@ export default async function AdminComponentsPage(props: {
                   <td>{c.deliveryDays ?? "—"}</td>
                   <td>
                     <div className="actions">
-                      <ComponentModal component={c} finance={finance} currencyCode={currencyCode} />
+                      <ComponentModal
+                        component={c}
+                        finance={finance}
+                        currencyCode={currencyCode}
+                        typeOptions={activeTypes.map((ty) => ({
+                          value: ty.code,
+                          label: ty.name,
+                        }))}
+                      />
                       <DeleteButton
                         url={`/api/admin/components/${c.id}`}
                         confirmText={`Удалить комплектующее «${c.name}»?`}

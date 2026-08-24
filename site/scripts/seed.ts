@@ -4,6 +4,7 @@ import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { db, sqlite } from "../lib/db";
 import {
   categories,
+  componentTypes,
   components,
   orders,
   products,
@@ -196,6 +197,22 @@ const componentSeed: ComponentSeed[] = [
   { name: "Колпачки для бус, пара", componentType: "clasp", price: 40, processingPrice: 15, stockQty: 60, isOrderable: false, deliveryDays: null, photoFile: "kolpachki-dlya-bus.svg" },
   { name: "Швензы латунные, пара", componentType: "base", price: 50, processingPrice: 20, stockQty: 45, isOrderable: false, deliveryDays: null, photoFile: "shvenzy-latunnye.svg" },
   { name: "Основа броши-игла, латунь", componentType: "base", price: 80, processingPrice: 25, stockQty: 28, isOrderable: false, deliveryDays: null, photoFile: "osnova-broshi.svg" },
+];
+
+// Типы комплектующих (план componentsExt): коды совпадают с историческими
+// значениями COMPONENT_TYPES — обратная совместимость данных сохранена.
+// Seed делает полный пересид (решение по плану): кастомные типы стираются.
+const componentTypeSeed: Array<{
+  code: string;
+  name: string;
+  sortOrder: number;
+}> = [
+  { code: "stone", name: "Камень", sortOrder: 0 },
+  { code: "pendant", name: "Подвеска", sortOrder: 1 },
+  { code: "bead", name: "Бусина", sortOrder: 2 },
+  { code: "cord", name: "Шнур и цепь", sortOrder: 3 },
+  { code: "clasp", name: "Застёжка", sortOrder: 4 },
+  { code: "base", name: "Основа", sortOrder: 5 },
 ];
 
 type ProductSeed = {
@@ -560,6 +577,7 @@ function main() {
   db.delete(slotTemplates).run();
   db.delete(components).run();
   db.delete(categories).run();
+  db.delete(componentTypes).run();
   db.delete(settings).run();
 
   // сброс счётчиков AUTOINCREMENT (иначе id «плывут» после пересидов — см. stage1_3review.md §4.4).
@@ -588,6 +606,11 @@ function main() {
       })
       .run();
     categoryIds.set(c.slug, Number(res.lastInsertRowid));
+  });
+
+  // 1.1. Типы комплектующих (план componentsExt)
+  componentTypeSeed.forEach((t) => {
+    db.insert(componentTypes).values(t).run();
   });
 
   // 2. Шаблоны слотов
@@ -667,6 +690,7 @@ function main() {
 
   console.log(
     `Seed готов: ${categorySeed.length} категорий, ${slotCount} слотов, ` +
+      `${componentTypeSeed.length} типов, ` +
       `${componentSeed.length} комплектующих (SVG в public/uploads/components/), ` +
       `${productSeed.length} товаров, ${Object.keys(settingsSeed).length} ключей settings`,
   );

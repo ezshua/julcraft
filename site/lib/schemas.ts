@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { COMPONENT_TYPES, PRODUCT_AVAILABILITY } from "@/drizzle/schema";
+import { PRODUCT_AVAILABILITY } from "@/drizzle/schema";
 
 const nullableString = z
   .string()
@@ -32,9 +32,11 @@ export const productSchema = z.object({
 });
 
 // Комплектующее: форма модалки склада.
+// componentType — код из таблицы componentTypes; существование кода
+// проверяется на сервере в API (см. isValidComponentTypeCode).
 export const componentSchema = z.object({
   name: z.string().trim().min(1, "Укажите название"),
-  componentType: z.enum(COMPONENT_TYPES),
+  componentType: z.string().trim().min(1, "Укажите тип комплектующего"),
   price: z.number().int().min(0, "Цена не может быть отрицательной"),
   priceCurrency: z.string().regex(/^[A-Z]{3}$/, "Некорректный код валюты цены"),
   processingPrice: z.number().int().min(0, "Обработка не может быть отрицательной"),
@@ -51,10 +53,38 @@ export const componentSchema = z.object({
 export const slotSchema = z.object({
   id: z.number().int().positive().nullable().optional(),
   name: z.string().trim().min(1, "Укажите название слота"),
-  componentType: z.enum(COMPONENT_TYPES),
+  componentType: z.string().trim().min(1, "Укажите тип слота"),
   minQty: z.number().int().min(0, "Min не может быть отрицательным"),
   maxQty: z.number().int().min(0),
 });
+
+// Тип комплектующего: админский CRUD (план componentsExt).
+// code — стабильный идентификатор; после создания не редактируется.
+export const componentTypeCreateSchema = z.object({
+  code: z
+    .string()
+    .trim()
+    .min(1, "Укажите код типа")
+    .regex(/^[a-z0-9-]+$/, "Код: только латиница, цифры и дефис"),
+  name: z.string().trim().min(1, "Укажите название типа"),
+  sortOrder: z.number().int().min(0).default(0),
+  isActive: z.boolean().default(true),
+});
+
+// Обновление: код менять нельзя (ломает ссылки из components/slotTemplates).
+// Частичная схема БЕЗ default-ов: UI шлёт точечные правки (например, только
+// переключение вкл/выкл), и отсутствующее поле не должно получать значение
+// по умолчанию — иначе патч затирал бы sortOrder/isActive.
+export const componentTypeUpdateSchema = componentTypeCreateSchema
+  .omit({ code: true })
+  .extend({
+    name: z.string().trim().min(1, "Укажите название типа").optional(),
+    sortOrder: z.number().int().min(0).optional(),
+    isActive: z.boolean().optional(),
+  });
+
+export type ComponentTypeCreateInput = z.infer<typeof componentTypeCreateSchema>;
+export type ComponentTypeUpdateInput = z.infer<typeof componentTypeUpdateSchema>;
 
 // Категория + слоты: редактор категории.
 export const categorySchema = z.object({

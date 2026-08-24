@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { components } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
+import { isValidComponentTypeCode } from "@/lib/component-types";
 import { componentSchema, type ComponentInput } from "@/lib/schemas";
 
 export async function POST(request: Request) {
@@ -22,6 +23,12 @@ export async function POST(request: Request) {
   }
 
   const data = parsed.data as ComponentInput;
+  if (!isValidComponentTypeCode(data.componentType)) {
+    return Response.json(
+      { error: "Неизвестный тип комплектующего" },
+      { status: 400 },
+    );
+  }
 
   const res = db
     .insert(components)

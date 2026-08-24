@@ -1,8 +1,13 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
+// DEPRECATED как источник истины: оставлен только как fallback при пустой
+// таблице componentTypes (см. lib/component-types.ts). Редактируемый список
+// типов живёт в БД (админка → Категории → вкладка «Типы компонентов»).
 export const COMPONENT_TYPES = ["stone", "pendant", "bead", "cord", "clasp", "base"] as const;
-export type ComponentType = (typeof COMPONENT_TYPES)[number];
+// Строковый псевдо-тип: код типа хранится в components.componentType /
+// slotTemplates.componentType и может быть любым кодом из таблицы componentTypes.
+export type ComponentType = string;
 
 export const PRODUCT_AVAILABILITY = ["in_stock", "reserve", "made_to_order", "out_of_stock"] as const;
 export type ProductAvailability = (typeof PRODUCT_AVAILABILITY)[number];
@@ -25,6 +30,17 @@ export const categories = sqliteTable("categories", {
   hasSlotTemplate: integer("hasSlotTemplate", { mode: "boolean" }).notNull(),
   isActive: integer("isActive", { mode: "boolean" }).notNull(),
   sortOrder: integer("sortOrder").notNull(),
+});
+
+// Редактируемые типы комплектующих (план componentsExt): code — стабильный
+// идентификатор (менять нельзя, на него ссылаются components/slotTemplates),
+// name — человекочитаемая подпись.
+export const componentTypes = sqliteTable("componentTypes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  code: text("code").notNull().unique(),
+  name: text("name").notNull(),
+  sortOrder: integer("sortOrder").notNull().default(0),
+  isActive: integer("isActive", { mode: "boolean" }).notNull().default(true),
 });
 
 export const slotTemplates = sqliteTable("slotTemplates", {
@@ -115,6 +131,9 @@ export const settings = sqliteTable("settings", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),
 });
+
+export type ComponentTypeRow = typeof componentTypes.$inferSelect;
+export type NewComponentType = typeof componentTypes.$inferInsert;
 
 export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;

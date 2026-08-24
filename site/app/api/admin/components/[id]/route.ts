@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { components } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
+import { isValidComponentTypeCode } from "@/lib/component-types";
 import { componentSchema, type ComponentInput } from "@/lib/schemas";
 
 export async function PUT(
@@ -41,6 +42,12 @@ export async function PUT(
   }
 
   const data = parsed.data as ComponentInput;
+  if (!isValidComponentTypeCode(data.componentType)) {
+    return Response.json(
+      { error: "Неизвестный тип комплектующего" },
+      { status: 400 },
+    );
+  }
 
   db.update(components)
     .set({
