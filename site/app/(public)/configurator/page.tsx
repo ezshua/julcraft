@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { categories } from "@/drizzle/schema";
+import { categories, slotTemplates } from "@/drizzle/schema";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
-import { formatPrice, asPriced } from "@/lib/format";
+import { formatPrice, asPriced, plural } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import CategoryCard from "@/components/category/CategoryCard";
-import { CONFIGURATOR_SLOT_DESC } from "@/components/category/category-captions";
 
 export const metadata: Metadata = {
   title: "Конфигуратор — JulCraft",
@@ -25,6 +24,19 @@ export default async function ConfiguratorPage() {
 
   const withTemplate = cats.filter((c) => c.hasSlotTemplate);
   const repair = cats.find((c) => c.slug === "vintazhnyj-remont");
+
+  // Подпись карточки — из БД: «{N} слот(ов): {имена слотов через запятую}» (решение №4)
+  const slotsByCategory = db.select().from(slotTemplates).orderBy(asc(slotTemplates.sortOrder)).all();
+  const slotDesc = new Map<number, string>();
+  for (const cat of withTemplate) {
+    const slots = slotsByCategory.filter((s) => s.categoryId === cat.id);
+    if (slots.length > 0) {
+      slotDesc.set(
+        cat.id,
+        `${slots.length} ${plural(slots.length, ["слот", "слота", "слотов"])}: ${slots.map((s) => s.name).join(", ")}`,
+      );
+    }
+  }
 
   return (
     <>
@@ -51,7 +63,7 @@ export default async function ConfiguratorPage() {
               key={cat.id}
               slug={cat.slug}
               name={cat.name}
-              desc={CONFIGURATOR_SLOT_DESC[cat.slug] ?? ""}
+              desc={slotDesc.get(cat.id) ?? ""}
               count={`работа от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)} · ${cat.baseWorkDays} дн`}
               href={`/configurator/${cat.slug}`}
             />

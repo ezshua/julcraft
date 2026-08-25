@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
@@ -69,9 +70,9 @@ export default async function CatalogPage() {
               Соберите украшение сами — из камней, подвесок и шнуров со склада
               мастерской.
             </p>
-            <a className="btn btn--primary" href="/configurator">
+            <Link className="btn btn--primary" href="/configurator">
               Открыть конфигуратор →
-            </a>
+            </Link>
           </div>
         </div>
       </section>

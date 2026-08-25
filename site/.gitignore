@@ -38,8 +38,8 @@ yarn-error.log*
 *.db
 
 # uploads (реальные загрузки; SVG-заглушки комплектующих — часть репозитория)
-public/uploads/collages/
-public/uploads/products/
+public/uploads/
+
 
 # vercel
 .vercel

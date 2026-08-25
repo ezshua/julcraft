@@ -66,9 +66,7 @@ function receiptRows(
     rows.push({ label: "СРОК", value: `${order.calcDays} ${plural(order.calcDays, ["день", "дня", "дней"])}` });
     rows.push({ label: "КОНТАКТ", value: order.contact });
     rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
-    if (order.collagePath) {
-      rows.push({ label: "КОЛЛАЖ", value: "приложен к заявке" });
-    }
+    // collagePath обрабатывается ниже — PNG показывается под чеком
   } else {
     // contact
     rows.push({ label: "ТИП", value: "контакт" });
@@ -117,6 +115,16 @@ export default async function OrderSuccessPage(props: {
               <span className="r">{row.value}</span>
             </div>
           ))}
+          {order.collagePath && (
+            <div style={{ textAlign: "center", margin: "16px 0" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={order.collagePath}
+                alt="Коллаж украшения из заявки"
+                style={{ maxWidth: "280px", width: "100%", border: "2px solid var(--brown)", borderRadius: "8px" }}
+              />
+            </div>
+          )}
           <p className="thanks">*** ЧТО ДАЛЬШЕ ***</p>
           <p style={{ fontSize: ".84rem", textAlign: "center", color: "var(--brown)" }}>
             Мастер свяжется с вами в течение дня, подтвердит цену и срок

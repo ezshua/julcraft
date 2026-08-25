@@ -492,6 +492,11 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
 .canvas-area .ca-bar b { font-family:var(--font-display); font-weight:700; color:var(--white); font-size:.9rem; }
 .canvas-area .ca-bar small { color:var(--on-dark); font-size:.66rem; letter-spacing:.04em; text-transform:uppercase; font-weight:600; }
 .canvas-area .ca-bar .tools { display:flex; gap:8px; }
+.canvas-area .ca-bar--bottom {
+  justify-content:center;
+  border-top:3px solid var(--ink);
+  border-bottom:none;
+}
 /* коллаж: кремовая область с точечной направляющей сеткой (12D guides) */
 .canvas {
   position:relative; aspect-ratio:1;
@@ -753,6 +758,14 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
 }
 .dropzone .dz-example .thumb svg { width:30px; height:30px; }
 .dropzone .dz-example span { font-size:.6rem; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; font-weight:700; }
+/* загруженное фото: миниатюра занимает большую часть дроп-зоны, надписи — сбоку */
+.dropzone.has-photo { display:flex; align-items:center; gap:16px; padding:16px 18px; text-align:left; }
+.dropzone.has-photo .dz-preview {
+  flex:none; width:56%; aspect-ratio:1; border:3px solid var(--ink); border-radius:14px;
+  background:var(--bg); overflow:hidden; display:flex; align-items:center; justify-content:center;
+}
+.dropzone.has-photo .dz-preview img { width:100%; height:100%; object-fit:contain; }
+.dropzone.has-photo .dz-meta { flex:1; min-width:0; }
 
 /* детали заявки */
 .order-detail .cd-thumbs { display:flex; gap:12px; flex-wrap:wrap; }

@@ -9,7 +9,6 @@ import { formatPrice, asPriced, plural } from "@/lib/format";
 import { telHref } from "@/lib/settings";
 import ProductCard from "@/components/product/ProductCard";
 import CategoryCard from "@/components/category/CategoryCard";
-import { HOME_CAT_DESC } from "@/components/category/category-captions";
 import HoursBoard from "@/components/ui/HoursBoard";
 
 export const metadata: Metadata = {
@@ -42,6 +41,11 @@ export default async function HomePage() {
   for (const p of allProducts) {
     perCategory.set(p.categoryId, (perCategory.get(p.categoryId) ?? 0) + 1);
   }
+  // Короткая подпись категории — первое предложение description (до первой точки, решение №4)
+  const shortDesc = (cat: (typeof cats)[number]) => {
+    const dot = cat.description.indexOf(".");
+    return dot > 0 ? cat.description.slice(0, dot) : cat.description;
+  };
   const countLabel = (cat: (typeof cats)[number], n: number) => {
     if (cat.slug === "komplekty") return `${n} ${plural(n, ["комплект", "комплекта", "комплектов"])}`;
     if (cat.slug === "vintazhnyj-remont") return `от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)}`;
@@ -88,7 +92,7 @@ export default async function HomePage() {
               key={cat.id}
               slug={cat.slug}
               name={cat.name}
-              desc={HOME_CAT_DESC[cat.slug] ?? cat.description}
+              desc={shortDesc(cat)}
               count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
               href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
             />

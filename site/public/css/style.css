@@ -427,6 +427,11 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
 .canvas-area .ca-bar b { font-family:var(--font-display); font-weight:400; color:var(--mustard); font-size:1rem; }
 .canvas-area .ca-bar small { color:var(--on-dark); font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; }
 .canvas-area .ca-bar .tools { display:flex; gap:8px; }
+.canvas-area .ca-bar--bottom {
+  justify-content:center;
+  border-top:3px solid var(--brown);
+  border-bottom:none;
+}
 .canvas {
   position:relative; aspect-ratio:1;
   background-image:radial-gradient(var(--muted) 1.2px, transparent 1.2px);
@@ -687,6 +692,14 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
 }
 .dropzone .dz-example .thumb svg { width:30px; height:30px; }
 .dropzone .dz-example span { font-size:.62rem; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; }
+/* загруженное фото: миниатюра занимает большую часть дроп-зоны, надписи — сбоку */
+.dropzone.has-photo { display:flex; align-items:center; gap:16px; padding:16px 18px; text-align:left; }
+.dropzone.has-photo .dz-preview {
+  flex:none; width:56%; aspect-ratio:1; border:3px solid var(--brown); border-radius:12px;
+  background:var(--paper); overflow:hidden; display:flex; align-items:center; justify-content:center;
+}
+.dropzone.has-photo .dz-preview img { width:100%; height:100%; object-fit:contain; }
+.dropzone.has-photo .dz-meta { flex:1; min-width:0; }
 
 /* детали заявки */
 .order-detail .cd-thumbs { display:flex; gap:12px; flex-wrap:wrap; }

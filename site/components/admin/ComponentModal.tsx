@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import ImageUploader from "./ImageUploader";
 import {
   amountToMinor,
   minorToAmount,
@@ -92,6 +91,37 @@ export default function ComponentModal({
     component?.deliveryDays != null ? String(component.deliveryDays) : "7",
   );
   const [photo, setPhoto] = useState(component?.photo ?? "");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dzDrag, setDzDrag] = useState(false);
+  const [uploadBusy, setUploadBusy] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  const uploadPhoto = async (file: File | undefined) => {
+    if (!file || uploadBusy) return;
+    if (file.size > 2 * 1024 * 1024) {
+      setUploadError("Файл больше 2 МБ");
+      return;
+    }
+    setUploadBusy(true);
+    setUploadError("");
+    try {
+      const fd = new FormData();
+      fd.append("kind", "components");
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const text = await res.text();
+      if (!res.ok) {
+        setUploadError(text || "Не получилось загрузить файл");
+        return;
+      }
+      const data = JSON.parse(text) as { path: string };
+      setPhoto(data.path);
+    } catch {
+      setUploadError("Не получилось загрузить файл");
+    } finally {
+      setUploadBusy(false);
+    }
+  };
 
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -183,31 +213,89 @@ export default function ComponentModal({
             </button>
           </div>
 
-          <ImageUploader
-            kind="components"
-            maxMB={2}
-            accept="image/png"
-            title="Фото для коллажа — PNG"
-            hint="прозрачный или белый фон · один ракурс · квадрат · до 2 МБ. Это важно: коллаж собирается сервером (sharp)"
-            onUploaded={(path) => {
-              setError("");
-              setPhoto(path);
+          <div
+            className={
+              photo ? "dropzone has-photo" : dzDrag ? "dropzone is-drag" : "dropzone"
+            }
+            style={{ cursor: "pointer" }}
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDzDrag(true);
+            }}
+            onDragLeave={() => setDzDrag(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDzDrag(false);
+              void uploadPhoto(e.dataTransfer.files?.[0]);
             }}
           >
-            <div className="dz-example">
-              <div className="thumb">
-                <svg viewBox="0 0 24 24" width="30" height="30">
-                  <circle cx="12" cy="12" r="9" fill="#e8b64c" stroke="#22242a" strokeWidth="2" />
-                </svg>
-              </div>
-              <div className="thumb">
-                <svg viewBox="0 0 24 24" width="30" height="30">
-                  <path d="M12 2l7 7-7 13L5 9z" fill="#d0785a" stroke="#22242a" strokeWidth="2" />
-                </svg>
-              </div>
-              <span>так — хорошо</span>
-            </div>
-          </ImageUploader>
+            {photo ? (
+              <>
+                <div className="dz-preview">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo} alt="Фото комплектующего" />
+                </div>
+                <div className="dz-meta">
+                  <b>{uploadBusy ? "Загружаем…" : "Заменить фото"}</b>
+                  <small>прозрачный или белый фон · один ракурс · квадрат · до 2 МБ</small>
+                  {uploadError && (
+                    <small style={{ color: "var(--rust)", display: "block", marginTop: 6 }}>
+                      {uploadError}
+                    </small>
+                  )}
+                  <button
+                    className="btn btn--secondary btn--small"
+                    style={{ marginTop: 10 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPhoto("");
+                    }}
+                  >
+                    Убрать фото
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="dz-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                  </svg>
+                </div>
+                <b>{uploadBusy ? "Загружаем…" : "Перетащите PNG сюда или нажмите"}</b>
+                <small>прозрачный или белый фон · один ракурс · квадрат · до 2 МБ</small>
+                {uploadError && (
+                  <small style={{ color: "var(--rust)", display: "block", marginTop: 6 }}>
+                    {uploadError}
+                  </small>
+                )}
+                <div className="dz-example">
+                  <div className="thumb">
+                    <svg viewBox="0 0 24 24" width="30" height="30">
+                      <circle cx="12" cy="12" r="9" fill="#e8b64c" stroke="#22242a" strokeWidth="2" />
+                    </svg>
+                  </div>
+                  <div className="thumb">
+                    <svg viewBox="0 0 24 24" width="30" height="30">
+                      <path d="M12 2l7 7-7 13L5 9z" fill="#d0785a" stroke="#22242a" strokeWidth="2" />
+                    </svg>
+                  </div>
+                  <span>так — хорошо</span>
+                </div>
+              </>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                void uploadPhoto(e.target.files?.[0]);
+                e.target.value = "";
+              }}
+            />
+          </div>
 
           <div className="field">
             <label>Название</label>
