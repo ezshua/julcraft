@@ -345,7 +345,7 @@ section.sect { padding:70px 4vw; max-width:1240px; margin:0 auto; }
   background:var(--white); color:var(--ink); border-radius:var(--r-item);
   border:3px solid var(--ink); overflow:hidden;
 }
-.board--paper { background:var(--white); }
+.board--paper { background:var(--white); padding:20px;  }
 .board .b-head {
   padding:16px 22px; border-bottom:3px solid var(--bg);
   display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
@@ -401,6 +401,7 @@ section.sect { padding:70px 4vw; max-width:1240px; margin:0 auto; }
   font-family:var(--font-display); font-weight:600; transform:rotate(-1deg);
 }
 .chip--mustard { background:var(--c1); }
+.sec-h2 .chip { vertical-align:top; }
 .chip--rust { background:var(--c3); color:var(--white); }
 .chip--olive { background:var(--c2); }
 .chip--2 { background:var(--c3); transform:rotate(2.6deg); color:var(--white); text-transform:none; font-size:1.6rem; }
@@ -531,6 +532,7 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
   display:flex; align-items:center; gap:12px; padding:14px 18px; cursor:pointer;
   background:var(--bg); border-bottom:3px solid var(--ink);
 }
+.slot-head--stacked { flex-direction:column; align-items:flex-start; gap:4px; }
 .slot-head .sq {
   width:28px; height:28px; border-radius:50%; border:3px solid var(--ink); flex:none;
   display:flex; align-items:center; justify-content:center; font-size:.68rem; font-weight:800;
@@ -721,7 +723,7 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
 .form-actions { display:flex; gap:12px; margin-top:24px; flex-wrap:wrap; }
 
 /* редактор слотов */
-.slot-editor { display:flex; flex-direction:column; gap:10px; }
+.slot-editor { display:flex; flex-direction:column; gap:20px; }
 .se-item {
   display:flex; gap:10px; align-items:center; background:var(--white);
   border:3px solid var(--ink); border-radius:14px; padding:10px 14px; flex-wrap:wrap;

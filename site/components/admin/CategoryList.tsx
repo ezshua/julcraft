@@ -77,15 +77,15 @@ export default function CategoryList({ categories, finance, currencyCode }: Prop
             }}
           >
             <div
-              className="slot-head"
+              className="slot-head slot-head--stacked"
               style={{ cursor: "pointer" }}
               onClick={() => router.push(`/admin/categories?id=${c.id}`)}
             >
-              ⣿ {c.name}
+              <span className="slot-title">⣿ {c.name}</span>
               <small>
                 {c.hasSlotTemplate
                    ? `${plural(c.productCount, ["изделие", "изделия", "изделий"])} ${c.productCount} · работа ${formatPrice(asPriced(c.workPrice, c.workPriceCurrency), currency, finance)} · ${c.baseWorkDays} дн`
-                  : "без шаблона слотов"}
+                   : "без шаблона слотов"}
               </small>
             </div>
           </div>

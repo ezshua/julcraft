@@ -261,7 +261,7 @@ export default function ComponentTypesManager({ types }: Props) {
 
       <div
         className="field--row"
-        style={{ marginTop: "16px", alignItems: "flex-end", gap: "10px" }}
+        style={{ marginTop: "16px", alignItems: "center", gap: "12px" }}
       >
         <div className="field">
           <label>Новый код (латиница/дефис)</label>
@@ -281,13 +281,16 @@ export default function ComponentTypesManager({ types }: Props) {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <button
-          className="btn btn--primary btn--small"
-          disabled={busy || !code.trim() || !name.trim()}
-          onClick={() => void create()}
-        >
-          + Добавить тип
-        </button>
+        <div className="field">
+          <label>&nbsp;</label>
+          <button
+            className="btn btn--primary btn--small"
+            disabled={busy || !code.trim() || !name.trim()}
+            onClick={() => void create()}
+          >
+            + Добавить тип
+          </button>
+        </div>
       </div>
       {error && (
         <p style={{ color: "var(--rust, #b4552d)", marginTop: "10px" }}>
