@@ -3,8 +3,8 @@ import { db } from "@/lib/db";
 import { categories, orders, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice, asPriced } from "@/lib/format";
-import OrderModal, { type OrderRow } from "@/components/admin/OrderModal";
+import type { OrderRow } from "@/components/admin/OrderModal";
+import OrderRowView from "@/components/admin/OrderRow";
 
 export const metadata: Metadata = {
   title: "Заявки — JulCraft Админ",
@@ -26,23 +26,6 @@ const TYPE_FILTERS = [
   { value: "custom", label: "Конфигуратор" },
   { value: "contact", label: "Контакт" },
 ] as const;
-
-const TYPE_TAGS: Record<string, string> = {
-  product: "tag--new",
-  custom: "tag--mustard",
-  contact: "tag--olive",
-};
-
-const TYPE_LABELS: Record<string, string> = {
-  product: "товар",
-  custom: "конфигуратор",
-  contact: "контакт",
-};
-
-function fmtDate(d: Date): string {
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${p(d.getDate())}.${p(d.getMonth() + 1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
-}
 
 function buildUrl(params: Record<string, string | undefined>): string {
   const url = new URLSearchParams();
@@ -91,8 +74,14 @@ export default async function AdminOrdersPage(props: {
   const currentPage = Math.min(page, pages);
   const pageItems = found.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const rows: OrderRow[] = pageItems.map((o) => {
+  const rows: (OrderRow & { smallText: string })[] = pageItems.map((o) => {
     const product = o.productId != null ? productById.get(o.productId) : undefined;
+    const smallText =
+      o.type === "product"
+        ? product?.name ?? "—"
+        : o.type === "contact"
+          ? "записка"
+          : "конфигуратор";
     return {
       id: o.id,
       type: o.type,
@@ -108,6 +97,7 @@ export default async function AdminOrdersPage(props: {
       calcDays: o.calcDays,
       status: o.status,
       createdAt: o.createdAt,
+      smallText,
     };
   });
 
@@ -119,7 +109,7 @@ export default async function AdminOrdersPage(props: {
 
   const smallText = (o: (typeof allOrders)[number]): string => {
     if (o.type === "product") return productById.get(o.productId ?? 0)?.name ?? "—";
-    if (o.type === "contact") return "сообщение с контактов";
+    if (o.type === "contact") return "записка";
     return "конфигуратор";
   };
 
@@ -188,40 +178,15 @@ export default async function AdminOrdersPage(props: {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => {
-                const o = allOrders.find((x) => x.id === r.id)!;
-                return (
-                  <tr key={r.id}>
-                    <td className="num">#{r.id}</td>
-                    <td>
-                      <span className={`tag ${TYPE_TAGS[r.type]}`}>{TYPE_LABELS[r.type]}</span>
-                    </td>
-                    <td className="cell-name">
-                      <b>{r.customerName}</b>
-                      <small>{smallText(o)}</small>
-                    </td>
-                    <td className="cell-name">
-                      <small>{r.contact}</small>
-                    </td>
-                    <td className="cell-price">
-                      {r.type === "contact" ? "—" : formatPrice(asPriced(r.calcPrice, r.calcPriceCurrency), currency, finance)}
-                    </td>
-                    <td className="num">
-                      {r.type === "custom" && r.calcDays > 0 ? `${r.calcDays} дн` : "—"}
-                    </td>
-                    <td>{r.collagePath ? <OrderModal order={r} collageOnly finance={finance} currencyCode={currencyCode} /> : "—"}</td>
-                    <td>
-                      <span className={`tag tag--${r.status}`}>{r.status}</span>
-                    </td>
-                    <td className="num">{fmtDate(r.createdAt)}</td>
-                    <td>
-                      <div className="actions">
-                        <OrderModal order={r} finance={finance} currencyCode={currencyCode} />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+              {rows.map((r) => (
+                <OrderRowView
+                  key={r.id}
+                  order={r}
+                  smallText={r.smallText}
+                  finance={finance}
+                  currencyCode={currencyCode}
+                />
+              ))}
               {rows.length === 0 && (
                 <tr>
                   <td colSpan={10} style={{ textAlign: "center", color: "var(--muted)" }}>

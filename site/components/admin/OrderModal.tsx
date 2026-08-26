@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice, asPriced, formatSnapshot } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
@@ -32,24 +32,47 @@ type SnapshotItem = {
   processingPrice: number;
 };
 
-// Модалка деталей заявки — копия div.modal-overlay#modal-order из mockup/admin/orders.html.
-// collageOnly — только кнопка «🖼» (колонка «Коллаж»), модалка та же.
-export default function OrderModal({
-  order,
-  collageOnly = false,
-  finance,
-  currencyCode,
-}: {
+export type OrderModalHandle = {
+  openView: () => void;
+  openEdit: () => void;
+};
+
+type Props = {
   order: OrderRow;
-  collageOnly?: boolean;
+  editMode?: "view" | "edit";
   finance: FinanceSettings;
   currencyCode: string;
-}) {
+};
+
+// Модалка деталей заявки — копия div.modal-overlay#modal-order из mockup/admin/orders.html.
+// editMode — режим по умолчанию для модалки, открытой по кнопке в колонке «Действия».
+// «view» — без кнопок смены статуса, «edit» — с ними.
+const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
+  {
+    order,
+    editMode = "edit",
+    finance,
+    currencyCode,
+  },
+  ref,
+) {
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"view" | "edit">(editMode);
   const [status, setStatus] = useState<OrderStatus>(order.status);
   const [busy, setBusy] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    openView: () => {
+      setMode("view");
+      setOpen(true);
+    },
+    openEdit: () => {
+      setMode("edit");
+      setOpen(true);
+    },
+  }));
 
   const changeStatus = async (next: OrderStatus) => {
     if (busy) return;
@@ -93,66 +116,45 @@ export default function OrderModal({
 
   return (
     <>
-      {collageOnly ? (
-        order.collagePath ? (
-          <button
-            className="icon-btn"
-            style={{ width: 32, height: 32 }}
-            title="Смотреть коллаж"
-            onClick={() => setOpen(true)}
-          >
-            🖼
-          </button>
-        ) : (
-          <span>—</span>
-        )
-      ) : (
-        <>
-          {order.collagePath && (
-            <button
-              className="icon-btn"
-              style={{ width: 32, height: 32 }}
-              title="Смотреть коллаж"
-              onClick={() => setOpen(true)}
-            >
-              🖼
-            </button>
-          )}
-          <button
-            className="icon-btn"
-            style={{ width: 32, height: 32 }}
-            title="Открыть"
-            onClick={() => setOpen(true)}
-          >
-            👁
-          </button>
-          <button
-            className="icon-btn"
-            style={{ width: 32, height: 32 }}
-            title="Редактировать"
-            onClick={() => setOpen(true)}
-          >
-            ✎
-          </button>
-          <button
-            className="icon-btn icon-btn--rust"
-            style={{ width: 32, height: 32 }}
-            title="Удалить"
-            onClick={() => {
-              if (window.confirm(`Удалить заявку #${order.id}?`)) {
-                void (async () => {
-                  const res = await fetch(`/api/admin/orders/${order.id}`, {
-                    method: "DELETE",
-                  });
-                  if (res.ok) router.refresh();
-                })();
-              }
-            }}
-          >
-            🗑
-          </button>
-        </>
-      )}
+      <button
+        className="icon-btn"
+        style={{ width: 32, height: 32 }}
+        title="Открыть"
+        onClick={() => {
+          setMode("view");
+          setOpen(true);
+        }}
+      >
+        👁
+      </button>
+      <button
+        className="icon-btn"
+        style={{ width: 32, height: 32 }}
+        title="Редактировать"
+        onClick={() => {
+          setMode("edit");
+          setOpen(true);
+        }}
+      >
+        ✎
+      </button>
+      <button
+        className="icon-btn icon-btn--rust"
+        style={{ width: 32, height: 32 }}
+        title="Удалить"
+        onClick={() => {
+          if (window.confirm(`Удалить заявку #${order.id}?`)) {
+            void (async () => {
+              const res = await fetch(`/api/admin/orders/${order.id}`, {
+                method: "DELETE",
+              });
+              if (res.ok) router.refresh();
+            })();
+          }
+        }}
+      >
+        🗑
+      </button>
 
       <div className={open ? "modal-overlay open" : "modal-overlay"} id="modal-order">
         <div className="modal modal--wide">
@@ -276,7 +278,7 @@ export default function OrderModal({
               <p style={{ fontSize: ".9rem", margin: "0 0 16px" }}>
                 состав: {order.productName ?? "—"}
               </p>
-            ) : (
+            ) : order.type === "contact" ? null : (
               <p style={{ fontSize: ".9rem", margin: "0 0 16px" }}>
                 сообщение: {order.message || "—"}
               </p>
@@ -284,7 +286,7 @@ export default function OrderModal({
 
             <div className="form-actions">
               <span className={`tag tag--${status}`}>{status}</span>
-              {status === "new" && (
+              {mode === "edit" && status === "new" && (
                 <button
                   className="btn btn--primary btn--small"
                   style={{ marginLeft: "auto" }}
@@ -294,7 +296,7 @@ export default function OrderModal({
                   Взять в работу
                 </button>
               )}
-              {status === "in_progress" && (
+              {mode === "edit" && status === "in_progress" && (
                 <button
                   className="btn btn--primary btn--small"
                   style={{ marginLeft: "auto" }}
@@ -304,7 +306,17 @@ export default function OrderModal({
                   Готово ✓
                 </button>
               )}
-              {(newCount || status === "in_progress") && (
+              {mode === "edit" && status === "cancelled" && (
+                <button
+                  className="btn btn--primary btn--small"
+                  style={{ marginLeft: "auto" }}
+                  onClick={() => void changeStatus("new")}
+                  disabled={busy}
+                >
+                  Переобработать
+                </button>
+              )}
+              {mode === "edit" && (newCount || status === "in_progress") && (
                 <button
                   className="btn btn--secondary btn--small"
                   onClick={() => void changeStatus("cancelled")}
@@ -319,4 +331,6 @@ export default function OrderModal({
       </div>
     </>
   );
-}
+});
+
+export default OrderModal;
