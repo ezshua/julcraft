@@ -8,9 +8,19 @@ import { getSettings } from "@/lib/get-settings";
 import { formatPrice, asPriced, plural } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
 import CategoryCard from "@/components/category/CategoryCard";
+import EmptyState from "@/components/ui/EmptyState";
 
 export const metadata: Metadata = {
   title: "Каталог — JulCraft",
+  description:
+    "Каталог мастерской JulCraft: десять отделов — бакелит, стекло, эмаль, латунь и немного волшебства. Всё в одном экземпляре.",
+  alternates: { canonical: "/catalog" },
+  openGraph: {
+    title: "Каталог — JulCraft",
+    description:
+      "Каталог мастерской JulCraft: десять отделов украшений ручной работы.",
+    type: "website",
+  },
 };
 
 export default async function CatalogPage() {
@@ -40,7 +50,7 @@ export default async function CatalogPage() {
       <div className="signboard signboard--small">
         <p className="est">✹ десять полок ✹</p>
         <h1>Каталог</h1>
-        <p className="tag">
+        <p className="tagline">
           всё в одном экземпляре — если понравилось, не откладывайте на завтра
         </p>
       </div>
@@ -50,18 +60,22 @@ export default async function CatalogPage() {
         <p className="sec-sub">
           {"// 10 отделов · бакелит, стекло, эмаль, латунь и немного волшебства"}
         </p>
-        <div className="shelf">
-          {cats.map((cat) => (
-            <CategoryCard
-              key={cat.id}
-              slug={cat.slug}
-              name={cat.name}
-              desc={cat.description}
-              count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
-              href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
-            />
-          ))}
-        </div>
+        {cats.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="shelf">
+            {cats.map((cat) => (
+              <CategoryCard
+                key={cat.id}
+                slug={cat.slug}
+                name={cat.name}
+                desc={cat.description}
+                count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
+                href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="mt-40">
           <div className="cta-banner">

@@ -4,6 +4,7 @@ import ErrorHeader from "@/components/layout/ErrorHeader";
 
 export const metadata: Metadata = {
   title: "Страница не найдена — JulCraft",
+  robots: { index: false },
 };
 
 export default function NotFound() {

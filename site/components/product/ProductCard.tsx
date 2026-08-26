@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { formatPrice, asPriced } from "@/lib/format";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
@@ -14,12 +15,11 @@ export default async function ProductCard({ product }: { product: Product }) {
       {product.isNew && <span className="badge badge--new">новинка</span>}
       {product.isFeatured && <span className="badge badge--feat">избранное</span>}
       <div className="photo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={product.images[0]}
           alt={product.name}
-          loading="lazy"
-          decoding="async"
+          fill
+          sizes="(max-width: 767px) 100vw, (max-width: 1079px) 50vw, 33vw"
         />
       </div>
       <div className="info">

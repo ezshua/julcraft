@@ -61,15 +61,3 @@ export function reserveDayShort(d: Date): string {
 export function reserveDayFull(d: Date): string {
   return FULL_DAYS[d.getDay()];
 }
-
-/**
- * Подмена query изображения.
- * В БД URL хранится с `w=800&q=80`; галерея использует w=900 / w=300.
- */
-export function imgWith(url: string, w: number, q = 80): string {
-  const [base, query = ""] = url.split("?");
-  const params = new URLSearchParams(query);
-  params.set("w", String(w));
-  params.set("q", String(q));
-  return `${base}?${params.toString()}`;
-}

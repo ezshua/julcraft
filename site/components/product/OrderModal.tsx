@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatPrice, asPriced, imgWith } from "@/lib/format";
+import { formatPrice, asPriced } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
 import type { FinanceSettings } from "@/lib/currency";
 import { availFullText } from "@/components/ui/Avail";
@@ -75,7 +75,7 @@ export default function OrderModal({
           <div className="m-photo">
             <div className="thumb">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imgWith(product.images[0], 300)} alt={product.name} />
+              <img src={product.images[0]} alt={product.name} />
             </div>
             <div>
               <b>{product.name}</b>

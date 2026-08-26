@@ -18,7 +18,24 @@ export async function generateMetadata(props: {
   const { slug } = await props.params;
   const product = db.select().from(products).where(eq(products.slug, slug)).get();
   if (!product) return { title: "Каталог — JulCraft" };
-  return { title: `${product.name} — JulCraft` };
+
+  // SEO-поля из админки; пустые — фолбэк на название/описание/первое фото
+  const title = product.metaTitle || `${product.name} — JulCraft`;
+  const description =
+    product.metaDescription || product.description.slice(0, 160);
+  const image = product.ogImage || product.images[0];
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/product/${product.slug}` },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      images: image ? [{ url: image }] : undefined,
+    },
+  };
 }
 
 // Второй абзац описания — статичная копия из макета (не привязан к данным)

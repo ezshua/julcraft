@@ -1,10 +1,20 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getSettings } from "@/lib/get-settings";
 import { telHref } from "@/lib/settings";
 import HoursBoard from "@/components/ui/HoursBoard";
 
 export const metadata: Metadata = {
   title: "О мастерской — JulCraft",
+  description:
+    "История мастерской JulCraft: Юля Крафт, 12 лет за верстаком, любимая эпоха 1972–1981. Ручная работа, ремонт старины и чай покупателям.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "О мастерской — JulCraft",
+    description:
+      "История мастерской JulCraft: ручная работа, ремонт старины и чай покупателям.",
+    type: "website",
+  },
 };
 
 export default function AboutPage() {
@@ -15,7 +25,7 @@ export default function AboutPage() {
       <div className="signboard">
         <p className="est">✹ о мастерской ✹</p>
         <h1>История на верстаке</h1>
-        <p className="tag">Юля Крафт · 12 лет за верстаком · любимая эпоха 1972–1981</p>
+        <p className="tagline">Юля Крафт · 12 лет за верстаком · любимая эпоха 1972–1981</p>
       </div>
       <div className="zigzag"></div>
 
@@ -38,13 +48,12 @@ export default function AboutPage() {
           </div>
           <div className="hours-grid" style={{ display: "block" }}>
             <div className="item" style={{ overflow: "hidden" }}>
-              <div className="photo" style={{ height: "280px" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=900&q=80"
+              <div className="photo" style={{ height: "280px", position: "relative" }}>
+                <Image
+                  src="/uploads/about-workshop.jpg"
                   alt="Мастерская Юли"
-                  loading="lazy"
-                  decoding="async"
+                  fill
+                  sizes="(max-width: 1079px) 100vw, 50vw"
                 />
               </div>
             </div>

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { siteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
   title: "JulCraft",
 };
 

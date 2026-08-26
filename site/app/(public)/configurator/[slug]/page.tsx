@@ -12,10 +12,17 @@ export async function generateMetadata(props: {
 }): Promise<Metadata> {
   const { slug } = await props.params;
   const category = db.select().from(categories).where(eq(categories.slug, slug)).get();
+  const title = category
+    ? `Конфигуратор — ${category.name} · JulCraft`
+    : "Конфигуратор — JulCraft";
+  const description = category
+    ? `Соберите ${category.name.toLowerCase()} сами: слоты, комплектующие со склада, калькулятор цены и срока.`
+    : "Конфигуратор украшений JulCraft";
   return {
-    title: category
-      ? `Конфигуратор — ${category.name} · JulCraft`
-      : "Конфигуратор — JulCraft",
+    title,
+    description,
+    alternates: { canonical: `/configurator/${slug}` },
+    openGraph: { title, description, type: "website" },
   };
 }
 

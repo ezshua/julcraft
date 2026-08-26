@@ -10,6 +10,15 @@ import CategoryCard from "@/components/category/CategoryCard";
 
 export const metadata: Metadata = {
   title: "Конфигуратор — JulCraft",
+  description:
+    "Соберите украшение сами: выберите форму, камни и подвески со склада мастерской — калькулятор посчитает цену и срок.",
+  alternates: { canonical: "/configurator" },
+  openGraph: {
+    title: "Конфигуратор — JulCraft",
+    description:
+      "Соберите украшение сами из камней, подвесок и шнуров со склада мастерской.",
+    type: "website",
+  },
 };
 
 export default async function ConfiguratorPage() {
@@ -45,7 +54,7 @@ export default async function ConfiguratorPage() {
       <div className="signboard signboard--small">
         <p className="est">✹ соберите своё ✹</p>
         <h1>Конфигуратор</h1>
-        <p className="tag">
+        <p className="tagline">
           выберите форму — дальше Юля соберёт украшение из камней и подвесок со
           склада, а калькулятор посчитает цену и срок
         </p>

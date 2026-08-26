@@ -163,7 +163,7 @@ export default function ConfiguratorClient({
       <div className="signboard signboard--small">
         <p className="est">✹ {category.slug} · {estLine} ✹</p>
         <h1>Собираем {accusative}</h1>
-        <p className="tag">{tagLine}</p>
+        <p className="tagline">{tagLine}</p>
       </div>
       <div className="zigzag"></div>
 

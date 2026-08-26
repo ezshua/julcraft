@@ -9,6 +9,30 @@ const CHANNELS = [
   { value: "email", label: "Email" },
 ];
 
+const CONTACT_HINTS: Record<string, string> = {
+  phone: "+380 95 123 45 67",
+  telegram: "@username",
+  email: "you@example.com",
+};
+
+function contactError(contact: string, channel: string): string {
+  const v = contact.trim();
+  if (channel === "email") {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)
+      ? ""
+      : "Похоже, это не email — нужен адрес вида you@example.com";
+  }
+  if (channel === "telegram") {
+    return /^@?[a-zA-Z0-9_]{5,32}$/.test(v.replace(/^https?:\/\/t\.me\//i, ""))
+      ? ""
+      : "Похоже, это не Telegram — нужен @username или ссылка на t.me";
+  }
+  const digits = v.replace(/\D/g, "");
+  return digits.length >= 10 && digits.length <= 15
+    ? ""
+    : "Похоже, это не телефон — нужно от 10 до 15 цифр, можно с + и пробелами";
+}
+
 // Форма обратной связи — копия чека из mockup/contacts.html.
 // Успех → редирект на /order-success/{id} (R-3, чек type=contact).
 export default function ContactForm() {
@@ -20,8 +44,27 @@ export default function ContactForm() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
+  const contactErr = contact.trim() ? contactError(contact, channel) : "";
+
   const submit = async () => {
     if (busy) return;
+    if (!name.trim()) {
+      setError("Укажите имя");
+      return;
+    }
+    if (!contact.trim()) {
+      setError("Укажите контакт");
+      return;
+    }
+    if (!message.trim()) {
+      setError("Напишите сообщение");
+      return;
+    }
+    const cErr = contactError(contact, channel);
+    if (cErr) {
+      setError(cErr);
+      return;
+    }
     setBusy(true);
     setError("");
     try {
@@ -64,12 +107,17 @@ export default function ContactForm() {
       </div>
       <div className="field">
         <input
-          type="tel"
-          placeholder="Телефон, email или Telegram"
+          type="text"
+          placeholder={CONTACT_HINTS[channel]}
           value={contact}
           onChange={(e) => setContact(e.target.value)}
           required
         />
+        {contactErr && (
+          <p style={{ color: "var(--rust)", fontSize: ".78rem", margin: "4px 0 0" }}>
+            {contactErr}
+          </p>
+        )}
       </div>
       <div className="row">
         <span className="lbl">Сообщение</span>
@@ -96,7 +144,10 @@ export default function ContactForm() {
               type="radio"
               name="ch"
               checked={channel === ch.value}
-              onChange={() => setChannel(ch.value)}
+              onChange={() => {
+                setChannel(ch.value);
+                setError("");
+              }}
             />{" "}
             {ch.label}
           </label>

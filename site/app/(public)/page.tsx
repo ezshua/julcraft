@@ -9,10 +9,20 @@ import { formatPrice, asPriced, plural } from "@/lib/format";
 import { telHref } from "@/lib/settings";
 import ProductCard from "@/components/product/ProductCard";
 import CategoryCard from "@/components/category/CategoryCard";
+import EmptyState from "@/components/ui/EmptyState";
 import HoursBoard from "@/components/ui/HoursBoard";
 
 export const metadata: Metadata = {
   title: "JulCraft — витрина · эст. 2026",
+  description:
+    "Мастерская украшений JulCraft: броши, кулоны, серьги из бакелита, стекла и латуни. Всё в одном экземпляре — собрано вручную.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "JulCraft — витрина · эст. 2026",
+    description:
+      "Мастерская украшений JulCraft: броши, кулоны, серьги из бакелита, стекла и латуни. Всё в одном экземпляре.",
+    type: "website",
+  },
 };
 
 export default async function HomePage() {
@@ -57,7 +67,7 @@ export default async function HomePage() {
       <div className="signboard">
         <p className="est">✹ эст. 2026 · открыто снова ✹</p>
         <h1>JulCraft</h1>
-        <p className="tag">украшения · винтажная бижутерия · ремонт бабушкиных бус</p>
+        <p className="tagline">украшения · винтажная бижутерия · ремонт бабушкиных бус</p>
         <div className="cta-row">
           <Link className="btn btn--primary" href="/catalog">
             Смотреть каталог
@@ -75,29 +85,37 @@ export default async function HomePage() {
         <p className="sec-sub">
           {"// всё в одном экземпляре · бакелит, стекло, настоящая ностальгия · 12 штук на полке"}
         </p>
-        <div className="shelf">
-          {shelf.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {shelf.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="shelf">
+            {shelf.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Плитка категорий */}
       <section className="sect">
         <h2 className="sec-h2">Разложено по полкам</h2>
         <p className="sec-sub">{"// десять отделов, в каждом — своё настроение"}</p>
-        <div className="shelf">
-          {cats.map((cat) => (
-            <CategoryCard
-              key={cat.id}
-              slug={cat.slug}
-              name={cat.name}
-              desc={shortDesc(cat)}
-              count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
-              href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
-            />
-          ))}
-        </div>
+        {cats.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="shelf">
+            {cats.map((cat) => (
+              <CategoryCard
+                key={cat.id}
+                slug={cat.slug}
+                name={cat.name}
+                desc={shortDesc(cat)}
+                count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
+                href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* CTA в конфигуратор */}

@@ -10,6 +10,7 @@ import { formatPrice, asPriced, plural } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Заявка принята — JulCraft",
+  robots: { index: false },
 };
 
 const STATUS_TEXT: Record<string, string> = {
@@ -17,6 +18,10 @@ const STATUS_TEXT: Record<string, string> = {
   in_progress: "в работе",
   done: "готова",
   cancelled: "отменена",
+};
+
+const NOTE_STATUS_TEXT: Record<string, string> = {
+  new: "на столе, среди чертежей",
 };
 
 type ConfigItem = {
@@ -68,11 +73,11 @@ function receiptRows(
     rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
     // collagePath обрабатывается ниже — PNG показывается под чеком
   } else {
-    // contact
-    rows.push({ label: "ТИП", value: "контакт" });
+    // contact — записка, а не чек
+    rows.push({ label: "ОТ", value: order.customerName ?? "—" });
     rows.push({ label: "СООБЩЕНИЕ", value: order.message });
     rows.push({ label: "КОНТАКТ", value: order.contact });
-    rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
+    rows.push({ label: "СТАТУС", value: NOTE_STATUS_TEXT[order.status] ?? STATUS_TEXT[order.status] ?? order.status });
   }
   return rows;
 }
@@ -96,19 +101,22 @@ export default async function OrderSuccessPage(props: {
   }
 
   const rows = receiptRows({ ...order, productName }, currency);
+  const isNote = order.type === "contact";
 
   return (
     <>
       <div className="signboard">
-        <p className="est">✹ чек получен ✹</p>
-        <h1>Заявка принята!</h1>
-        <p className="tag">Юля уже глянула на коллаж и ставит чайник</p>
+        <p className="est">✹ {isNote ? "записка получена" : "чек получен"} ✹</p>
+        <h1>{isNote ? "Подтверждаю!" : "Заявка принята!"}</h1>
+        <p className="tagline">
+          {isNote ? "Юля уже заметила конверт и вытирает руки" : "Юля уже глянула на коллаж и ставит чайник"}
+        </p>
       </div>
       <div className="zigzag"></div>
 
       <section className="sect">
         <div className="receipt">
-          <h2>◍ ЧЕК ЗАЯВКИ №{order.id} ◍</h2>
+          <h2>{isNote ? `◍ ЗАПИСКА ◍` : `◍ ЧЕК ЗАЯВКИ №${order.id} ◍`}</h2>
           {rows.map((row, i) => (
             <div className="row" key={i}>
               <span>{row.label}</span>
@@ -126,11 +134,18 @@ export default async function OrderSuccessPage(props: {
             </div>
           )}
           <p className="thanks">*** ЧТО ДАЛЬШЕ ***</p>
-          <p style={{ fontSize: ".84rem", textAlign: "center", color: "var(--brown)" }}>
-            Мастер свяжется с вами в течение дня, подтвердит цену и срок
-            <br />
-            и уточнит детали. Предоплата не нужна — чай бесплатно.
-          </p>
+          {isNote ? (
+            <p style={{ fontSize: ".84rem", textAlign: "center", color: "var(--brown)" }}>
+              На первой паузе мастер вдумчиво прочтёт записку
+              <br />и ответит вам по указанному контакту.
+            </p>
+          ) : (
+            <p style={{ fontSize: ".84rem", textAlign: "center", color: "var(--brown)" }}>
+              Мастер свяжется с вами в течение дня, подтвердит цену и срок
+              <br />
+              и уточнит детали. Предоплата не нужна — чай бесплатно.
+            </p>
+          )}
           <div className="cta-row" style={{ justifyContent: "center", marginTop: "20px" }}>
             <Link className="btn btn--primary" href="/">
               На главную

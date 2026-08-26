@@ -225,7 +225,7 @@ type ProductSeed = {
   isFeatured: boolean;
   availability: ProductAvailability;
   orderDays: number | null;
-  photoId: string;
+  photoFile: string;
   materials?: string[];
   specs?: string[];
 };
@@ -242,7 +242,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: true,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1630019852942-f89202989a59",
+    photoFile: "brosh-romashkovaya.jpg",
   },
   {
     name: "Серьги «Танец-76»",
@@ -254,7 +254,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1611591437281-460bfbe1220a",
+    photoFile: "sergi-tanec-76.jpg",
   },
   {
     name: "Кулон «Телеграмма»",
@@ -266,7 +266,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: true,
     availability: "reserve",
     orderDays: null,
-    photoId: "photo-1596944924616-7b38e7cfac36",
+    photoFile: "kulon-telegramma.jpg",
     materials: ["стекло", "латунь", "гравировка"],
     specs: [
       "Размер: 32 × 24 мм, толщина 8 мм",
@@ -285,7 +285,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1611652022419-a9419f74343d",
+    photoFile: "brosh-gribnaya-polyana.jpg",
   },
   {
     name: "Серьги «Капли дождя»",
@@ -297,7 +297,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1535632066927-ab7c9ab60908",
+    photoFile: "sergi-kapli-dozhdya.jpg",
   },
   {
     name: "Кольцо «Воскресное»",
@@ -309,7 +309,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "made_to_order",
     orderDays: 7,
-    photoId: "photo-1515562141207-7a88fb7ce338",
+    photoFile: "kolco-voskresnoe.jpg",
   },
   {
     name: "Браслет «Кассета-минус»",
@@ -321,7 +321,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1617038220319-276d3cfab638",
+    photoFile: "braslet-kasseta-minus.jpg",
   },
   {
     name: "Бусы «Капсула времени»",
@@ -333,7 +333,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1599643478518-a784e5dc4c8f",
+    photoFile: "busy-kapsula-vremeni.jpg",
   },
   {
     name: "Кулон «Письмо из 76-го»",
@@ -345,7 +345,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1611085583191-a3b181a88401",
+    photoFile: "kulon-pismo-iz-76.jpg",
   },
   {
     name: "Клипсы «Паркетный вальс»",
@@ -357,7 +357,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1601121141461-9d6647bca1ed",
+    photoFile: "klipsy-parketnyj-vals.jpg",
   },
   {
     name: "Комплект «Вечер на Радищева»",
@@ -369,7 +369,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: true,
     availability: "made_to_order",
     orderDays: 10,
-    photoId: "photo-1517841905240-472988babdf9",
+    photoFile: "komplekt-vecher-na-radishcheva.jpg",
   },
   {
     name: "Амулет «Счастливая пуговица»",
@@ -381,7 +381,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1517841905240-472988babdf9",
+    photoFile: "amulet-schastlivaya-pugovica.jpg",
   },
   {
     name: "Кулон «Лунный свет из чулана»",
@@ -393,7 +393,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1599643478518-a784e5dc4c8f",
+    photoFile: "kulon-lunnyj-svet-iz-chulana.jpg",
   },
   {
     name: "Кулон «Бабушкина ваза»",
@@ -405,7 +405,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1535632066927-ab7c9ab60908",
+    photoFile: "kulon-babushkina-vaza.jpg",
   },
   {
     name: "Кулон «Радио-волна»",
@@ -417,7 +417,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1611652022419-a9419f74343d",
+    photoFile: "kulon-radio-volna.jpg",
   },
   {
     name: "Кулон «Монета-76»",
@@ -429,7 +429,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "made_to_order",
     orderDays: 5,
-    photoId: "photo-1515562141207-7a88fb7ce338",
+    photoFile: "kulon-moneta-76.jpg",
   },
   {
     name: "Кулон «Северное сияние»",
@@ -441,7 +441,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1611591437281-460bfbe1220a",
+    photoFile: "kulon-severnoe-siyanie.jpg",
   },
   {
     name: "Кулон «Тишина в библиотеке»",
@@ -453,7 +453,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "in_stock",
     orderDays: null,
-    photoId: "photo-1601121141461-9d6647bca1ed",
+    photoFile: "kulon-tishina-v-biblioteke.jpg",
   },
   {
     name: "Кулон «Морской узел»",
@@ -465,7 +465,7 @@ const productSeed: ProductSeed[] = [
     isFeatured: false,
     availability: "made_to_order",
     orderDays: 7,
-    photoId: "photo-1517841905240-472988babdf9",
+    photoFile: "kulon-morskoj-uzel.jpg",
   },
 ];
 
@@ -666,7 +666,7 @@ function main() {
         description: p.description,
         price: amountToMinor(p.price),
         priceCurrency: "RUB",
-        images: [`https://images.unsplash.com/${p.photoId}?w=800&q=80`],
+        images: [`/uploads/products/${p.photoFile}`],
         materials: p.materials ?? [],
         specs: p.specs ?? [],
         isNew: p.isNew,

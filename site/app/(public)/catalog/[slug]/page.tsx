@@ -21,7 +21,25 @@ export async function generateMetadata(props: {
     .where(eq(categories.slug, slug))
     .get();
   if (!cat) return { title: "Каталог — JulCraft" };
-  return { title: `${cat.name} — JulCraft` };
+
+  // OG-картинка — фото первого товара категории (если есть)
+  const first = db
+    .select()
+    .from(products)
+    .where(eq(products.categoryId, cat.id))
+    .get();
+
+  return {
+    title: `${cat.name} — JulCraft`,
+    description: cat.description,
+    alternates: { canonical: `/catalog/${cat.slug}` },
+    openGraph: {
+      title: `${cat.name} — JulCraft`,
+      description: cat.description,
+      type: "website",
+      images: first?.images[0] ? [{ url: first.images[0] }] : undefined,
+    },
+  };
 }
 
 const PAGE_SIZE = 9;
@@ -145,7 +163,7 @@ export default async function CategoryPage(props: {
       <div className="signboard signboard--small">
         <p className="est">✹ отдел №{cat.sortOrder} ✹</p>
         <h1>{cat.name}</h1>
-        <p className="tag">{cat.description}</p>
+        <p className="tagline">{cat.description}</p>
       </div>
       <div className="zigzag"></div>
 

@@ -93,6 +93,26 @@ assert(
 );
 console.log(allComponents.map((c) => c.photo).join("\n"));
 
+console.log("--- Фото товаров ---");
+const productsDir = resolve(process.cwd(), "public", "uploads", "products");
+let productFiles: string[] = [];
+try {
+  productFiles = readdirSync(productsDir).filter((f) => f.endsWith(".jpg"));
+} catch {
+  /* пусто */
+}
+console.log(`фото в public/uploads/products/: ${productFiles.length}`);
+assert(
+  allProducts.length > 0 &&
+    allProducts.every((p) =>
+      p.images.every((src) => {
+        const file = src.replace("/uploads/products/", "");
+        return src.startsWith("/uploads/products/") && productFiles.includes(file);
+      }),
+    ),
+  "все images товаров — локальные пути /uploads/products/ на существующие файлы",
+);
+
 console.log("--- Settings из БД ---");
 const siteSettings = getSettings();
 console.log(`phone: ${siteSettings.contacts.phone}`);

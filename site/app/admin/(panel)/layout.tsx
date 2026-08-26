@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import AdminHeader from "@/components/admin/AdminHeader";
+
+// Панель мастера не индексируется
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 // Защита панели: без сессии — на /admin/login (серверная проверка в layout).
 // Маршруты внутри группы: /admin, /admin/products, /admin/components,

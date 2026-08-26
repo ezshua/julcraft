@@ -141,6 +141,14 @@ section.sect { padding:70px 4vw; max-width:1240px; margin:0 auto; }
 }
 .signboard h1 .chip, .signboard h1 span { display:inline-block; }
 .signboard .tag { color:var(--muted); font-size:1.05rem; max-width:60ch; margin:0 auto; font-weight:600; }
+/* подпись-«бирка» под заголовком вывески: широкий переносимый блок вместо
+   чипа .tag (чип даёт nowrap и мелкий паддинг — длинные подписи вылезают) */
+.signboard .tagline {
+  display:block; max-width:80ch; margin:0 auto;
+  background:var(--white); border:3px solid var(--ink); border-radius:var(--r-item);
+  padding:10px 26px; color:var(--muted); font-size:1.05rem; font-weight:600;
+  line-height:1.7; letter-spacing:normal; text-transform:none; white-space:normal;
+}
 .signboard .cta-row { margin-top:30px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
 .signboard--small { padding:54px 4vw 46px; }
 .signboard--small h1 { font-size:clamp(1.9rem,5vw,3.2rem); }

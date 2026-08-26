@@ -28,6 +28,19 @@ function relDate(d: Date): string {
   return `${SHORT_DAYS[d.getDay()]} ${hhmm}`;
 }
 
+// Бейдж типа заявки — те же классы, что в /admin/orders (TYPE_TAGS/TYPE_LABELS)
+const TYPE_TAGS: Record<string, string> = {
+  product: "tag--new",
+  custom: "tag--mustard",
+  contact: "tag--olive",
+};
+
+const TYPE_LABELS: Record<string, string> = {
+  product: "товар",
+  custom: "конфигуратор",
+  contact: "контакт",
+};
+
 // Подпись заявки в колонке «Тип» (как демо: «custom · кулон», «product · брошь»)
 function typeLabel(type: string, productName: string | null, configJson: string): string {
   if (type === "product") return `product · ${productName ?? "—"}`;
@@ -165,7 +178,12 @@ export default async function DashboardPage() {
                   return (
                     <tr key={o.id}>
                       <td className="num">{o.id}</td>
-                      <td>{typeLabel(o.type, product?.name ?? null, o.configJson)}</td>
+                      <td>
+                        <span className={`tag ${TYPE_TAGS[o.type]}`}>{TYPE_LABELS[o.type]}</span>{" "}
+                        <small style={{ color: "var(--muted)" }}>
+                          {typeLabel(o.type, product?.name ?? null, o.configJson)}
+                        </small>
+                      </td>
                       <td className="cell-name">
                         <b>{o.customerName}</b>
                         <small>{o.contact}</small>

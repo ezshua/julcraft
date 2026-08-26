@@ -7,6 +7,15 @@ import HoursBoard from "@/components/ui/HoursBoard";
 
 export const metadata: Metadata = {
   title: "Контакты — JulCraft",
+  description:
+    "Контакты мастерской JulCraft: телефон, email, адрес, часы работы. Позвоните, напишите или зайдите на чай.",
+  alternates: { canonical: "/contacts" },
+  openGraph: {
+    title: "Контакты — JulCraft",
+    description:
+      "Контакты мастерской JulCraft: телефон, email, адрес, часы работы.",
+    type: "website",
+  },
 };
 
 const ROW_STYLE: React.CSSProperties = {
@@ -29,7 +38,7 @@ export default function ContactsPage() {
       <div className="signboard signboard--small">
         <p className="est">✹ всегда рады ✹</p>
         <h1>Контакты</h1>
-        <p className="tag">
+        <p className="tagline">
           позвоните, напишите или зайдите на чай — отвечаем быстрее, чем остывает чайник
         </p>
       </div>
@@ -43,42 +52,33 @@ export default function ContactsPage() {
           {/* Правая колонка: карта + контакты */}
           <div>
             <div className="item" style={{ overflow: "hidden", marginBottom: "22px" }}>
-              <div
-                className="map-ph"
+              {/* Решение №6 (Этап 6): Google Maps embed по адресу из Settings, без API-ключа */}
+              <iframe
+                title={`Карта — ${contacts.address}`}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(contacts.address)}&output=embed`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
                 style={{
+                  width: "100%",
                   height: "260px",
+                  border: "none",
+                  display: "block",
                   background: "var(--paper)",
-                  backgroundImage:
-                    "radial-gradient(var(--muted) 1.2px, transparent 1.2px)",
-                  backgroundSize: "22px 22px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative",
+                }}
+              />
+              <span
+                style={{
+                  display: "block",
+                  padding: "8px 12px 10px",
+                  fontSize: ".7rem",
+                  color: "var(--muted)",
+                  letterSpacing: ".08em",
+                  textTransform: "uppercase",
                 }}
               >
-                <svg viewBox="0 0 24 24" width="44" height="44" style={{ position: "absolute" }}>
-                  <path
-                    d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"
-                    fill="#d0785a"
-                    stroke="#22242a"
-                    strokeWidth="2"
-                  />
-                  <circle cx="12" cy="10" r="3" fill="#ffffff" stroke="#22242a" strokeWidth="2" />
-                </svg>
-                <span
-                  style={{
-                    position: "absolute",
-                    bottom: "14px",
-                    fontSize: ".7rem",
-                    color: "var(--muted)",
-                    letterSpacing: ".08em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Яндекс.Карты · embed · {contacts.address}
-                </span>
-              </div>
+                Google Maps · {contacts.address}
+              </span>
             </div>
 
             <div className="board board--paper">

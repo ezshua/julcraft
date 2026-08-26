@@ -1,7 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
-import { imgWith } from "@/lib/format";
 
 const THUMB_SVGS = [
   <svg key="ell" viewBox="0 0 24 24" width="56" height="56">
@@ -29,8 +29,7 @@ export default function ProductGallery({
       key={i}
       onClick={() => setActive(i)}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={imgWith(src, 300)} alt={`Вид ${i + 1}`} loading="lazy" decoding="async" />
+      <Image src={src} alt={`Вид ${i + 1}`} width={160} height={160} sizes="160px" />
     </div>
   ));
   for (let i = realCount; i < 4; i++) {
@@ -44,8 +43,14 @@ export default function ProductGallery({
   return (
     <div className="gallery">
       <div className="gallery-main">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={imgWith(images[0], 900)} alt={alt} loading="lazy" decoding="async" />
+        <Image
+          src={images[active]}
+          alt={alt}
+          width={800}
+          height={800}
+          sizes="(max-width: 1079px) 100vw, 520px"
+          priority
+        />
       </div>
       <div className="gallery-thumbs">{thumbs}</div>
     </div>
