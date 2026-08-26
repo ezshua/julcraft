@@ -8,6 +8,7 @@ import OrderModal, {
 import CollageLightbox from "@/components/admin/CollageLightbox";
 import { formatPrice, asPriced } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
+import { ORDER_STATUS_LABELS } from "@/lib/order-status-labels";
 import type { FinanceSettings } from "@/lib/currency";
 
 const TYPE_TAGS: Record<string, string> = {
@@ -18,8 +19,8 @@ const TYPE_TAGS: Record<string, string> = {
 
 const TYPE_LABELS: Record<string, string> = {
   product: "товар",
-  custom: "конфигуратор",
-  contact: "контакт",
+  custom: "сборка",
+  contact: "записка",
 };
 
 function fmtDate(d: Date): string {
@@ -70,7 +71,7 @@ export default function OrderRow({
       </td>
       <td>{order.collagePath ? <CollageLightbox src={order.collagePath} /> : "—"}</td>
       <td>
-        <span className={`tag tag--${order.status}`}>{order.status}</span>
+        <span className={`tag tag--${order.status}`}>{ORDER_STATUS_LABELS[order.status]}</span>
       </td>
       <td className="num">{fmtDate(order.createdAt)}</td>
       <td>

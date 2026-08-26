@@ -4,6 +4,7 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice, asPriced, formatSnapshot } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
+import { ORDER_STATUS_LABELS } from "@/lib/order-status-labels";
 import type { FinanceSettings } from "@/lib/currency";
 import type { OrderStatus, OrderType } from "@/drizzle/schema";
 
@@ -285,7 +286,7 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
             )}
 
             <div className="form-actions">
-              <span className={`tag tag--${status}`}>{status}</span>
+              <span className={`tag tag--${status}`}>{ORDER_STATUS_LABELS[status]}</span>
               {mode === "edit" && status === "new" && (
                 <button
                   className="btn btn--primary btn--small"

@@ -80,8 +80,8 @@ export default async function AdminOrdersPage(props: {
       o.type === "product"
         ? product?.name ?? "—"
         : o.type === "contact"
-          ? "записка"
-          : "конфигуратор";
+          ? "сообщение от контакта"
+          : "коллаж из конфигуратора";
     return {
       id: o.id,
       type: o.type,
