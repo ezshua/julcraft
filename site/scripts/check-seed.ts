@@ -35,8 +35,8 @@ console.log(`ключей settings: ${allSettings.length}: ${allSettings.map((s)
 console.log("--- Сверка с макетом (D-11) ---");
 
 const kulony = allCategories.find((c) => c.slug === "kulony");
-// 1000 ₽ — в БД v2 хранится как миноры исходной валюты + маркер "RUB"
-assert(!!kulony && kulony.workPrice === 1000 * 100 && kulony.workPriceCurrency === "RUB", "Кулоны workPrice = 1000 ₽ (100000 minor, RUB)");
+// 1000 ₴ — в БД v2 хранится как миноры исходной валюты + маркер "UAH"
+assert(!!kulony && kulony.workPrice === 1000 * 100 && kulony.workPriceCurrency === "UAH", "Кулоны workPrice = 1000 ₽ (100000 minor, UAH)");
 assert(!!kulony && kulony.baseWorkDays === 3, "Кулоны baseWorkDays = 3");
 assert(!!kulony && kulony.hasSlotTemplate === true, "Кулоны hasSlotTemplate = true");
 

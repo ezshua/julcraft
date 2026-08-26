@@ -96,7 +96,7 @@ const categorySeed: CategorySeed[] = [
   {
     name: "Винтажный ремонт",
     slug: "vintazhnyj-remont",
-    description: "починим бабушкины клипсы и одинокие серьги. От 300 ₽.",
+    description: "починим бабушкины клипсы и одинокие серьги. От 300 ₴.",
     workPrice: 300,
     baseWorkDays: 0,
   },
@@ -484,7 +484,7 @@ const shortReceiptSeed = {
     { label: "ЛЮБИМЫЙ МАТЕРИАЛ", value: "бакелит" },
     { label: "НЕЛЮБИМАЯ ФРАЗА", value: "«это сейчас не в моде»" },
     { label: "ЧАЙ ПОКУПАТЕЛЯМ", value: "бесплатно" },
-    { label: "РЕМОНТ СТАРИНЫ", value: "от 300 ₽" },
+    { label: "РЕМОНТ СТАРИНЫ", value: "от 300 ₴" },
   ],
   thanks: "*** СПАСИБО ЗА ВИЗИТ. ВОЗВРАЩАЙТЕСЬ ***",
 };
@@ -498,8 +498,8 @@ const historyReceiptSeed = {
     { label: "ЛЮБИМЫЙ МАТЕРИАЛ", value: "бакелит" },
     { label: "ЛЮБИМЫЙ ИНСТРУМЕНТ", value: "паяльник «Чародейка»" },
     { label: "НЕЛЮБИМАЯ ФРАЗА", value: "«это сейчас не в моде»" },
-    { label: "РЕМОНТ СТАРИНЫ", value: "от 300 ₽" },
-    { label: "СБОРКА НА ЗАКАЗ", value: "от 800 ₽ + материалы" },
+    { label: "РЕМОНТ СТАРИНЫ", value: "от 300 ₴" },
+    { label: "СБОРКА НА ЗАКАЗ", value: "от 800 ₴ + материалы" },
     { label: "СРОК ОБЫЧНОЙ РАБОТЫ", value: "3–7 дней" },
     { label: "ГАРАНТИЯ", value: "пожизненный ремонт своих работ" },
     { label: "ЧАЙ ПОКУПАТЕЛЯМ", value: "бесплатно" },
@@ -533,7 +533,7 @@ const settingsSeed: Record<string, string> = {
     { code: "EUR", name: "Евро", symbol: "€", ratePerUsd: 0.92 },
   ]),
   "finance.defaultCurrency": "UAH",
-  // Границы фильтра цены каталога как Priced в рублях (D-23b): «до 2 000 ₽ / от 2 500 ₽»
+  // Границы фильтра цены каталога как Priced в рублях (D-23b): «до 2 000 ₴ / от 2 500 ₴»
   "finance.filterLow": String(amountToMinor(2000)),
   "finance.filterLowCurrency": "RUB",
   "finance.filterHigh": String(amountToMinor(2500)),

@@ -10,10 +10,10 @@ import { defaultFinance } from "../lib/currency";
 // Курс рубля на момент миграции: env MIGRATE_USD_RATE, по умолчанию 85.
 // ============================================================
 
-const RUB_RATE = Number(process.env.MIGRATE_USD_RATE ?? "85");
+const UAH_RATE = Number(process.env.MIGRATE_USD_RATE ?? "44");
 
 function toUsdCents(rubles: number): number {
-  return Math.round((rubles * 100) / RUB_RATE);
+  return Math.round((rubles * 100) / UAH_RATE);
 }
 
 const marker = db
@@ -97,7 +97,7 @@ upsertSetting("finance.filterHighCurrency", defaultFinance.filterHighCurrency);
 upsertSetting("finance.migratedToUsd", "1");
 
 console.log(
-  `Миграция завершена: ${changed} строк пересчитано по курсу ${RUB_RATE} ₽ за 1 $. ` +
+  `Миграция завершена: ${changed} строк пересчитано по курсу ${UAH_RATE} ₽ за 1 $. ` +
     `finance.* записаны в Settings.`,
 );
 sqlite.close();

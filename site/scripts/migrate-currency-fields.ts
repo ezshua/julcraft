@@ -50,7 +50,7 @@ console.log(
 
 // Конвертация старых границ фильтра (USD-центы) в нативную валюту (D-23b):
 // добавляем маркер валюты и пересчитываем миноры. Идемпотентно — только если
-// маркера ещё нет. По умолчанию выбираем RUB (исторически границы задавались в ₽).
+// маркера ещё нет. По умолчанию выбираем UAH (исторически границы задавались в ₴).
 function getSetting(key: string): string | undefined {
   return db
     .select()
@@ -73,7 +73,7 @@ if (!getSetting("finance.filterLowCurrency")) {
   try {
     const arr = JSON.parse(getSetting("finance.currencies") ?? "[]") as unknown[];
     const r = (arr as Array<{ code: string; ratePerUsd: number }>).find(
-      (c) => c.code === "RUB",
+      (c) => c.code === "UAH",
     );
     if (r && r.ratePerUsd) rubRate = r.ratePerUsd;
   } catch {
@@ -83,11 +83,11 @@ if (!getSetting("finance.filterLowCurrency")) {
   const low = Number(getSetting("finance.filterLow") ?? "0");
   const high = Number(getSetting("finance.filterHigh") ?? "0");
   upsertSetting("finance.filterLow", String(toNativeMinor(low)));
-  upsertSetting("finance.filterLowCurrency", "RUB");
+  upsertSetting("finance.filterLowCurrency", "UAH");
   upsertSetting("finance.filterHigh", String(toNativeMinor(high)));
-  upsertSetting("finance.filterHighCurrency", "RUB");
+  upsertSetting("finance.filterHighCurrency", "UAH");
   console.log(
-    `finance.filterLow/High: USD-центы → рубли (rate ${rubRate}); маркер RUB добавлен.`,
+    `finance.filterLow/High: USD-центы → рубли (rate ${rubRate}); маркер UAH добавлен.`,
   );
 } else {
   console.log("finance.filterLow/High: уже в нативной валюте — пропускаем");

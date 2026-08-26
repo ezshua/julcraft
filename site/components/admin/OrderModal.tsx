@@ -240,7 +240,7 @@ export default function OrderModal({
 
             {order.type === "custom" && snap && snap.items.length > 0 ? (
               <div className="receipt" style={{ maxWidth: "100%", margin: "0 0 16px", padding: "26px 24px" }}>
-                {/* Q-6: снимок configJson — исторический факт, суммы как сохранены (₽) */}
+                {/* Q-6: снимок configJson — исторический факт, суммы как сохранены (₴) */}
                 {snap.items.map((item, i) => (
                   <div key={i}>
                     <div className="row">

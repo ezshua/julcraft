@@ -37,16 +37,15 @@ export const defaultFinance: FinanceSettings = {
   currencies: [
     { code: "USD", name: "Доллар", symbol: "$", ratePerUsd: 1 },
     { code: "UAH", name: "Гривна", symbol: "₴", ratePerUsd: 44 },
-    { code: "RUB", name: "Рубль", symbol: "₽", ratePerUsd: 85 },
     { code: "EUR", name: "Евро", symbol: "€", ratePerUsd: 0.92 },
   ],
   defaultCurrency: "UAH",
-  // Бывшие границы «до 2 000 ₽ / от 2 500 ₽» (Q-4: правятся в настройках). Храним как
-  // Priced в выбранной валюте, по умолчанию — в рублях (rate 85).
+  // Бывшие границы «до 2 000 ₴ / от 2 500 ₴» (Q-4: правятся в настройках). Храним как
+  // Priced в выбранной валюте, по умолчанию — в гривнах (rate 44).
   filterLow: amountToMinor(2000),
-  filterLowCurrency: "RUB",
+  filterLowCurrency: "UAH",
   filterHigh: amountToMinor(2500),
-  filterHighCurrency: "RUB",
+  filterHighCurrency: "UAH",
 };
 
 const CODE_RE = /^[A-Z]{3}$/;
@@ -198,9 +197,9 @@ export function formatPrice(
   return formatMoney(target.priceMinor / 100, display.symbol);
 }
 
-/** Исторические суммы (snapshot configJson старых заявок) — как сохранены, с пометкой ₽ (Q-6) */
+/** Исторические суммы (snapshot configJson старых заявок) — как сохранены, с пометкой ₴ (Q-6) */
 export function formatSnapshot(n: number): string {
-  return `${n.toLocaleString("ru-RU")} ₽`;
+  return `${n.toLocaleString("ru-RU")} ₴`;
 }
 
 /**
