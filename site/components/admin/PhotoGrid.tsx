@@ -179,7 +179,7 @@ export default function PhotoGrid({ images, onChange, kind, maxMB, accept, hint 
         style={{ display: "none" }}
         onChange={onPick}
       />
-      <div className="grid-hint">
+      <div className="grid-hint" style={{ textAlign: "center" }}>
         {hint} · загружено {images.length} из {MAX}
       </div>
       {busy && <div className="grid-hint">Загружаем…</div>}

@@ -7,11 +7,8 @@ import { slugify } from "@/lib/format";
 import {
   amountToMinor,
   minorToAmount,
-  convertPriced,
-  asPriced,
   type FinanceSettings,
 } from "@/lib/currency";
-import { useCurrency } from "@/lib/use-currency";
 import type { Product, ProductAvailability } from "@/drizzle/schema";
 
 const AVAILABILITY_OPTIONS = [
@@ -35,6 +32,7 @@ type FormState = {
   slug: string;
   categoryId: string;
   price: string;
+  priceCurrency: string;
   description: string;
   isNew: boolean;
   isFeatured: boolean;
@@ -65,6 +63,7 @@ function buildSnapshot(p: Product | undefined, currencyCode: string): FormState 
       slug: "",
       categoryId: "",
       price: "",
+      priceCurrency: currencyCode,
       description: "",
       isNew: false,
       isFeatured: false,
@@ -82,6 +81,7 @@ function buildSnapshot(p: Product | undefined, currencyCode: string): FormState 
     slug: p.slug,
     categoryId: String(p.categoryId),
     price: "", // заполняется после монтирования, см. useEffect
+    priceCurrency: p.priceCurrency,
     description: p.description,
     isNew: p.isNew,
     isFeatured: p.isFeatured,
@@ -123,7 +123,6 @@ function isDirty(a: FormState, b: FormState): boolean {
 //   * «Отмена» / крестик / клик по фону → если есть правки, спрашиваем подтверждение.
 export default function ProductModal({ categories, product, finance, currencyCode }: Props) {
   const router = useRouter();
-  const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState(0);
 
@@ -157,18 +156,15 @@ export default function ProductModal({ categories, product, finance, currencyCod
     if (initialOpenRef.current) return;
     const base = buildSnapshot(product, currencyCode);
     if (product) {
-      const priceMinor = convertPriced(
-        asPriced(product.price, product.priceCurrency),
-        currency,
-        finance,
-      ).priceMinor;
-      base.price = String(minorToAmount(priceMinor));
+      // Цена правится в явно выбранной валюте товара (priceCurrency) —
+      // конвертация в валюту «Вид» не нужна.
+      base.price = String(minorToAmount(product.price));
     }
     setForm(base);
     setSnapshot(base);
     setHydrated(true);
     initialOpenRef.current = true;
-  }, [open, product, currency, finance, currencyCode]);
+  }, [open, product, finance, currencyCode]);
 
   const dirty = isDirty(form, snapshot);
 
@@ -232,7 +228,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
         description: form.description,
         categoryId: Number(form.categoryId),
         price: amountToMinor(Number(form.price) || 0),
-        priceCurrency: currency.code,
+        priceCurrency: form.priceCurrency,
         isNew: form.isNew,
         isFeatured: form.isFeatured,
         availability: form.availability,
@@ -332,16 +328,16 @@ export default function ProductModal({ categories, product, finance, currencyCod
                 onBlur={() => void autoSlug()}
               />
             </div>
-            <div className="field">
-              <label>ID (URL)</label>
-              <input
-                type="text"
-                placeholder="brosh-nazvanie"
-                value={form.slug}
-                onChange={(e) => setField("slug", e.target.value)}
-              />
-            </div>
             <div className="field--row">
+              <div className="field">
+                <label>ID (URL)</label>
+                <input
+                  type="text"
+                  placeholder="brosh-nazvanie"
+                  value={form.slug}
+                  onChange={(e) => setField("slug", e.target.value)}
+                />
+              </div>
               <div className="field">
                 <label>Категория</label>
                 <select
@@ -356,8 +352,10 @@ export default function ProductModal({ categories, product, finance, currencyCod
                   ))}
                 </select>
               </div>
+            </div>
+            <div className="field--row">
               <div className="field">
-                <label>Цена, {currency.symbol}</label>
+                <label>Цена</label>
                 <input
                   type="number"
                   step="0.01"
@@ -365,6 +363,19 @@ export default function ProductModal({ categories, product, finance, currencyCod
                   value={form.price}
                   onChange={(e) => setField("price", e.target.value)}
                 />
+              </div>
+              <div className="field">
+                <label>Валюта цены</label>
+                <select
+                  value={form.priceCurrency}
+                  onChange={(e) => setField("priceCurrency", e.target.value)}
+                >
+                  {finance.currencies.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.code} ({c.symbol})
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="field">
