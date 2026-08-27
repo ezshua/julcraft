@@ -794,6 +794,47 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
 .dropzone.has-photo .dz-preview img { width:100%; height:100%; object-fit:contain; }
 .dropzone.has-photo .dz-meta { flex:1; min-width:0; }
 
+/* Сетка фото (до 6 ячеек) во вкладке «Фото» карточки товара */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+@media (max-width: 520px) {
+  .photo-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.photo-grid .cell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border: 3px dashed var(--ink);
+  border-radius: var(--r-item);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background .2s;
+}
+.photo-grid .cell:hover { background: var(--bg); }
+.photo-grid .cell.is-filled { border-style: solid; cursor: default; }
+.photo-grid .cell.is-drag { background: var(--mustard); }
+.photo-grid .cell.is-drop-target { outline: 3px solid var(--mustard); outline-offset: -3px; }
+.photo-grid .cell.is-dragging { opacity: .5; }
+.photo-grid .cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-grid .cell .plus {
+  font-size: 1.8rem; line-height: 1; color: var(--ink);
+  font-family: var(--font-display);
+}
+.photo-grid .cell .cover-tag {
+  position: absolute; top: 6px; left: 6px;
+  background: var(--mustard); border: 2px solid var(--ink);
+  border-radius: 6px; font-size: .6rem; padding: 1px 6px;
+  font-family: var(--font-display); pointer-events: none;
+}
+.photo-grid .grid-hint { margin-top: 12px; font-size: .72rem; color: var(--muted); text-align: center; }
+.photo-grid .grid-error { margin-top: 8px; font-size: .72rem; color: var(--rust); text-align: center; }
+
 /* детали заявки */
 .order-detail .cd-thumbs { display:flex; gap:12px; flex-wrap:wrap; }
 .order-detail .cd-thumbs .thumb {

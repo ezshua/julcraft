@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import ImageUploader from "./ImageUploader";
+import PhotoGrid from "./PhotoGrid";
 import { slugify } from "@/lib/format";
 import {
   amountToMinor,
@@ -433,58 +433,14 @@ export default function ProductModal({ categories, product, finance, currencyCod
           </div>
 
           <div className="tab-pane" style={{ display: tab === 1 ? "" : "none" }}>
-            <ImageUploader
+            <PhotoGrid
+              images={form.images}
+              onChange={(next) => setField("images", next)}
               kind="products"
               maxMB={5}
               accept="image/jpeg,image/png,image/webp"
-              title="Перетащите фото сюда или нажмите"
               hint="JPG/PNG/WebP до 5 МБ · первое фото — обложка"
-              onUploaded={(path) => {
-                if (form.images.length >= 6) {
-                  setError("Максимум 6 фото");
-                  return;
-                }
-                setError("");
-                setField("images", [...form.images, path]);
-              }}
-            >
-              <div className="dz-example">
-                {form.images.map((img, i) => (
-                  <div
-                    key={img}
-                    style={{ position: "relative", display: "inline-block" }}
-                  >
-                    <div className="thumb">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img} alt="" />
-                    </div>
-                    <button
-                      className="icon-btn"
-                      style={{
-                        position: "absolute",
-                        top: -8,
-                        right: -8,
-                        width: 20,
-                        height: 20,
-                        fontSize: ".6rem",
-                        borderWidth: 2,
-                      }}
-                      title="Удалить фото"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setField(
-                          "images",
-                          form.images.filter((_, j) => j !== i),
-                        );
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-                <span>уже загружено: {form.images.length} из 6</span>
-              </div>
-            </ImageUploader>
+            />
           </div>
           <div className="tab-pane" style={{ display: tab === 2 ? "" : "none" }}>
             <div className="field">
