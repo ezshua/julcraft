@@ -7,7 +7,7 @@ import HoursBoard from "@/components/ui/HoursBoard";
 export const metadata: Metadata = {
   title: "О мастерской — JulCraft",
   description:
-    "История мастерской JulCraft: Юля Крафт, 12 лет за верстаком, любимая эпоха 1972–1981. Ручная работа, ремонт старины и чай покупателям.",
+    "История мастерской JulCraft: Юля, много лет за рукоделием. Ручная работа, ремонт старины и чай покупателям.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "О мастерской — JulCraft",
@@ -25,7 +25,7 @@ export default function AboutPage() {
       <div className="signboard">
         <p className="est">✹ о мастерской ✹</p>
         <h1>История на верстаке</h1>
-        <p className="tagline">Юля Крафт · 12 лет за верстаком · любимая эпоха 1972–1981</p>
+        <p className="tagline">Юля-Юличка · много лет за рукоделием · от идеи "до" переходим к изделию "после"</p>
       </div>
       <div className="zigzag"></div>
 
