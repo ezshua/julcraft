@@ -187,11 +187,31 @@ section.sect { padding:70px 4vw; max-width:1080px; margin:0 auto; }
 .btn--small { padding:9px 18px; font-size:.68rem; }
 .btn--block { width:100%; }
 .btn:disabled, .btn.is-disabled { opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
+/* «Горящая» кнопка — форма содержит несохранённые изменения.
+   Подсвечиваем акцентной тенью и мягко пульсирующим контуром. */
+.btn--primary.is-dirty {
+  background:var(--rust);
+  color:var(--cream);
+  box-shadow:6px 6px 0 var(--mustard), 0 0 0 3px var(--mustard);
+  animation:btn-dirty-pulse 1.4s ease-in-out infinite;
+}
+.btn--primary.is-dirty:hover {
+  transform:translate(-2px,-2px);
+  box-shadow:8px 8px 0 var(--mustard), 0 0 0 3px var(--mustard);
+}
+@keyframes btn-dirty-pulse {
+  0%,100% { box-shadow:6px 6px 0 var(--mustard), 0 0 0 3px var(--mustard); }
+  50%     { box-shadow:6px 6px 0 var(--mustard), 0 0 0 5px var(--mustard); }
+}
+/* уважаем prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  .btn--primary.is-dirty { animation:none; }
+}
 
 /* ---------- 6. Витрина / полка / карточки ---------- */
 .shelf { display:grid; grid-template-columns:repeat(3,1fr); gap:30px; }
 .item {
-  background:var(--white); border:3px solid var(--brown); border-radius:var(--r-item);
+  background:var(--paper); border:3px solid var(--brown); border-radius:var(--r-item);
   overflow:hidden; box-shadow:var(--shadow-item); transition:.25s; display:block;
   text-decoration:none; color:var(--brown); position:relative;
 }
@@ -537,10 +557,10 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
 /* ---------- 13. Галерея товара ---------- */
 .gallery { display:grid; grid-template-columns:1.35fr 1fr; gap:30px; align-items:start; }
 .gallery-main {
-  background:var(--white); border:3px solid var(--brown); border-radius:var(--r-item);
+  background:var(--paper); border:3px solid var(--brown); border-radius:var(--r-item);
   overflow:hidden; box-shadow:var(--shadow-item);
 }
-.gallery-main img { width:100%; aspect-ratio:1; object-fit:cover; }
+.gallery-main img { width:100%; aspect-ratio:1; object-fit:contain; object-position:center; background:var(--paper); }
 .gallery-thumbs { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
 .g-t {
   border:3px solid var(--brown); border-radius:12px; overflow:hidden; cursor:pointer; aspect-ratio:1;

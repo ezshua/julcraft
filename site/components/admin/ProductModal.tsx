@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUploader from "./ImageUploader";
 import { slugify } from "@/lib/format";
@@ -21,12 +21,30 @@ const AVAILABILITY_OPTIONS = [
   { value: "out_of_stock", label: "нет на складе" },
 ] as const;
 
+
 type Props = {
   categories: { id: number; name: string }[];
   /** Без product — режим «Новый товар» */
   product?: Product;
   finance: FinanceSettings;
   currencyCode: string;
+};
+
+type FormState = {
+  name: string;
+  slug: string;
+  categoryId: string;
+  price: string;
+  description: string;
+  isNew: boolean;
+  isFeatured: boolean;
+  availability: ProductAvailability;
+  reserveUntil: string;
+  orderDays: string;
+  images: string[];
+  metaTitle: string;
+  metaDescription: string;
+  ogImage: string;
 };
 
 function toDateInput(d: Date | null): string {
@@ -37,54 +55,161 @@ function fromDateInput(s: string): string | null {
   return s ? new Date(`${s}T00:00:00Z`).toISOString() : null;
 }
 
+// Снимок формы, по которому считаем «грязность». Для price важна
+// именно введённая строка, потому что при открытии мы её пересчитываем
+// из миноров в текущую валюту; сравниваем с тем, что лежит в state.
+function buildSnapshot(p: Product | undefined, currencyCode: string): FormState {
+  if (!p) {
+    return {
+      name: "",
+      slug: "",
+      categoryId: "",
+      price: "",
+      description: "",
+      isNew: false,
+      isFeatured: false,
+      availability: "in_stock",
+      reserveUntil: "",
+      orderDays: "7",
+      images: [],
+      metaTitle: "",
+      metaDescription: "",
+      ogImage: "",
+    };
+  }
+  return {
+    name: p.name,
+    slug: p.slug,
+    categoryId: String(p.categoryId),
+    price: "", // заполняется после монтирования, см. useEffect
+    description: p.description,
+    isNew: p.isNew,
+    isFeatured: p.isFeatured,
+    availability: p.availability,
+    reserveUntil: toDateInput(p.reserveUntil ?? null),
+    orderDays: p.orderDays != null ? String(p.orderDays) : "7",
+    images: [...p.images],
+    metaTitle: p.metaTitle ?? "",
+    metaDescription: p.metaDescription ?? "",
+    ogImage: p.ogImage ?? "",
+  };
+}
+
+// Глубокое сравнение «грязности». Все поля формы — примитивы
+// или массив строк, рекурсия тут не нужна.
+function isDirty(a: FormState, b: FormState): boolean {
+  if (a === b) return false;
+  for (const k of Object.keys(a) as (keyof FormState)[]) {
+    const av = a[k];
+    const bv = b[k];
+    if (Array.isArray(av) && Array.isArray(bv)) {
+      if (av.length !== bv.length) return true;
+      for (let i = 0; i < av.length; i++) if (av[i] !== bv[i]) return true;
+    } else if (av !== bv) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Модалка товара — копия div.modal-overlay#modal из mockup/admin/products.html
 // (табы Основное/Фото/SEO + D-13: select «Наличие», «Резерв до», «Дней под заказ»).
 // Цена — в текущей валюте «Вид» (D-24): при открытии конвертируется из хранимой
 // валюты в текущую, при сохранении — сохраняется «как ввели» + priceCurrency.
+//
+// Кнопки «Сохранить» и «Отмена» зависят от isDirty:
+//   * пустая форма (только что открыли)  → «Сохранить» disabled, «Отмена» закрывает;
+//   * что-то поменяли                   → «Сохранить» активен + класс is-dirty;
+//   * «Отмена» / крестик / клик по фону → если есть правки, спрашиваем подтверждение.
 export default function ProductModal({ categories, product, finance, currencyCode }: Props) {
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState(0);
 
-  const [name, setName] = useState(product?.name ?? "");
-  const [slug, setSlug] = useState(product?.slug ?? "");
-  const [categoryId, setCategoryId] = useState(
-    product ? String(product.categoryId) : "",
-  );
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState(product?.description ?? "");
-  const [isNew, setIsNew] = useState(product?.isNew ?? false);
-  const [isFeatured, setIsFeatured] = useState(product?.isFeatured ?? false);
-  const [availability, setAvailability] = useState(
-    product?.availability ?? "in_stock",
-  );
-  const [reserveUntil, setReserveUntil] = useState(
-    toDateInput(product?.reserveUntil ?? null),
-  );
-  const [orderDays, setOrderDays] = useState(
-    product?.orderDays != null ? String(product.orderDays) : "7",
-  );
-  const [images, setImages] = useState<string[]>(product?.images ?? []);
-  const [metaTitle, setMetaTitle] = useState(product?.metaTitle ?? "");
-  const [metaDescription, setMetaDescription] = useState(
-    product?.metaDescription ?? "",
-  );
-  const [ogImage, setOgImage] = useState(product?.ogImage ?? "");
+  const [form, setForm] = useState<FormState>(() => buildSnapshot(product, currencyCode));
+  const [snapshot, setSnapshot] = useState<FormState>(() => buildSnapshot(product, currencyCode));
+  // Флаг «снимок уже подтянут под продукт + текущую валюту». Нужен, чтобы
+  // первый рендер с уже-открытой формой не сбрасывал то, что начал
+  // заполнять пользователь, и одновременно чтобы при повторном открытии
+  // существующего товара (или при смене валюты) поля переинициализировались.
+  const [hydrated, setHydrated] = useState(false);
 
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const initialOpenRef = useRef(false);
+
+  const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // Снимок формы на момент открытия (или смены валюты/продукта).
+  // Запускаем, когда модалка только что стала открыта — переинициализируем
+  // ВСЕ поля, а не только цену. Раньше при повторном открытии товара
+  // подтягивалась только цена; остальные поля оставались от прошлого
+  // открытия (баг «первое редактирование работает, второе — нет»).
+  useEffect(() => {
+    if (!open) {
+      setHydrated(false);
+      initialOpenRef.current = false;
+      return;
+    }
+    if (initialOpenRef.current) return;
+    const base = buildSnapshot(product, currencyCode);
+    if (product) {
+      const priceMinor = convertPriced(
+        asPriced(product.price, product.priceCurrency),
+        currency,
+        finance,
+      ).priceMinor;
+      base.price = String(minorToAmount(priceMinor));
+    }
+    setForm(base);
+    setSnapshot(base);
+    setHydrated(true);
+    initialOpenRef.current = true;
+  }, [open, product, currency, finance, currencyCode]);
+
+  const dirty = isDirty(form, snapshot);
+
+  const closeWithConfirm = () => {
+    if (busy) return;
+    if (dirty) {
+      const ok = window.confirm(
+        "В форме есть несохранённые изменения. Закрыть без сохранения?",
+      );
+      if (!ok) return;
+    }
+    setOpen(false);
+  };
+
+  // Закрытие по клику на тёмный фон (но не по самой модалке)
+  const onOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) closeWithConfirm();
+  };
+
+  // Предупреждение при уходе со страницы с несохранёнными правками
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
 
   const openCreate = () => {
     setError("");
     setTab(0);
-    setPrice("");
+    setForm(buildSnapshot(undefined, currencyCode));
+    setSnapshot(buildSnapshot(undefined, currencyCode));
     setOpen(true);
   };
 
   const autoSlug = async () => {
-    if (slug) return;
-    const base = slugify(name);
+    if (form.slug) return;
+    const base = slugify(form.name);
     if (!base) return;
     const res = await fetch("/api/admin/products/slugs");
     if (!res.ok) return;
@@ -93,30 +218,31 @@ export default function ProductModal({ categories, product, finance, currencyCod
     let candidate = base;
     let n = 2;
     while (taken.has(candidate)) candidate = `${base}-${n++}`;
-    setSlug((prev) => (prev !== "" ? prev : candidate));
+    setField("slug", form.slug !== "" ? form.slug : candidate);
   };
 
   const save = async () => {
-    if (busy) return;
+    if (busy || !dirty) return;
     setBusy(true);
     setError("");
     try {
       const payload = {
-        name,
-        slug,
-        description,
-        categoryId: Number(categoryId),
-        price: amountToMinor(Number(price) || 0),
+        name: form.name,
+        slug: form.slug,
+        description: form.description,
+        categoryId: Number(form.categoryId),
+        price: amountToMinor(Number(form.price) || 0),
         priceCurrency: currency.code,
-        isNew,
-        isFeatured,
-        availability,
-        reserveUntil: fromDateInput(reserveUntil),
-        orderDays: availability === "made_to_order" ? Number(orderDays || 0) : null,
-        images,
-        metaTitle: metaTitle || null,
-        metaDescription: metaDescription || null,
-        ogImage: ogImage || null,
+        isNew: form.isNew,
+        isFeatured: form.isFeatured,
+        availability: form.availability,
+        reserveUntil: fromDateInput(form.reserveUntil),
+        orderDays:
+          form.availability === "made_to_order" ? Number(form.orderDays || 0) : null,
+        images: form.images,
+        metaTitle: form.metaTitle || null,
+        metaDescription: form.metaDescription || null,
+        ogImage: form.ogImage || null,
       };
       const res = await fetch(
         product ? `/api/admin/products/${product.id}` : "/api/admin/products",
@@ -132,7 +258,11 @@ export default function ProductModal({ categories, product, finance, currencyCod
         setBusy(false);
         return;
       }
+      // Снимок обновляем до закрытия, чтобы при следующем открытии
+      // форма не считала «грязной» то, что мы только что сохранили.
+      setSnapshot(form);
       setOpen(false);
+      setBusy(false);
       router.refresh();
     } catch {
       setError("Не получилось сохранить товар");
@@ -150,17 +280,6 @@ export default function ProductModal({ categories, product, finance, currencyCod
           onClick={() => {
             setError("");
             setTab(0);
-            setPrice(
-              String(
-                minorToAmount(
-                  convertPriced(
-                    asPriced(product.price, product.priceCurrency),
-                    currency,
-                    finance,
-                  ).priceMinor,
-                ),
-              ),
-            );
             setOpen(true);
           }}
         >
@@ -172,14 +291,19 @@ export default function ProductModal({ categories, product, finance, currencyCod
         </button>
       )}
 
-      <div className={open ? "modal-overlay open" : "modal-overlay"} id="modal">
+      <div
+        className={open ? "modal-overlay open" : "modal-overlay"}
+        id="modal"
+        onClick={onOverlayClick}
+      >
         <div className="modal modal--wide">
           <div className="m-head">
             <h3>{product ? "Редактировать товар" : "Новый товар на витрину"}</h3>
             <button
               className="icon-btn"
-              onClick={() => setOpen(false)}
+              onClick={closeWithConfirm}
               aria-label="Закрыть"
+              disabled={busy}
             >
               ✕
             </button>
@@ -203,8 +327,8 @@ export default function ProductModal({ categories, product, finance, currencyCod
               <input
                 type="text"
                 placeholder="Брошь «...»"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={form.name}
+                onChange={(e) => setField("name", e.target.value)}
                 onBlur={() => void autoSlug()}
               />
             </div>
@@ -213,16 +337,16 @@ export default function ProductModal({ categories, product, finance, currencyCod
               <input
                 type="text"
                 placeholder="brosh-nazvanie"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                value={form.slug}
+                onChange={(e) => setField("slug", e.target.value)}
               />
             </div>
             <div className="field--row">
               <div className="field">
                 <label>Категория</label>
                 <select
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
+                  value={form.categoryId}
+                  onChange={(e) => setField("categoryId", e.target.value)}
                 >
                   <option value="">— выберите —</option>
                   {categories.map((c) => (
@@ -238,8 +362,8 @@ export default function ProductModal({ categories, product, finance, currencyCod
                   type="number"
                   step="0.01"
                   placeholder="1 950"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  value={form.price}
+                  onChange={(e) => setField("price", e.target.value)}
                 />
               </div>
             </div>
@@ -247,24 +371,24 @@ export default function ProductModal({ categories, product, finance, currencyCod
               <label>Описание</label>
               <textarea
                 placeholder="Что за вещь, из чего, какая история"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={form.description}
+                onChange={(e) => setField("description", e.target.value)}
               />
             </div>
             <div className="field" style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
               <label className="checkbox">
                 <input
                   type="checkbox"
-                  checked={isNew}
-                  onChange={(e) => setIsNew(e.target.checked)}
+                  checked={form.isNew}
+                  onChange={(e) => setField("isNew", e.target.checked)}
                 />{" "}
                 Новинка
               </label>
               <label className="checkbox">
                 <input
                   type="checkbox"
-                  checked={isFeatured}
-                  onChange={(e) => setIsFeatured(e.target.checked)}
+                  checked={form.isFeatured}
+                  onChange={(e) => setField("isFeatured", e.target.checked)}
                 />{" "}
                 Избранное (на главную)
               </label>
@@ -273,8 +397,10 @@ export default function ProductModal({ categories, product, finance, currencyCod
             <div className="field">
               <label>Наличие</label>
               <select
-                value={availability}
-                onChange={(e) => setAvailability(e.target.value as ProductAvailability)}
+                value={form.availability}
+                onChange={(e) =>
+                  setField("availability", e.target.value as ProductAvailability)
+                }
               >
                 {AVAILABILITY_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -283,24 +409,24 @@ export default function ProductModal({ categories, product, finance, currencyCod
                 ))}
               </select>
             </div>
-            {availability === "reserve" && (
+            {form.availability === "reserve" && (
               <div className="field">
                 <label>Резерв до</label>
                 <input
                   type="date"
-                  value={reserveUntil}
-                  onChange={(e) => setReserveUntil(e.target.value)}
+                  value={form.reserveUntil}
+                  onChange={(e) => setField("reserveUntil", e.target.value)}
                 />
               </div>
             )}
-            {availability === "made_to_order" && (
+            {form.availability === "made_to_order" && (
               <div className="field">
                 <label>Дней под заказ</label>
                 <input
                   type="number"
                   placeholder="7"
-                  value={orderDays}
-                  onChange={(e) => setOrderDays(e.target.value)}
+                  value={form.orderDays}
+                  onChange={(e) => setField("orderDays", e.target.value)}
                 />
               </div>
             )}
@@ -314,16 +440,16 @@ export default function ProductModal({ categories, product, finance, currencyCod
               title="Перетащите фото сюда или нажмите"
               hint="JPG/PNG/WebP до 5 МБ · первое фото — обложка"
               onUploaded={(path) => {
-                if (images.length >= 6) {
+                if (form.images.length >= 6) {
                   setError("Максимум 6 фото");
                   return;
                 }
                 setError("");
-                setImages((prev) => [...prev, path]);
+                setField("images", [...form.images, path]);
               }}
             >
               <div className="dz-example">
-                {images.map((img, i) => (
+                {form.images.map((img, i) => (
                   <div
                     key={img}
                     style={{ position: "relative", display: "inline-block" }}
@@ -346,36 +472,36 @@ export default function ProductModal({ categories, product, finance, currencyCod
                       title="Удалить фото"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setImages((prev) => prev.filter((_, j) => j !== i));
+                        setField(
+                          "images",
+                          form.images.filter((_, j) => j !== i),
+                        );
                       }}
                     >
                       ✕
                     </button>
                   </div>
                 ))}
-                <span>
-                  уже загружено: {images.length} из 6
-                </span>
+                <span>уже загружено: {form.images.length} из 6</span>
               </div>
             </ImageUploader>
           </div>
-
           <div className="tab-pane" style={{ display: tab === 2 ? "" : "none" }}>
             <div className="field">
               <label>Meta title</label>
               <input
                 type="text"
                 placeholder="Брошь «Ромашковая» — JulCraft"
-                value={metaTitle}
-                onChange={(e) => setMetaTitle(e.target.value)}
+                value={form.metaTitle}
+                onChange={(e) => setField("metaTitle", e.target.value)}
               />
             </div>
             <div className="field">
               <label>Meta description</label>
               <textarea
                 placeholder="Эмаль по меди, ручная роспись, в одном экземпляре."
-                value={metaDescription}
-                onChange={(e) => setMetaDescription(e.target.value)}
+                value={form.metaDescription}
+                onChange={(e) => setField("metaDescription", e.target.value)}
               />
             </div>
             <div className="field">
@@ -383,8 +509,8 @@ export default function ProductModal({ categories, product, finance, currencyCod
               <input
                 type="text"
                 placeholder="/uploads/products/..."
-                value={ogImage}
-                onChange={(e) => setOgImage(e.target.value)}
+                value={form.ogImage}
+                onChange={(e) => setField("ogImage", e.target.value)}
               />
             </div>
           </div>
@@ -396,12 +522,25 @@ export default function ProductModal({ categories, product, finance, currencyCod
           )}
 
           <div className="m-actions">
-            <button className="btn btn--primary" onClick={() => void save()} disabled={busy}>
-              Сохранить товар
+            <button
+              className={`btn btn--primary${dirty ? " is-dirty" : ""}`}
+              onClick={() => void save()}
+              disabled={busy || !dirty}
+              title={
+                dirty
+                  ? "Сохранить изменения"
+                  : "Нет изменений — сохранять нечего"
+              }
+            >
+              {product
+                ? dirty
+                  ? "Сохранить изменения"
+                  : "Сохранить"
+                : "Сохранить товар"}
             </button>
             <button
               className="btn btn--secondary"
-              onClick={() => setOpen(false)}
+              onClick={closeWithConfirm}
               disabled={busy}
             >
               Отмена
