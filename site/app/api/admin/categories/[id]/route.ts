@@ -1,6 +1,6 @@
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { categories, slotTemplates } from "@/drizzle/schema";
+import { categories, slotTemplates, products } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
 import { isValidComponentTypeCode } from "@/lib/component-types";
 import { categorySchema, type CategoryInput } from "@/lib/schemas";
@@ -104,6 +104,7 @@ export async function PUT(
       name: data.name,
       slug: data.slug,
       description: data.description,
+      image: data.image === undefined ? existing.image : data.image,
       workPrice: data.workPrice,
       workPriceCurrency: data.workPriceCurrency,
       baseWorkDays: data.baseWorkDays,
@@ -149,6 +150,53 @@ export async function PUT(
       db.delete(slotTemplates).where(eq(slotTemplates.id, s.id)).run();
     }
   }
+
+  return Response.json({ ok: true });
+}
+
+// Удаление категории (левый список, крестик на карточке).
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  if (!(await requireAdmin())) {
+    return Response.json({ error: "Не авторизован" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const categoryId = Number.parseInt(id, 10);
+  if (!Number.isInteger(categoryId) || categoryId <= 0) {
+    return Response.json({ error: "Некорректный id" }, { status: 400 });
+  }
+
+  const category = db
+    .select()
+    .from(categories)
+    .where(eq(categories.id, categoryId))
+    .get();
+  if (!category) {
+    return Response.json({ error: "Категория не найдена" }, { status: 404 });
+  }
+
+  // Категорию с товарами удалять нельзя — сначала перенести/удалить товары.
+  const productCount = db
+    .select({ id: products.id })
+    .from(products)
+    .where(eq(products.categoryId, categoryId))
+    .all().length;
+  if (productCount > 0) {
+    return Response.json(
+      {
+        error: `Нельзя удалить: в категории ${productCount} ${
+          productCount === 1 ? "товар" : "товаров"
+        }. Сначала перенесите или удалите их.`,
+      },
+      { status: 400 },
+    );
+  }
+
+  db.delete(slotTemplates).where(eq(slotTemplates.categoryId, categoryId)).run();
+  db.delete(categories).where(eq(categories.id, categoryId)).run();
 
   return Response.json({ ok: true });
 }

@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 type Props = {
-  kind: "products" | "components";
+  kind: "products" | "components" | "categories";
   /** Лимит из макета: товары — 5 МБ, комплектующие — 2 МБ */
   maxMB: number;
   /** MIME-типы: товары — jpeg/png/webp, комплектующие — png */

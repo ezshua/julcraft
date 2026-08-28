@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 type Props = {
   url: string;
   confirmText: string;
+  icon?: string;
 };
 
-// Кнопка «🗑» с нативным confirm() и refresh после удаления (Решение 4в).
-export default function DeleteButton({ url, confirmText }: Props) {
+// Кнопка удаления с нативным confirm() и refresh после удаления (Решение 4в).
+export default function DeleteButton({ url, confirmText, icon = "🗑" }: Props) {
   const router = useRouter();
 
   const del = async () => {
@@ -28,7 +29,7 @@ export default function DeleteButton({ url, confirmText }: Props) {
       title="Удалить"
       onClick={() => void del()}
     >
-      🗑
+      {icon}
     </button>
   );
 }

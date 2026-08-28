@@ -48,7 +48,7 @@ export default async function CatalogPage() {
       <Crumbs items={[{ label: "Главная", href: "/" }, { label: "Каталог" }]} />
 
       <div className="signboard signboard--small">
-        <p className="est">✹ десять полок ✹</p>
+        <p className="est">✹ Витрина и полки ✹</p>
         <h1>Каталог</h1>
         <p className="tagline">
           всё в одном экземпляре — если понравилось, не откладывайте на завтра
@@ -58,7 +58,7 @@ export default async function CatalogPage() {
 
       <section className="sect">
         <p className="sec-sub">
-          {"// 10 отделов · бакелит, стекло, эмаль, латунь и немного волшебства"}
+          {"// много разделов · металл, стекло, эмаль - руки и немного волшебства"}
         </p>
         {cats.length === 0 ? (
           <EmptyState />
@@ -70,6 +70,7 @@ export default async function CatalogPage() {
                 slug={cat.slug}
                 name={cat.name}
                 desc={cat.description}
+                image={cat.image}
                 count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
                 href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
               />

@@ -34,6 +34,7 @@ const createSchema = z.object({
     .trim()
     .min(1, "Укажите slug")
     .regex(/^[a-z0-9-]+$/, "Slug: только латиница, цифры и дефис"),
+  image: z.string().nullable().optional(),
   workPrice: z.number().int().min(0, "Работа не может быть отрицательной"),
   workPriceCurrency: z.string().regex(/^[A-Z]{3}$/, "Некорректный код валюты работы"),
   baseWorkDays: z.number().int().min(0),
@@ -77,6 +78,7 @@ export async function POST(request: Request) {
       name: data.name,
       slug: data.slug,
       description: "",
+      image: data.image ?? null,
       workPrice: data.workPrice,
       workPriceCurrency: data.workPriceCurrency,
       baseWorkDays: data.baseWorkDays,

@@ -83,7 +83,7 @@ export default async function HomePage() {
       <section className="sect">
         <h2 className="sec-h2">Сегодня на витрине</h2>
         <p className="sec-sub">
-          {"// всё в одном экземпляре · бакелит, стекло, настоящая ностальгия · 12 штук на полке"}
+          {"// всё в одном экземпляре · металлы, стекло, настоящая ностальгия на полке"}
         </p>
         {shelf.length === 0 ? (
           <EmptyState />
@@ -99,7 +99,7 @@ export default async function HomePage() {
       {/* Плитка категорий */}
       <section className="sect">
         <h2 className="sec-h2">Разложено по полкам</h2>
-        <p className="sec-sub">{"// десять отделов, в каждом — своё настроение"}</p>
+        <p className="sec-sub">{"// много разделов, в каждом — своё настроение"}</p>
         {cats.length === 0 ? (
           <EmptyState />
         ) : (
@@ -110,6 +110,7 @@ export default async function HomePage() {
                 slug={cat.slug}
                 name={cat.name}
                 desc={shortDesc(cat)}
+                image={cat.image}
                 count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
                 href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
               />

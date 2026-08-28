@@ -161,7 +161,7 @@ export default async function CategoryPage(props: {
       />
 
       <div className="signboard signboard--small">
-        <p className="est">✹ отдел №{cat.sortOrder} ✹</p>
+        <p className="est">✹ полка №{cat.sortOrder} ✹</p>
         <h1>{cat.name}</h1>
         <p className="tagline">{cat.description}</p>
       </div>

@@ -73,6 +73,7 @@ export default async function ConfiguratorPage() {
               slug={cat.slug}
               name={cat.name}
               desc={slotDesc.get(cat.id) ?? ""}
+              image={cat.image}
               count={`работа от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)} · ${cat.baseWorkDays} дн`}
               href={`/configurator/${cat.slug}`}
             />
@@ -82,6 +83,7 @@ export default async function ConfiguratorPage() {
             <CategoryCard
               slug={repair.slug}
               name={repair.name}
+              image={repair.image}
               desc="нет шаблона слотов — это услуга"
               count="через форму на контактах"
               href="/contacts"
@@ -95,7 +97,7 @@ export default async function ConfiguratorPage() {
             Цена = работа категории + стоимость комплектующих + обработка. Срок = база
             категории + дни обработки + поставка «под заказ».
             Точные формулы пересчитываются на сервере при отправке заявки — калькулятор
-            в макете показывает текущий расчёт.
+            в макете показывает текущий расчёт, мастер уточнит и сообщит.
           </div>
         </div>
       </section>

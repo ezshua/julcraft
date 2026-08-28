@@ -7,8 +7,8 @@ const ERROR_NAV = [
   { href: "/", label: "Витрина" },
   { href: "/catalog", label: "Каталог" },
   { href: "/configurator", label: "Конфигуратор" },
-  { href: "/about", label: "О нас" },
   { href: "/contacts", label: "Контакты" },
+  { href: "/about", label: "О нас" },
 ];
 
 // Шапка и мобильное меню страницы 404 — копия mockup/error.html

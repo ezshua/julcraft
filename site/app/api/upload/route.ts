@@ -10,6 +10,18 @@ const LIMITS: Record<string, { mime: string[]; max: number; ext: string }> = {
     ext: "jpg",
   },
   components: { mime: ["image/png"], max: 2 * 1024 * 1024, ext: "png" },
+  categories: {
+    mime: ["image/svg+xml", "image/png", "image/webp"],
+    max: 2 * 1024 * 1024,
+    ext: "auto",
+  },
+};
+
+const EXT_BY_MIME: Record<string, string> = {
+  "image/svg+xml": "svg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/jpeg": "jpg",
 };
 
 // Загрузка изображений (товары/комплектующие). Лимиты — из макетов.
@@ -43,7 +55,9 @@ export async function POST(request: Request) {
     return Response.json({ error: "Файл слишком большой" }, { status: 400 });
   }
 
-  const name = `${Date.now()}-${randomUUID().slice(0, 8)}.${rule.ext}`;
+  const ext =
+    rule.ext === "auto" ? EXT_BY_MIME[file.type] ?? "bin" : rule.ext;
+  const name = `${Date.now()}-${randomUUID().slice(0, 8)}.${ext}`;
   const dir = path.join(process.cwd(), "public", "uploads", kind);
   await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));

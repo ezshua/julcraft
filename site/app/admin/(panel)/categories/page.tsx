@@ -63,6 +63,7 @@ export default async function AdminCategoriesPage(props: {
         name: active.name,
         slug: active.slug,
         description: active.description,
+        image: active.image,
         workPrice: active.workPrice,
         workPriceCurrency: active.workPriceCurrency,
         baseWorkDays: active.baseWorkDays,
@@ -99,6 +100,7 @@ export default async function AdminCategoriesPage(props: {
         categories={listItems}
         finance={finance}
         currencyCode={currencyCode}
+        activeId={active?.id}
       />
 
       {editorCategory ? (

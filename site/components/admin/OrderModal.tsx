@@ -258,7 +258,7 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
                 ))}
                 {snap.workPrice != null && snap.categoryName != null && (
                   <div className="row">
-                    <span>Работа мастера ({snap.categoryName})</span>
+                    <span>Стоимость работы ({snap.categoryName})</span>
                     <span className="r">{formatSnapshot(snap.workPrice)}</span>
                   </div>
                 )}

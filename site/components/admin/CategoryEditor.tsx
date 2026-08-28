@@ -23,6 +23,7 @@ export type EditorCategory = {
   name: string;
   slug: string;
   description: string;
+  image: string | null;
   workPrice: number;
   workPriceCurrency: string;
   baseWorkDays: number;
@@ -43,7 +44,7 @@ type Props = {
 
 // Правая панель: форма категории + редактор слотов (копия mockup/admin/categories.html).
 // Серверный page рендерит компонент с key={category.id} — при смене категории состояние сбрасывается.
-// Работа мастера — в выбранной валюте (D-24): у поля свой селект валюты.
+// Стоимость работы — в выбранной валюте (D-24): у поля свой селект валюты.
 export default function CategoryEditor({
   category,
   finance,
@@ -55,6 +56,38 @@ export default function CategoryEditor({
   const [name, setName] = useState(category.name);
   const [slug, setSlug] = useState(category.slug);
   const [description, setDescription] = useState(category.description);
+  const [image, setImage] = useState(category.image ?? "");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dzDrag, setDzDrag] = useState(false);
+  const [uploadBusy, setUploadBusy] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  const uploadPhoto = async (file: File | undefined) => {
+    if (!file || uploadBusy) return;
+    if (file.size > 2 * 1024 * 1024) {
+      setUploadError("Файл больше 2 МБ");
+      return;
+    }
+    setUploadBusy(true);
+    setUploadError("");
+    try {
+      const fd = new FormData();
+      fd.append("kind", "categories");
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const text = await res.text();
+      if (!res.ok) {
+        setUploadError(text || "Не получилось загрузить файл");
+        return;
+      }
+      const data = JSON.parse(text) as { path: string };
+      setImage(data.path);
+    } catch {
+      setUploadError("Не получилось загрузить файл");
+    } finally {
+      setUploadBusy(false);
+    }
+  };
   const [workPrice, setWorkPrice] = useState(String(minorToAmount(category.workPrice)));
   const [workPriceCurrency, setWorkPriceCurrency] = useState(
     category.workPriceCurrency || currencyCode,
@@ -68,6 +101,24 @@ export default function CategoryEditor({
 
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  // Dirty-tracking: кнопка активна только при несохранённых изменениях.
+  // Снимок игнорирует служебный `key` слотов, сравниваются только данные.
+  const initialRef = useRef<string | null>(null);
+  const currentSig = JSON.stringify({
+    name,
+    slug,
+    description,
+    image,
+    workPrice,
+    workPriceCurrency,
+    baseWorkDays,
+    isActive,
+    hasSlotTemplate,
+    slots: slots.map(({ key, ...rest }) => rest),
+  });
+  if (initialRef.current === null) initialRef.current = currentSig;
+  const isDirty = currentSig !== initialRef.current;
 
   const patchSlot = (key: number, patch: Partial<SlotState>) =>
     setSlots((prev) => prev.map((s) => (s.key === key ? { ...s, ...patch } : s)));
@@ -109,6 +160,7 @@ export default function CategoryEditor({
           name,
           slug,
           description,
+          image: image || null,
           workPrice: amountToMinor(Number(workPrice) || 0),
           workPriceCurrency,
           baseWorkDays: Number(baseWorkDays || 0),
@@ -131,6 +183,8 @@ export default function CategoryEditor({
         return;
       }
       router.refresh();
+      initialRef.current = currentSig;
+      setBusy(false);
     } catch {
       setError("Не получилось сохранить категорию");
       setBusy(false);
@@ -159,9 +213,96 @@ export default function CategoryEditor({
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
+      <div className="field">
+        <label>Изображение категории</label>
+        <div
+          className={
+            image ? "dropzone has-photo" : dzDrag ? "dropzone is-drag" : "dropzone"
+          }
+          style={{ cursor: "pointer" }}
+          onClick={() => fileInputRef.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDzDrag(true);
+          }}
+          onDragLeave={() => setDzDrag(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDzDrag(false);
+            void uploadPhoto(e.dataTransfer.files?.[0]);
+          }}
+        >
+          {image ? (
+            <>
+              <div className="dz-preview">
+                <img src={image} alt="Изображение категории" />
+              </div>
+              <div className="dz-meta">
+                <b>{uploadBusy ? "Загружаем…" : "Заменить изображение"}</b>
+                <small>SVG или PNG, до 2 МБ</small>
+                {uploadError && (
+                  <small
+                    style={{ color: "var(--rust)", display: "block", marginTop: 6 }}
+                  >
+                    {uploadError}
+                  </small>
+                )}
+                <button
+                  className="btn btn--secondary btn--small"
+                  style={{ marginTop: 10 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setImage("");
+                  }}
+                >
+                  Убрать изображение
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="dz-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                </svg>
+              </div>
+              <b>
+                {uploadBusy
+                  ? "Загружаем…"
+                  : "Перетащите изображение сюда или нажмите"}
+              </b>
+              <small>SVG или PNG, до 2 МБ</small>
+              {uploadError && (
+                <small
+                  style={{ color: "var(--rust)", display: "block", marginTop: 6 }}
+                >
+                  {uploadError}
+                </small>
+              )}
+            </>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/svg+xml,image/png,image/webp"
+            style={{ display: "none" }}
+            onChange={(e) => {
+              void uploadPhoto(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
+        </div>
+      </div>
       <div className="field--row">
         <div className="field">
-          <label>Работа мастера</label>
+          <label>Стоимость работы</label>
           <input
             type="number"
             step="0.01"
@@ -323,7 +464,7 @@ export default function CategoryEditor({
       )}
 
       <div className="form-actions" style={{ marginTop: "18px" }}>
-        <button className="btn btn--primary" onClick={() => void save()} disabled={busy}>
+          <button className={`btn btn--primary${isDirty ? " is-dirty" : ""}`} onClick={() => void save()} disabled={busy || !isDirty}>
           Сохранить категорию
         </button>
         <button className="btn btn--secondary" onClick={addSlot} disabled={busy}>

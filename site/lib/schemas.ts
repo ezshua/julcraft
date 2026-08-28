@@ -93,8 +93,10 @@ export const categorySchema = z.object({
     .string()
     .trim()
     .min(1, "Укажите slug")
+    .min(3, "Slug: минимум 3 символа")
     .regex(/^[a-z0-9-]+$/, "Slug: только латиница, цифры и дефис"),
   description: z.string().trim(),
+  image: z.string().nullable().optional(),
   workPrice: z.number().int().min(0, "Работа не может быть отрицательной"),
   workPriceCurrency: z.string().regex(/^[A-Z]{3}$/, "Некорректный код валюты работы"),
   baseWorkDays: z.number().int().min(0),

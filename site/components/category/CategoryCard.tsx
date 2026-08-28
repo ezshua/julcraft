@@ -1,5 +1,4 @@
 import Link from "next/link";
-import CategoryIcon from "./CategoryIcon";
 
 type CategoryCardProps = {
   slug: string;
@@ -7,6 +6,7 @@ type CategoryCardProps = {
   desc: string;
   count: string;
   href: string;
+  image?: string | null;
   disabled?: boolean;
 };
 
@@ -17,12 +17,21 @@ export default function CategoryCard({
   desc,
   count,
   href,
+  image,
   disabled,
 }: CategoryCardProps) {
+  const icon = image ? (
+    <div className="cat-icon">
+      <img src={image} alt="" />
+    </div>
+  ) : (
+    <div className="cat-icon cat-icon--empty" />
+  );
+
   if (disabled) {
     return (
       <div className="item item--cat is-disabled" title="Нет шаблона слотов">
-        <CategoryIcon slug={slug} />
+        {icon}
         <div className="info">
           <h3>{name}</h3>
           <p className="desc">{desc}</p>
@@ -33,7 +42,7 @@ export default function CategoryCard({
   }
   return (
     <Link className="item item--cat" href={href}>
-      <CategoryIcon slug={slug} />
+      {icon}
       <div className="info">
         <h3>{name}</h3>
         <p className="desc">{desc}</p>
