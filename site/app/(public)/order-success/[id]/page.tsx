@@ -43,7 +43,11 @@ function receiptRows(
     rows.push({ label: "ТИП", value: "товар" });
     rows.push({ label: "СОСТАВ", value: order.productName ?? "—" });
     rows.push({ label: "ЦЕНА", value: formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance) });
-    rows.push({ label: "КОНТАКТ", value: order.contact });
+    const contactValue = order.customerName
+      ? `${order.customerName}${order.contact ? ` (${order.contact})` : ""}`
+      : order.contact;
+    rows.push({ label: "КОНТАКТ", value: contactValue });
+    rows.push({ label: "СООБЩЕНИЕ", value: order.message });
     rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
   } else if (order.type === "custom") {
     let config: ConfigItem[] = [];
@@ -69,7 +73,11 @@ function receiptRows(
     });
     rows.push({ label: "ЦЕНА", value: formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance) });
     rows.push({ label: "СРОК", value: `${order.calcDays} ${plural(order.calcDays, ["день", "дня", "дней"])}` });
-    rows.push({ label: "КОНТАКТ", value: order.contact });
+    const contactValue = order.customerName
+      ? `${order.customerName}${order.contact ? ` (${order.contact})` : ""}`
+      : order.contact;
+    rows.push({ label: "КОНТАКТ", value: contactValue });
+    rows.push({ label: "СООБЩЕНИЕ", value: order.message });
     rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
     // collagePath обрабатывается ниже — PNG показывается под чеком
   } else {
@@ -95,9 +103,11 @@ export default async function OrderSuccessPage(props: {
   const currency = await getDisplayCurrency();
 
   let productName: string | null = null;
+  let productImage: string | null = null;
   if (order.productId) {
     const product = db.select().from(products).where(eq(products.id, order.productId)).get();
     productName = product?.name ?? null;
+    productImage = product?.images?.[0] ?? null;
   }
 
   const rows = receiptRows({ ...order, productName }, currency);
@@ -129,7 +139,17 @@ export default async function OrderSuccessPage(props: {
               <img
                 src={order.collagePath}
                 alt="Коллаж украшения из заявки"
-                style={{ maxWidth: "280px", width: "100%", border: "2px solid var(--brown)", borderRadius: "8px" }}
+                style={{ display: "block", margin: "0 auto", maxWidth: "280px", width: "100%", border: "2px solid var(--brown)", borderRadius: "8px" }}
+              />
+            </div>
+          )}
+          {order.type === "product" && productImage && (
+            <div style={{ textAlign: "center", margin: "16px 0" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={productImage}
+                alt={productName ?? "Товар из заявки"}
+                style={{ display: "block", margin: "0 auto", maxWidth: "280px", width: "100%", border: "2px solid var(--brown)", borderRadius: "8px" }}
               />
             </div>
           )}
