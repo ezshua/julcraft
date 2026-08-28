@@ -6,6 +6,7 @@ import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
 import { formatPrice, asPriced, plural } from "@/lib/format";
 import { sumPriced } from "@/lib/currency";
+import { ORDER_STATUS_LABELS } from "@/lib/order-status-labels";
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const SHORT_DAYS = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
@@ -37,23 +38,12 @@ const TYPE_TAGS: Record<string, string> = {
 
 const TYPE_LABELS: Record<string, string> = {
   product: "товар",
-  custom: "конфигуратор",
-  contact: "контакт",
+  custom: "сборка",
+  contact: "записка",
 };
 
 // Подпись заявки в колонке «Тип» (как демо: «custom · кулон», «product · брошь»)
-function typeLabel(type: string, productName: string | null, configJson: string): string {
-  if (type === "product") return `product · ${productName ?? "—"}`;
-  if (type === "custom") {
-    try {
-      const cfg = JSON.parse(configJson) as { category?: string };
-      return `custom · ${cfg.category ?? "—"}`;
-    } catch {
-      return "custom · —";
-    }
-  }
-  return "contact · контакт";
-}
+
 
 export default async function DashboardPage() {
   const currency = await getDisplayCurrency();
@@ -105,6 +95,14 @@ export default async function DashboardPage() {
     .limit(5)
     .all();
   const productById = new Map(allProducts.map((p) => [p.id, p]));
+
+  // Та же подпись под именем клиента, что в /admin/orders (OrderRow.smallText)
+  const smallTextFor = (o: (typeof lastOrders)[number]): string => {
+    const product = o.productId ? productById.get(o.productId) : null;
+    if (o.type === "product") return product?.name ?? "—";
+    if (o.type === "contact") return "сообщение от контакта";
+    return "коллаж из конфигуратора";
+  };
 
   const stockComponents = db.select().from(components).all();
   const low = stockComponents.filter((c) => c.stockQty <= 5);
@@ -173,32 +171,30 @@ export default async function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {lastOrders.map((o) => {
-                  const product = o.productId ? productById.get(o.productId) : null;
-                  return (
-                    <tr key={o.id}>
-                      <td className="num">{o.id}</td>
-                      <td>
-                        <span className={`tag ${TYPE_TAGS[o.type]}`}>{TYPE_LABELS[o.type]}</span>{" "}
-                        <small style={{ color: "var(--muted)" }}>
-                          {typeLabel(o.type, product?.name ?? null, o.configJson)}
-                        </small>
-                      </td>
-                      <td className="cell-name">
-                        <b>{o.customerName}</b>
-                        <small>{o.contact}</small>
-                      </td>
-                      <td className="cell-price">
-                        {o.type === "contact" ? "—" : formatPrice(asPriced(o.calcPrice, o.calcPriceCurrency), currency, finance)}
-                      </td>
-                      <td>{o.type === "custom" ? `${o.calcDays} дн` : "—"}</td>
-                      <td>
-                        <span className={`tag tag--${o.status}`}>{o.status}</span>
-                      </td>
-                      <td>{relDate(o.createdAt)}</td>
-                    </tr>
-                  );
-                })}
+                 {lastOrders.map((o) => {
+                   return (
+                     <tr key={o.id}>
+                       <td className="num">{o.id}</td>
+                       <td>
+                         <span className={`tag ${TYPE_TAGS[o.type]}`}>{TYPE_LABELS[o.type]}</span>
+                       </td>
+                       <td className="cell-name">
+                         <b>{o.customerName}</b>
+                         <small>{smallTextFor(o)}</small>
+                       </td>
+                       <td className="cell-price">
+                         {o.type === "contact" ? "—" : formatPrice(asPriced(o.calcPrice, o.calcPriceCurrency), currency, finance)}
+                       </td>
+                       <td>{o.type === "custom" ? `${o.calcDays} дн` : "—"}</td>
+                       <td>
+                         <span className={`tag tag--${o.status}`}>
+                           {ORDER_STATUS_LABELS[o.status]}
+                         </span>
+                       </td>
+                       <td>{relDate(o.createdAt)}</td>
+                     </tr>
+                   );
+                 })}
                 {lastOrders.length === 0 && (
                   <tr>
                     <td colSpan={7} style={{ textAlign: "center", color: "var(--muted)" }}>

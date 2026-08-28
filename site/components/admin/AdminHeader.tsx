@@ -7,10 +7,10 @@ import { logoutAction } from "@/app/admin/(panel)/actions";
 
 const ADMIN_LINKS = [
   { href: "/admin", label: "Дашборд" },
+  { href: "/admin/orders", label: "Заявки" },
   { href: "/admin/products", label: "Товары" },
   { href: "/admin/components", label: "Склад" },
   { href: "/admin/categories", label: "Категории" },
-  { href: "/admin/orders", label: "Заявки" },
   { href: "/admin/settings", label: "Настройки" },
 ];
 
