@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { formatPrice, asPriced } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
@@ -22,6 +23,8 @@ export default function OrderModal({
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
+  const [mounted] = useState(() => typeof document !== "undefined");
+
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
@@ -64,7 +67,9 @@ export default function OrderModal({
         Заказать
       </button>
 
-      <div className={open ? "modal-overlay open" : "modal-overlay"} id="modal">
+      {mounted &&
+        createPortal(
+          <div className={open ? "modal-overlay open" : "modal-overlay"} id="modal">
         <div className="modal">
           <div className="m-head">
             <h3>Заявка на {product.name}</h3>
@@ -129,7 +134,9 @@ export default function OrderModal({
             *** без предоплаты — цена и срок в чеке после звонка ***
           </p>
         </div>
-      </div>
+          </div>,
+          document.body
+        )}
     </>
   );
 }

@@ -14,7 +14,7 @@ export default async function ProductCard({ product }: { product: Product }) {
     <Link className="item" href={`/product/${product.slug}`}>
       {product.isNew && <span className="badge badge--new">новинка</span>}
       {product.isFeatured && <span className="badge badge--feat">избранное</span>}
-      <div className="photo">
+      <div className="photo" style={{ position: "relative" }}>
         <Image
           src={product.images[0]}
           alt={product.name}

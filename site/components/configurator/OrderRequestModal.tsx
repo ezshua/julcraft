@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { formatPrice, type Priced } from "@/lib/currency";
 import { useCurrency } from "@/lib/use-currency";
@@ -46,6 +47,8 @@ export default function OrderRequestModal({
 }) {
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
+  const [mounted] = useState(() => typeof document !== "undefined");
+
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
@@ -93,8 +96,9 @@ export default function OrderRequestModal({
     }
   };
 
-  return (
-    <div className={open ? "modal-overlay open" : "modal-overlay"} id="custom-modal">
+  return mounted
+    ? createPortal(
+        <div className={open ? "modal-overlay open" : "modal-overlay"} id="custom-modal">
       <div className="modal">
         <div className="m-head">
           <h3>Заявка на {accusative}</h3>
@@ -160,10 +164,12 @@ export default function OrderRequestModal({
         </div>
         <p className="thanks" style={{ marginTop: "14px", textAlign: "center", fontSize: ".72rem" }}>
           *** без предоплаты — цена и срок в чеке после звонка ***
-        </p>
-      </div>
-    </div>
-  );
+          </p>
+        </div>
+      </div>,
+        document.body
+      )
+    : null;
 }
 
 // Локальная обёртка для суммы компонентов (не используется напрямую,
