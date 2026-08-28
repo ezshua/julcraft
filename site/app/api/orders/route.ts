@@ -105,8 +105,8 @@ async function handleProduct(body: unknown): Promise<Response> {
   // Сумма — в валюте отображения мастера (Q-5, plan-finances2.md).
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
-  const notice = `[заявка ${id}] товар: ${product.name}; клиент: ${customerName} (${contact}); ` +
-    `цена: ${formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)}; сообщение: ${message || "—"}`;
+  const notice = `Заявка #${id}: \nтовар: ${(product.name)}; \nКлиент: ${(customerName)} (${(contact)}); \n` +
+    `Цена: ${(formatPrice(asPriced(product.price, product.priceCurrency), currency, finance))}; \nСообщение: ${(message || "—")}`;
 
   // Обложку товара шлём картинкой, если файл доступен локально.
   let sent = { ok: false as boolean };
@@ -226,9 +226,9 @@ async function handleCustom(rawBody: unknown): Promise<Response> {
   const id = Number(res.lastInsertRowid);
 
   const notice =
-    `[заявка ${id}] конфигуратор: ${category.name}; клиент: ${customerName} (${contact}); ` +
-    `${snapshot.items.map((i) => (i.qty > 1 ? `${i.name} ×${i.qty}` : i.name)).join(" + ")}; ` +
-    `цена: ${formatPrice(total, currency, finance)}; срок: ${days} дн; сообщение: ${message || "—"}`;
+    `Заявка #${id}: \nконфигуратор: ${(category.name)}; \nКлиент: ${(customerName)} (${(contact)}); \n` +
+    `Состав: ${snapshot.items.map((i) => (i.qty > 1 ? `${(i.name)} ×${i.qty}` : (i.name))).join(" + ")}; \n` +
+    `Цена: ${(formatPrice(total, currency, finance))}; \nСрок: ${days} дн; \nСообщение: ${(message || "—")}`;
 
   // Коллаж шлём картинкой, если он сохранён локально.
   let sent = { ok: false as boolean };
