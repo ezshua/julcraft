@@ -2,8 +2,16 @@
 
 import { useState } from "react";
 
-// Кнопка «Тест: отправить сообщение» — результат показывается рядом (текст, без нового дизайна).
-export default function TelegramTestButton() {
+// Кнопка «Тест: отправить сообщение» — отправляет по значениям из полей формы
+// (botToken/chatId), а не из БД, чтобы тест работал до сохранения. Результат
+// показывается рядом (текст, без нового дизайна).
+export default function TelegramTestButton({
+  botToken,
+  chatId,
+}: {
+  botToken: string;
+  chatId: string;
+}) {
   const [result, setResult] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -12,7 +20,11 @@ export default function TelegramTestButton() {
     setBusy(true);
     setResult("");
     try {
-      const res = await fetch("/api/admin/settings/telegram-test", { method: "POST" });
+      const res = await fetch("/api/admin/settings/telegram-test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ botToken, chatId }),
+      });
       const text = await res.text();
       if (res.ok) {
         setResult("Отправлено ✓");

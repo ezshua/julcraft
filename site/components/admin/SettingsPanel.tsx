@@ -205,6 +205,32 @@ export default function SettingsPanel({
       { key: "telegram.chatId", value: chatId },
     ]);
 
+  // «Обновить из настроек»: подгружает botToken/chatId из .env в поля формы.
+  // Далее пользователь либо сохраняет считанное в БД, либо правит вручную.
+  const [envBusy, setEnvBusy] = useState(false);
+  const loadTelegramFromEnv = async () => {
+    if (envBusy) return;
+    setEnvBusy(true);
+    setMsg("");
+    try {
+      const res = await fetch("/api/admin/settings/telegram-env", {
+        method: "GET",
+      });
+      if (!res.ok) {
+        setMsg("Не получилось прочитать значения из .env");
+        setEnvBusy(false);
+        return;
+      }
+      const data = (await res.json()) as { botToken: string; chatId: string };
+      setBotToken(data.botToken);
+      setChatId(data.chatId);
+      setMsg("Поля заполнены из .env — сохраните, чтобы применить");
+    } catch {
+      setMsg("Не получилось прочитать значения из .env");
+    }
+    setEnvBusy(false);
+  };
+
   const patchRow = (
     list: Row[],
     set: (r: Row[]) => void,
@@ -488,12 +514,27 @@ export default function SettingsPanel({
           </div>
           <div className="notice notice--olive" style={{ marginBottom: "18px" }}>
             Сервер шлёт мастеру заявку с коллажем и деталями. Email — запасной канал.
+            {botToken.trim().includes(":") && (
+              <>
+                {" "}
+                Чтобы получать уведомления, первым напишите боту (идентификатор бота:{" "}
+                <b>{botToken.trim().slice(0, botToken.trim().indexOf(":"))}</b>) — отправьте <code>/start</code>.
+              </>
+            )}
           </div>
           <div className="form-actions">
             <button className="btn btn--primary" onClick={() => void saveTelegram()} disabled={busy}>
               Сохранить
             </button>
-            <TelegramTestButton />
+            <button
+              className="btn btn--secondary"
+              onClick={() => void loadTelegramFromEnv()}
+              disabled={envBusy}
+              title="Подгрузить botToken/chatId из .env в поля формы"
+            >
+              Обновить из настроек
+            </button>
+            <TelegramTestButton botToken={botToken} chatId={chatId} />
             {msg && <span style={{ fontSize: ".8rem", color: "var(--muted)" }}>{msg}</span>}
           </div>
         </div>

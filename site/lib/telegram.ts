@@ -2,12 +2,16 @@ import { getSettings } from "./get-settings";
 
 // Отправка сообщения мастеру в Telegram (Этап 4.6).
 // Токены берутся из Settings (форма «Настройки»); при пустых — только лог.
+// override позволяет передать токен/чат из полей формы (тест до сохранения в БД).
 export async function sendTelegram(
   text: string,
+  override?: { botToken?: string; chatId?: string },
 ): Promise<{ ok: boolean; error?: string }> {
   const { telegram } = getSettings();
 
-  if (!telegram.botToken || !telegram.chatId) {
+  const botToken = (override?.botToken ?? telegram.botToken).trim();
+  const chatId = (override?.chatId ?? telegram.chatId).trim();
+  if (!botToken || !chatId) {
     console.log(`[telegram не настроен] ${text}`);
     return {
       ok: false,
@@ -17,11 +21,11 @@ export async function sendTelegram(
 
   try {
     const res = await fetch(
-      `https://api.telegram.org/bot${telegram.botToken}/sendMessage`,
+      `https://api.telegram.org/bot${botToken}/sendMessage`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: telegram.chatId, text }),
+        body: JSON.stringify({ chat_id: chatId, text }),
       },
     );
     if (!res.ok) {
