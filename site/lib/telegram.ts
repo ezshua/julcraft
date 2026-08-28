@@ -40,3 +40,48 @@ export async function sendTelegram(
     };
   }
 }
+
+// Отправка фото (обложка товара / коллаж конфигуратора) с подписью в Telegram.
+// Файл передаётся байтами (multipart), чтобы работать и на локальном dev-сервере,
+// где Telegram не может скачать картинку по локальному URL.
+export async function sendTelegramPhoto(
+  caption: string,
+  photo: Buffer,
+  filename: string,
+  mime: string,
+  override?: { botToken?: string; chatId?: string },
+): Promise<{ ok: boolean; error?: string }> {
+  const { telegram } = getSettings();
+
+  const botToken = (override?.botToken ?? telegram.botToken).trim();
+  const chatId = (override?.chatId ?? telegram.chatId).trim();
+  if (!botToken || !chatId) {
+    console.log(`[telegram не настроен] ${caption}`);
+    return {
+      ok: false,
+      error: "Telegram не настроен: укажите botToken и chatId в настройках",
+    };
+  }
+
+  try {
+    const form = new FormData();
+    form.append("chat_id", chatId);
+    form.append("caption", caption);
+    form.append("photo", new Blob([photo as unknown as BlobPart], { type: mime }), filename);
+
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+      method: "POST",
+      body: form,
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      return { ok: false, error: body.slice(0, 300) };
+    }
+    return { ok: true };
+  } catch (e) {
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Ошибка сети",
+    };
+  }
+}

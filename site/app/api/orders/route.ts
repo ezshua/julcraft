@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { eq } from "drizzle-orm";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
 import { resolve } from "node:path";
 import { db } from "@/lib/db";
@@ -12,7 +12,7 @@ import {
 } from "@/drizzle/schema";
 import type { CalcComponent } from "@/lib/calc";
 import { calcTotals, buildSnapshot, MAX_COLLAGE_BYTES } from "@/lib/calc";
-import { sendTelegram } from "@/lib/telegram";
+import { sendTelegram, sendTelegramPhoto } from "@/lib/telegram";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, asPriced } from "@/lib/format";
@@ -107,8 +107,27 @@ async function handleProduct(body: unknown): Promise<Response> {
   const currency = await getDisplayCurrency();
   const notice = `[заявка ${id}] товар: ${product.name}; клиент: ${customerName} (${contact}); ` +
     `цена: ${formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)}; сообщение: ${message || "—"}`;
-  const sent = await sendTelegram(notice);
-  if (!sent.ok) console.log(notice);
+
+  // Обложку товара шлём картинкой, если файл доступен локально.
+  let sent = { ok: false as boolean };
+  const cover = product.images[0];
+  if (cover && cover.startsWith("/")) {
+    try {
+      const buf = await readFile(resolve(process.cwd(), "public", cover.replace(/^\//, "")));
+      sent = await sendTelegramPhoto(
+        notice,
+        buf,
+        cover.split("/").pop() ?? "cover.jpg",
+        cover.endsWith(".png") ? "image/png" : "image/jpeg",
+      );
+    } catch {
+      sent = { ok: false };
+    }
+  }
+  if (!sent.ok) {
+    const t = await sendTelegram(notice);
+    if (!t.ok) console.log(notice);
+  }
 
   return Response.json({ id });
 }
@@ -209,9 +228,27 @@ async function handleCustom(rawBody: unknown): Promise<Response> {
   const notice =
     `[заявка ${id}] конфигуратор: ${category.name}; клиент: ${customerName} (${contact}); ` +
     `${snapshot.items.map((i) => (i.qty > 1 ? `${i.name} ×${i.qty}` : i.name)).join(" + ")}; ` +
-    `цена: ${formatPrice(total, currency, finance)}; срок: ${days} дн`;
-  const sent = await sendTelegram(notice);
-  if (!sent.ok) console.log(notice);
+    `цена: ${formatPrice(total, currency, finance)}; срок: ${days} дн; сообщение: ${message || "—"}`;
+
+  // Коллаж шлём картинкой, если он сохранён локально.
+  let sent = { ok: false as boolean };
+  if (collagePath && collagePath.startsWith("/")) {
+    try {
+      const buf = await readFile(resolve(process.cwd(), "public", collagePath.replace(/^\//, "")));
+      sent = await sendTelegramPhoto(
+        notice,
+        buf,
+        collagePath.split("/").pop() ?? "collage.png",
+        "image/png",
+      );
+    } catch {
+      sent = { ok: false };
+    }
+  }
+  if (!sent.ok) {
+    const t = await sendTelegram(notice);
+    if (!t.ok) console.log(notice);
+  }
 
   return Response.json({ id });
 }
