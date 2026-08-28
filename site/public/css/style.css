@@ -178,7 +178,7 @@ section.sect { padding:70px 4vw; max-width:1080px; margin:0 auto; }
 }
 .btn--primary { background:var(--rust); color:var(--cream); box-shadow:var(--shadow-phone); }
 .btn--primary:hover { transform:translate(-2px,-2px); box-shadow:var(--shadow-phone-hover); }
-.btn--secondary { background:transparent; color:var(--brown); }
+.btn--secondary { background:var(--cream); color:var(--brown); }
 .btn--secondary:hover { background:var(--brown); color:var(--cream); transform:translate(-2px,-2px); box-shadow:var(--shadow-phone); }
 .btn--mustard { background:var(--mustard); color:var(--brown); box-shadow:var(--shadow-phone); }
 .btn--mustard:hover { transform:translate(-2px,-2px); box-shadow:var(--shadow-phone-hover); }
