@@ -497,7 +497,7 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
 .slot.is-active {
   border-color: var(--rust);
   background: var(--cream);
-  box-shadow: 0 3px 0 6px var(--mustard), var(--shadow-item);
+  box-shadow: 3px 3px 0 6px var(--rust), var(--shadow-item);
 }
 .slot.is-active .slot-head { background: var(--cream); }
 .slot-head {
