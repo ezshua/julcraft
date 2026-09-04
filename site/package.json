@@ -11,9 +11,13 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:migrate-currency": "tsx scripts/migrate-currency-fields.ts",
     "db:seed": "tsx scripts/seed.ts",
-    "db:check": "tsx scripts/check-seed.ts"
+    "db:check": "tsx scripts/check-seed.ts",
+    "snapshot:capture": "tsx scripts/snapshot-capture.ts",
+    "snapshot:restore": "tsx scripts/snapshot-restore.ts",
+    "snapshot:check": "tsx scripts/check-snapshot.ts"
   },
   "dependencies": {
+    "adm-zip": "^0.6.0",
     "better-sqlite3": "^13.0.3",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
@@ -27,6 +31,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^20",
     "@types/react": "^19",
