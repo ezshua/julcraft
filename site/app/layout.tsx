@@ -11,6 +11,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ru">
       <body>
+        {/* preconnect к Google Fonts: @import в скинах тянет шрифты
+            с fonts.gstatic.com (внешний по решению руководителя —
+            шрифты зашиты в CSS макета, скины не правим) — раннее
+            рукопожатие убирает DNS/TCP/TLS из критического пути */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* Единственный stylesheet: его подменяет skin-switcher.js (как в макете).
             suppressHydrationWarning: скин из localStorage применяется скриптом,
             поэтому href может отличаться от серверного — иначе React

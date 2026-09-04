@@ -6,6 +6,7 @@ import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
 import { formatPrice, asPriced, plural } from "@/lib/format";
 import Crumbs from "@/components/ui/Crumbs";
+import EmptyState from "@/components/ui/EmptyState";
 import CategoryCard from "@/components/category/CategoryCard";
 
 export const metadata: Metadata = {
@@ -67,17 +68,21 @@ export default async function ConfiguratorPage() {
           {"// у каждой категории — свой набор слотов: камень, подвески, шнур, застёжка"}
         </p>
         <div className="shelf">
-          {withTemplate.map((cat) => (
-            <CategoryCard
-              key={cat.id}
-              slug={cat.slug}
-              name={cat.name}
-              desc={slotDesc.get(cat.id) ?? ""}
-              image={cat.image}
-              count={`работа от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)} · ${cat.baseWorkDays} дн`}
-              href={`/configurator/${cat.slug}`}
-            />
-          ))}
+          {withTemplate.length === 0 ? (
+            <EmptyState />
+          ) : (
+            withTemplate.map((cat) => (
+              <CategoryCard
+                key={cat.id}
+                slug={cat.slug}
+                name={cat.name}
+                desc={slotDesc.get(cat.id) ?? ""}
+                image={cat.image}
+                count={`работа от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)} · ${cat.baseWorkDays} дн`}
+                href={`/configurator/${cat.slug}`}
+              />
+            ))
+          )}
 
           {repair && (
             <CategoryCard
