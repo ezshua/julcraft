@@ -47,8 +47,8 @@ export const defaultSettings: SiteSettings = {
     phone: "+38 095 358 48 11",
     email: "julcraft79@gmail.com",
     address: "ул. Мстислава Скрипника, 40А",
-    telegram: "https://t.me/julcraft_76",
-    instagram: "https://instagram.com/julcraft_76",
+    telegram: "https://t.me/julcraft_79",
+    instagram: "https://instagram.com/julcraft_79",
     hours: [
       { day: "Понедельник", value: "выходной", closed: true },
       { day: "Вторник — Пятница", value: "11:00 — 20:00" },

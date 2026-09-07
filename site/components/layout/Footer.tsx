@@ -35,14 +35,14 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
           <a href={`mailto:${contacts.email}`}>✉ {contacts.email}</a>
           <Link href="/contacts">⛭ {contacts.address}</Link>
           <div className="f-socials">
-            <a href="#" aria-label="Instagram" title="Instagram">
+            <a href={contacts.instagram} aria-label="Instagram" title="Instagram">
               <svg viewBox="0 0 24 24" fill="none" stroke="#22242a" strokeWidth="2" strokeLinecap="round">
                 <rect x="2" y="2" width="20" height="20" rx="5" />
                 <circle cx="12" cy="12" r="4" />
                 <circle cx="17.5" cy="6.5" r=".5" fill="#22242a" />
               </svg>
             </a>
-            <a href="#" aria-label="Telegram" title="Telegram">
+            <a href={contacts.telegram} aria-label="Telegram" title="Telegram">
               <svg viewBox="0 0 24 24" fill="none" stroke="#22242a" strokeWidth="2" strokeLinejoin="round">
                 <path d="m22 2-7 20-4-9-9-4z" />
                 <path d="M22 2 11 13" />

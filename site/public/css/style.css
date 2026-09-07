@@ -6,7 +6,9 @@
    синих/зелёных. Только тёплая гамма дерева/кожи/бакелита/бумаги.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Shrikhand&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+/* Self-host шрифты (D-16, T-7.0): файлы в public/fonts/, сгенерированы
+   scripts/fetch-fonts.ts из официального CSS2 API Google Fonts. */
+@import url('/fonts/fonts.css');
 
 /* ---------- 1. Токены (база Tailwind config) ---------- */
 :root {

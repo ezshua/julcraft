@@ -1,0 +1,15 @@
+# ============================================================
+# JulCraft — cron-обвязка бэкапов (Этап 7, T-7.2; решение D-21)
+# Установка (sudo, из корня клона /opt/julcraft):
+#   sudo cp deploy/backup/crontab /etc/cron.d/julcraft-backup
+#   sudo chmod 0644 /etc/cron.d/julcraft-backup
+#   sudo chown root:root /etc/cron.d/julcraft-backup
+#
+# Ежедневный снимок в 03:30 (хранение 7), еженедельный — в вс 04:00
+# (хранение 4). Итого ≤ 11 артефактов ≈ 1 ГБ (92 МБ/шт). Лог:
+# /opt/julcraft/backups/backup.log (см. README-deploy §4 — про
+# /var/log/julcraft-backup.log).
+# ============================================================
+
+30 3 * * * ubuntu /opt/julcraft/deploy/backup/snapshot-backup.sh daily
+0 4 * * 0 ubuntu /opt/julcraft/deploy/backup/snapshot-backup.sh weekly

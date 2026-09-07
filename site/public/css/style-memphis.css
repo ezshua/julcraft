@@ -8,7 +8,9 @@
    в HTML ссылку на assets/css/style.css.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+/* Self-host шрифты (D-16, T-7.0): файлы в public/fonts/, сгенерированы
+   scripts/fetch-fonts.ts из официального CSS2 API Google Fonts. */
+@import url('/fonts/fonts.css');
 
 /* ---------- 1. Токены (палитра 12D redesign12.md §1.1) ---------- */
 :root {

@@ -1,0 +1,40 @@
+# ============================================================
+# JulCraft — nginx-конфиг (Этап 7, T-7.1; решение D-15)
+# Шаблон: подстановка домена через setup-nginx.sh (sed).
+# Устанавливается в /etc/nginx/sites-available/julcraft.
+#
+# HTTP-only на первом шаге; HTTPS добавит certbot (deploy/setup-ssl.sh),
+# который допишет ssl-блок и redirect сам (--nginx-плагин).
+# ============================================================
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name julcraft.zapto.org;
+
+    # Реверс-прокси на Next.js (PM2, порт 3000)
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade           $http_upgrade;
+        proxy_set_header Connection        "upgrade";
+        # админка/загрузка картинок: 10 МБ с запасом (PNG ≤ 2 МБ по ТЗ)
+        client_max_body_size 10m;
+        proxy_read_timeout 60s;
+    }
+
+    # статику Next (/​_next/static) проксируем как есть — Next сам отдаёт
+    # с immutable-кэшем; отдельный location не требуется.
+
+    # gzip для текстовых ответов (картинки/woff2 уже сжаты)
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript
+               application/xml image/svg+xml;
+    gzip_min_length 1024;
+    gzip_vary on;
+}

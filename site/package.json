@@ -14,7 +14,8 @@
     "db:check": "tsx scripts/check-seed.ts",
     "snapshot:capture": "tsx scripts/snapshot-capture.ts",
     "snapshot:restore": "tsx scripts/snapshot-restore.ts",
-    "snapshot:check": "tsx scripts/check-snapshot.ts"
+    "snapshot:check": "tsx scripts/check-snapshot.ts",
+    "fetch-fonts": "tsx scripts/fetch-fonts.ts"
   },
   "dependencies": {
     "adm-zip": "^0.6.0",
