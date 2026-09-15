@@ -5,27 +5,33 @@ import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
-import { formatPrice, asPriced, plural } from "@/lib/format";
+import { formatPrice, asPriced } from "@/lib/format";
+import { getDictionary, getLocale, plural, t } from "@/lib/i18n";
 import Crumbs from "@/components/ui/Crumbs";
 import CategoryCard from "@/components/category/CategoryCard";
 import EmptyState from "@/components/ui/EmptyState";
 
-export const metadata: Metadata = {
-  title: "Каталог — JulCraft",
-  description:
-    "Каталог мастерской JulCraft: десять отделов — бакелит, стекло, эмаль, латунь и немного волшебства. Всё в одном экземпляре.",
-  alternates: { canonical: "/catalog" },
-  openGraph: {
-    title: "Каталог — JulCraft",
-    description:
-      "Каталог мастерской JulCraft: десять отделов украшений ручной работы.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: t(dict, "meta.catalog.title"),
+    description: t(dict, "meta.catalog.description"),
+    alternates: { canonical: "/catalog" },
+    openGraph: {
+      title: t(dict, "meta.catalog.title"),
+      description: t(dict, "meta.catalog.descriptionOg"),
+      type: "website",
+    },
+  };
+}
 
 export default async function CatalogPage() {
   const currency = await getDisplayCurrency();
   const { finance } = getSettings();
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const cat = dict.catalog;
   const cats = db
     .select()
     .from(categories)
@@ -37,42 +43,47 @@ export default async function CatalogPage() {
   for (const p of allProducts) {
     perCategory.set(p.categoryId, (perCategory.get(p.categoryId) ?? 0) + 1);
   }
-  const countLabel = (cat: (typeof cats)[number], n: number) => {
-    if (cat.slug === "komplekty") return `${n} ${plural(n, ["комплект", "комплекта", "комплектов"])}`;
-    if (cat.slug === "vintazhnyj-remont") return `услуга · от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)}`;
-    return `${n} ${plural(n, ["изделие", "изделия", "изделий"])}`;
+  const countLabel = (c: (typeof cats)[number], n: number) => {
+    if (c.slug === "komplekty")
+      return `${n} ${plural(n, cat.unit.komplekty, locale)}`;
+    if (c.slug === "vintazhnyj-remont")
+      return t(dict, "catalog.unit.vintazhnyj-remont", {
+        price: formatPrice(asPriced(c.workPrice, c.workPriceCurrency), currency, finance),
+      });
+    return `${n} ${plural(n, cat.unit.default, locale)}`;
   };
 
   return (
     <>
-      <Crumbs items={[{ label: "Главная", href: "/" }, { label: "Каталог" }]} />
+      <Crumbs
+        items={[
+          { label: cat.crumbsHome, href: "/" },
+          { label: cat.crumbsCatalog },
+        ]}
+      />
 
       <div className="signboard signboard--small">
-        <p className="est">✹ Витрина и полки ✹</p>
-        <h1>Каталог</h1>
-        <p className="tagline">
-          всё в одном экземпляре — если понравилось, не откладывайте на завтра
-        </p>
+        <p className="est">{cat.est}</p>
+        <h1>{cat.title}</h1>
+        <p className="tagline">{cat.tagline}</p>
       </div>
       <div className="zigzag"></div>
 
       <section className="sect">
-        <p className="sec-sub">
-          {"// много разделов · металл, стекло, эмаль - руки и немного волшебства"}
-        </p>
+        <p className="sec-sub">{cat.secSub}</p>
         {cats.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="shelf">
-            {cats.map((cat) => (
+            {cats.map((c) => (
               <CategoryCard
-                key={cat.id}
-                slug={cat.slug}
-                name={cat.name}
-                desc={cat.description}
-                image={cat.image}
-                count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
-                href={cat.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${cat.slug}`}
+                key={c.id}
+                slug={c.slug}
+                name={c.name}
+                desc={c.description}
+                image={c.image}
+                count={countLabel(c, perCategory.get(c.id) ?? 0)}
+                href={c.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${c.slug}`}
               />
             ))}
           </div>
@@ -80,13 +91,10 @@ export default async function CatalogPage() {
 
         <div className="mt-40">
           <div className="cta-banner">
-            <h2>Не нашли своё?</h2>
-            <p>
-              Соберите украшение сами — из камней, подвесок и шнуров со склада
-              мастерской.
-            </p>
+            <h2>{cat.ctaTitle}</h2>
+            <p>{cat.ctaText}</p>
             <Link className="btn btn--primary" href="/configurator">
-              Открыть конфигуратор →
+              {cat.ctaButton}
             </Link>
           </div>
         </div>

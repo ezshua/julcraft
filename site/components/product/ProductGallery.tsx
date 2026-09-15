@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import type { Dictionary } from "@/lib/dictionaries/ru";
 
 // Потолок количества фотографий — единый с админкой и zod-схемой (max(6)).
 const MAX_IMAGES = 6;
@@ -12,9 +13,11 @@ const MAX_IMAGES = 6;
 export default function ProductGallery({
   images,
   alt,
+  dict,
 }: {
   images: string[];
   alt: string;
+  dict: Dictionary["product"];
 }) {
   // Берём только валидные строки, обрезаем по MAX_IMAGES — на случай,
   // если в БД по какой-то причине оказалось больше (миграция, ручной импорт).
@@ -56,7 +59,7 @@ export default function ProductGallery({
           >
             <Image
               src={src}
-              alt={`Вид ${i + 1}`}
+              alt={dict.viewAlt.replace("{n}", String(i + 1))}
               width={160}
               height={160}
               sizes="160px"

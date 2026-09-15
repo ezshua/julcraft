@@ -6,11 +6,12 @@ import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, asPriced } from "@/lib/format";
+import { getDictionary, getLocale, t } from "@/lib/i18n";
 import Crumbs from "@/components/ui/Crumbs";
 import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
 import OrderModal from "@/components/product/OrderModal";
-import { AvailProduct } from "@/components/ui/Avail";
+import { AvailProduct, availFullText } from "@/components/ui/Avail";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -38,18 +39,17 @@ export async function generateMetadata(props: {
   };
 }
 
-// Второй абзац описания — статичная копия из макета (не привязан к данным)
-const MUTED_DESC = [
-  "Цепочка латунная, 50 см, уже в комплекте. Носится с чем угодно — проверено на витрине,",
-  "покупателях и одной очень строгой кошке.",
-].join(" ");
-
 export default async function ProductPage(props: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await props.params;
   const product = db.select().from(products).where(eq(products.slug, slug)).get();
   if (!product) notFound();
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const productDict = dict.product;
+  const catalogDict = dict.catalog;
 
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
@@ -72,15 +72,15 @@ export default async function ProductPage(props: {
     <>
       <Crumbs
         items={[
-          { label: "Главная", href: "/" },
-          { label: "Каталог", href: "/catalog" },
+          { label: catalogDict.crumbsHome, href: "/" },
+          { label: catalogDict.crumbsCatalog, href: "/catalog" },
           ...(category ? [{ label: category.name, href: `/catalog/${category.slug}` }] : []),
           { label: product.name },
         ]}
       />
 
       <section className="sect">
-        <ProductGallery images={product.images} alt={product.name} />
+        <ProductGallery images={product.images} alt={product.name} dict={productDict} />
 
         <div className="product-info mt-40" style={{ maxWidth: "640px" }}>
           <h1>{product.name}</h1>
@@ -88,7 +88,7 @@ export default async function ProductPage(props: {
             {formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)}
           </span>
           <p className="p-desc">{product.description}</p>
-          <p className="p-desc muted">{MUTED_DESC}</p>
+          <p className="p-desc muted">{productDict.staticSecondParagraph}</p>
 
           {product.materials.length > 0 && (
             <div className="chips mb-20">
@@ -108,16 +108,19 @@ export default async function ProductPage(props: {
             </ul>
           )}
 
-          <AvailProduct product={product} />
+          <AvailProduct product={product} dict={dict} locale={locale} />
 
           <div className="cta-row mt-30">
             <OrderModal
               product={product}
               finance={finance}
               currencyCode={currency.code}
+              dict={productDict}
+              availText={availFullText(product, dict, locale)}
+              modalTitle={t(dict, "product.modalTitle", { name: product.name })}
             />
             <a className="btn btn--secondary" href={`/configurator/${category?.slug ?? ""}`}>
-              Собрать похожий →
+              {productDict.buildSimilar}
             </a>
           </div>
         </div>
@@ -125,8 +128,8 @@ export default async function ProductPage(props: {
 
       {nearby.length > 0 && (
         <section className="sect">
-          <h2 className="sec-h2">Рядом на полке</h2>
-          <p className="sec-sub">{"// тоже хорошие, тоже в одном экземпляре"}</p>
+          <h2 className="sec-h2">{productDict.nearbyTitle}</h2>
+          <p className="sec-sub">{productDict.nearbySub}</p>
           <div className="shelf">
             {nearby.map((p) => (
               <ProductCard key={p.id} product={p} />

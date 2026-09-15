@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { formatPrice, asPriced } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
 import type { FinanceSettings } from "@/lib/currency";
-import { availFullText } from "@/components/ui/Avail";
+import type { Dictionary } from "@/lib/dictionaries/ru";
 import type { Product } from "@/drizzle/schema";
 
 // Модалка заявки на товар — копия div.modal-overlay#modal из mockup/product.html.
@@ -15,10 +15,16 @@ export default function OrderModal({
   product,
   finance,
   currencyCode,
+  dict,
+  availText,
+  modalTitle,
 }: {
   product: Product;
   finance: FinanceSettings;
   currencyCode: string;
+  dict: Dictionary["product"];
+  availText: string;
+  modalTitle: string;
 }) {
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
@@ -49,14 +55,14 @@ export default function OrderModal({
       });
       if (!res.ok) {
         const text = await res.text();
-        setError(text || "Не получилось отправить заявку — попробуйте ещё раз");
+        setError(text || dict.submitError);
         setBusy(false);
         return;
       }
       const data = (await res.json()) as { id: number };
       router.push(`/order-success/${data.id}`);
     } catch {
-      setError("Не получилось отправить заявку — попробуйте ещё раз");
+      setError(dict.submitError);
       setBusy(false);
     }
   };
@@ -64,7 +70,7 @@ export default function OrderModal({
   return (
     <>
       <button className="btn btn--primary" onClick={() => setOpen(true)}>
-        Заказать
+        {dict.orderButton}
       </button>
 
       {mounted &&
@@ -72,8 +78,8 @@ export default function OrderModal({
           <div className={open ? "modal-overlay open" : "modal-overlay"} id="modal">
         <div className="modal">
           <div className="m-head">
-            <h3>Заявка на {product.name}</h3>
-            <button className="icon-btn" onClick={() => setOpen(false)} aria-label="Закрыть">
+            <h3>{modalTitle}</h3>
+            <button className="icon-btn" onClick={() => setOpen(false)} aria-label={dict.closeAria}>
               ✕
             </button>
           </div>
@@ -85,34 +91,34 @@ export default function OrderModal({
             <div>
               <b>{product.name}</b>
               <small>
-                {formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)} · {availFullText(product)} · мастер свяжется сама
+                {formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)} · {availText} · {dict.masterNote}
               </small>
             </div>
           </div>
           <div className="field">
-            <label>Имя</label>
+            <label>{dict.fieldName}</label>
             <input
               type="text"
-              placeholder="Как к вам обращаться"
+              placeholder={dict.namePlaceholder}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
           <div className="field">
-            <label>Контакт</label>
+            <label>{dict.fieldContact}</label>
             <input
               type="tel"
-              placeholder="Телефон, email или Telegram"
+              placeholder={dict.contactPlaceholder}
               value={contact}
               onChange={(e) => setContact(e.target.value)}
               required
             />
           </div>
           <div className="field">
-            <label>Комментарий</label>
+            <label>{dict.fieldComment}</label>
             <textarea
-              placeholder="Цепочка длиннее/короче, пожелания — что угодно"
+              placeholder={dict.commentPlaceholder}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
@@ -124,14 +130,14 @@ export default function OrderModal({
           )}
           <div className="m-actions">
             <button className="btn btn--primary" onClick={submit} disabled={busy}>
-              Отправить заявку
+              {dict.submit}
             </button>
             <button className="btn btn--secondary" onClick={() => setOpen(false)} disabled={busy}>
-              Отмена
+              {dict.cancel}
             </button>
           </div>
           <p className="thanks" style={{ marginTop: "14px", textAlign: "center", fontSize: ".72rem" }}>
-            *** без предоплаты — цена и срок в чеке после звонка ***
+            {dict.noPrepayment}
           </p>
         </div>
           </div>,

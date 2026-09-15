@@ -16,12 +16,14 @@ import { sendTelegram, sendTelegramPhoto } from "@/lib/telegram";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, asPriced } from "@/lib/format";
+import { getLocale, getDictionary, t, type DictionaryKey } from "@/lib/i18n";
+import type { Dictionary } from "@/lib/dictionaries/ru";
 
 const orderSchema = z.object({
   type: z.literal("product"),
   productId: z.number().int().positive(),
-  customerName: z.string().trim().min(1, "Укажите имя"),
-  contact: z.string().trim().min(1, "Укажите контакт"),
+  customerName: z.string().trim().min(1, "api.common.name"),
+  contact: z.string().trim().min(1, "api.common.contact"),
   message: z.string().trim().default(""),
 });
 
@@ -34,12 +36,12 @@ const customSelectionSchema = z.object({
 const customSchema = z.object({
   type: z.literal("custom"),
   categoryId: z.number().int().positive(),
-  customerName: z.string().trim().min(1, "Укажите имя"),
-  contact: z.string().trim().min(1, "Укажите контакт"),
+  customerName: z.string().trim().min(1, "api.common.name"),
+  contact: z.string().trim().min(1, "api.common.contact"),
   message: z.string().trim().default(""),
   collageDataUrl: z
     .string()
-    .regex(/^data:image\/png;base64,/, "Коллаж должен быть PNG data URL")
+    .regex(/^data:image\/png;base64,/, "api.orders.collagePng")
     .max(MAX_COLLAGE_BYTES * 2)
     .nullable(),
   config: z.object({
@@ -48,11 +50,15 @@ const customSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const dict = getDictionary(await getLocale());
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Некорректный JSON" }, { status: 400 });
+    return Response.json(
+      { error: t(dict, "api.common.invalidJson") },
+      { status: 400 },
+    );
   }
 
   const rawType =
@@ -60,23 +66,28 @@ export async function POST(request: Request) {
       ? (body as { type: unknown }).type
       : undefined;
 
-  if (rawType === "custom") return handleCustom(body);
-  return handleProduct(body);
+  if (rawType === "custom") return handleCustom(body, dict);
+  return handleProduct(body, dict);
 }
 
 // Заявка на готовое изделие: серверный расчёт цены/срока, запись Order.
-async function handleProduct(body: unknown): Promise<Response> {
+async function handleProduct(body: unknown, dict: Dictionary): Promise<Response> {
   const parsed = orderSchema.safeParse(body);
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message ?? "Некорректные данные";
-    return Response.json({ error: message }, { status: 400 });
+    const key =
+      (parsed.error.issues[0]?.message ??
+        "api.common.invalidData") as DictionaryKey;
+    return Response.json({ error: t(dict, key) }, { status: 400 });
   }
 
   const { productId, customerName, contact, message } = parsed.data;
 
   const product = db.select().from(products).where(eq(products.id, productId)).get();
   if (!product) {
-    return Response.json({ error: "Товар не найден" }, { status: 400 });
+    return Response.json(
+      { error: t(dict, "api.orders.productNotFound") },
+      { status: 400 },
+    );
   }
 
   const now = new Date();
@@ -134,21 +145,29 @@ async function handleProduct(body: unknown): Promise<Response> {
 
 // Заявка на собранное в конфигураторе украшение (Этап 5):
 // пересчёт из БД по componentId+qty, snapshot в configJson, PNG-коллаж на диск.
-async function handleCustom(rawBody: unknown): Promise<Response> {
+async function handleCustom(rawBody: unknown, dict: Dictionary): Promise<Response> {
   const parsed = customSchema.safeParse(rawBody);
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message ?? "Некорректные данные";
-    return Response.json({ error: message }, { status: 400 });
+    const key =
+      (parsed.error.issues[0]?.message ??
+        "api.common.invalidData") as DictionaryKey;
+    return Response.json({ error: t(dict, key) }, { status: 400 });
   }
   const { categoryId, customerName, contact, message, collageDataUrl } = parsed.data;
   const selections = parsed.data.config.items.filter((s) => s.qty > 0);
   if (selections.length === 0) {
-    return Response.json({ error: "Выберите хотя бы один компонент" }, { status: 400 });
+    return Response.json(
+      { error: t(dict, "api.orders.noComponents") },
+      { status: 400 },
+    );
   }
 
   const category = db.select().from(categories).where(eq(categories.id, categoryId)).get();
   if (!category) {
-    return Response.json({ error: "Категория не найдена" }, { status: 400 });
+    return Response.json(
+      { error: t(dict, "api.orders.categoryNotFound") },
+      { status: 400 },
+    );
   }
 
   const compsById = new Map<number, CalcComponent>(
@@ -171,7 +190,10 @@ async function handleCustom(rawBody: unknown): Promise<Response> {
   );
   for (const sel of selections) {
     if (!compsById.has(sel.componentId)) {
-      return Response.json({ error: "Компонент не найден" }, { status: 400 });
+      return Response.json(
+        { error: t(dict, "api.orders.componentNotFound") },
+        { status: 400 },
+      );
     }
   }
 
@@ -194,7 +216,10 @@ async function handleCustom(rawBody: unknown): Promise<Response> {
     const base64 = collageDataUrl.slice(collageDataUrl.indexOf(",") + 1);
     const bytes = Buffer.from(base64, "base64");
     if (bytes.length > MAX_COLLAGE_BYTES) {
-      return Response.json({ error: "Коллаж слишком большой" }, { status: 413 });
+      return Response.json(
+        { error: t(dict, "api.orders.collageTooBig") },
+        { status: 413 },
+      );
     }
     const dir = resolve(process.cwd(), "public", "uploads", "collages");
     await mkdir(dir, { recursive: true });

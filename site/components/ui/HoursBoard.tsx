@@ -1,7 +1,8 @@
 import type { HoursEntry } from "@/lib/settings";
+import { getDictionary, getLocale } from "@/lib/i18n";
 
 // Копия div.hours-board из макета: заголовок «Часы работы» + строки .day
-export default function HoursBoard({
+export default async function HoursBoard({
   hours,
   className,
   style,
@@ -10,12 +11,13 @@ export default function HoursBoard({
   className?: string;
   style?: React.CSSProperties;
 }) {
+  const dict = getDictionary(await getLocale());
   return (
     <div
       className={className ? `hours-board ${className}` : "hours-board"}
       style={style}
     >
-      <h3>Часы работы</h3>
+      <h3>{dict.layout.hoursTitle}</h3>
       {hours.map((entry, i) => (
         <div className="day" key={i}>
           <span>{entry.day}</span>

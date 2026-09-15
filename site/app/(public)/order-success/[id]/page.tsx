@@ -6,23 +6,17 @@ import { db } from "@/lib/db";
 import { orders, products } from "@/drizzle/schema";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
-import { formatPrice, asPriced, plural } from "@/lib/format";
+import { formatPrice, asPriced } from "@/lib/format";
+import { getDictionary, getLocale, plural as pluralForms, t } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Заявка принята — JulCraft",
-  robots: { index: false },
-};
-
-const STATUS_TEXT: Record<string, string> = {
-  new: "новая · в очереди к верстаку",
-  in_progress: "в работе",
-  done: "готова",
-  cancelled: "отменена",
-};
-
-const NOTE_STATUS_TEXT: Record<string, string> = {
-  new: "на столе, среди чертежей",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: t(dict, "meta.orderSuccess.title"),
+    robots: { index: false },
+  };
+}
 
 type ConfigItem = {
   name?: string;
@@ -34,21 +28,24 @@ type ConfigItem = {
 function receiptRows(
   order: (typeof orders.$inferSelect) & { productName?: string | null },
   currency: Awaited<ReturnType<typeof getDisplayCurrency>>,
+  dict: Awaited<ReturnType<typeof getDictionary>>,
+  locale: Awaited<ReturnType<typeof getLocale>>,
 ) {
   const rows: { label: string; value: string }[] = [];
+  const d = dict.orderSuccess;
 
   const { finance } = getSettings();
 
   if (order.type === "product") {
-    rows.push({ label: "ТИП", value: "товар" });
-    rows.push({ label: "СОСТАВ", value: order.productName ?? "—" });
-    rows.push({ label: "ЦЕНА", value: formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance) });
+    rows.push({ label: d.rowType, value: d.typeProduct });
+    rows.push({ label: d.rowComposition, value: order.productName ?? "—" });
+    rows.push({ label: d.rowPrice, value: formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance) });
     const contactValue = order.customerName
       ? `${order.customerName}${order.contact ? ` (${order.contact})` : ""}`
       : order.contact;
-    rows.push({ label: "КОНТАКТ", value: contactValue });
-    rows.push({ label: "СООБЩЕНИЕ", value: order.message });
-    rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
+    rows.push({ label: d.rowContact, value: contactValue });
+    rows.push({ label: d.rowMessage, value: order.message });
+    rows.push({ label: d.rowStatus, value: d.status[order.status] ?? order.status });
   } else if (order.type === "custom") {
     let config: ConfigItem[] = [];
     let categoryName = "";
@@ -62,30 +59,36 @@ function receiptRows(
     } catch {
       // пусто
     }
-    rows.push({ label: "ТИП", value: `конфигуратор · ${categoryName}` });
+    rows.push({ label: d.rowType, value: t(dict, "orderSuccess.typeConfigurator", { category: categoryName }) });
     rows.push({
-      label: "СОСТАВ",
+      label: d.rowComposition,
       value: config.length
         ? config
             .map((c) => `${c.name ?? ""} ×${c.qty ?? 1}`)
             .join(" + ")
         : "—",
     });
-    rows.push({ label: "ЦЕНА", value: formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance) });
-    rows.push({ label: "СРОК", value: `${order.calcDays} ${plural(order.calcDays, ["день", "дня", "дней"])}` });
+    rows.push({ label: d.rowPrice, value: formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance) });
+    rows.push({ label: d.rowTerm, value: `${order.calcDays} ${pluralForms(order.calcDays, d.days, locale)}` });
     const contactValue = order.customerName
       ? `${order.customerName}${order.contact ? ` (${order.contact})` : ""}`
       : order.contact;
-    rows.push({ label: "КОНТАКТ", value: contactValue });
-    rows.push({ label: "СООБЩЕНИЕ", value: order.message });
-    rows.push({ label: "СТАТУС", value: STATUS_TEXT[order.status] ?? order.status });
+    rows.push({ label: d.rowContact, value: contactValue });
+    rows.push({ label: d.rowMessage, value: order.message });
+    rows.push({ label: d.rowStatus, value: d.status[order.status] ?? order.status });
     // collagePath обрабатывается ниже — PNG показывается под чеком
   } else {
     // contact — записка, а не чек
-    rows.push({ label: "ОТ", value: order.customerName ?? "—" });
-    rows.push({ label: "СООБЩЕНИЕ", value: order.message });
-    rows.push({ label: "КОНТАКТ", value: order.contact });
-    rows.push({ label: "СТАТУС", value: NOTE_STATUS_TEXT[order.status] ?? STATUS_TEXT[order.status] ?? order.status });
+    rows.push({ label: d.rowFrom, value: order.customerName ?? "—" });
+    rows.push({ label: d.rowMessage, value: order.message });
+    rows.push({ label: d.rowContact, value: order.contact });
+    rows.push({
+      label: d.rowStatus,
+      value:
+        d.statusNote[order.status as keyof typeof d.statusNote] ??
+        d.status[order.status] ??
+        order.status,
+    });
   }
   return rows;
 }
@@ -101,6 +104,9 @@ export default async function OrderSuccessPage(props: {
   if (!order) notFound();
 
   const currency = await getDisplayCurrency();
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const d = dict.orderSuccess;
 
   let productName: string | null = null;
   let productImage: string | null = null;
@@ -110,23 +116,23 @@ export default async function OrderSuccessPage(props: {
     productImage = product?.images?.[0] ?? null;
   }
 
-  const rows = receiptRows({ ...order, productName }, currency);
+  const rows = receiptRows({ ...order, productName }, currency, dict, locale);
   const isNote = order.type === "contact";
 
   return (
     <>
       <div className="signboard">
-        <p className="est">✹ {isNote ? "записка получена" : "чек получен"} ✹</p>
-        <h1>{isNote ? "Подтверждаю!" : "Заявка принята!"}</h1>
+        <p className="est">✹ {isNote ? d.estNote : d.estReceipt} ✹</p>
+        <h1>{isNote ? d.titleNote : d.titleReceipt}</h1>
         <p className="tagline">
-          {isNote ? "Юля уже заметила конверт и вытирает руки" : "Юля уже глянула на коллаж и ставит чайник"}
+          {isNote ? d.taglineNote : d.taglineReceipt}
         </p>
       </div>
       <div className="zigzag"></div>
 
       <section className="sect">
         <div className="receipt">
-          <h2>{isNote ? `◍ ЗАПИСКА ◍` : `◍ ЧЕК ЗАЯВКИ №${order.id} ◍`}</h2>
+          <h2>{isNote ? d.receiptNoteTitle : t(dict, "orderSuccess.receiptTitle", { id: order.id })}</h2>
           {rows.map((row, i) => (
             <div className="row" key={i}>
               <span>{row.label}</span>
@@ -138,7 +144,7 @@ export default async function OrderSuccessPage(props: {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={order.collagePath}
-                alt="Коллаж украшения из заявки"
+                alt={d.collageAlt}
                 style={{ display: "block", margin: "0 auto", maxWidth: "280px", width: "100%", border: "2px solid var(--brown)", borderRadius: "8px" }}
               />
             </div>
@@ -148,30 +154,30 @@ export default async function OrderSuccessPage(props: {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={productImage}
-                alt={productName ?? "Товар из заявки"}
+                alt={productName ?? d.productAlt}
                 style={{ display: "block", margin: "0 auto", maxWidth: "280px", width: "100%", border: "2px solid var(--brown)", borderRadius: "8px" }}
               />
             </div>
           )}
-          <p className="thanks">*** ЧТО ДАЛЬШЕ ***</p>
+          <p className="thanks">{d.whatNextTitle}</p>
           {isNote ? (
             <p style={{ fontSize: ".84rem", textAlign: "center", color: "var(--brown)" }}>
-              На первой паузе мастер вдумчиво прочтёт записку
-              <br />и ответит вам по указанному контакту.
+              {d.whatNextNote}
+              <br />{d.whatNextNoteSecond}
             </p>
           ) : (
             <p style={{ fontSize: ".84rem", textAlign: "center", color: "var(--brown)" }}>
-              Мастер свяжется с вами в течение дня, подтвердит цену и срок
+              {d.whatNextReceipt}
               <br />
-              и уточнит детали. Предоплата не нужна — чай бесплатно.
+              {d.whatNextReceiptSecond}
             </p>
           )}
           <div className="cta-row" style={{ justifyContent: "center", marginTop: "20px" }}>
             <Link className="btn btn--primary" href="/">
-              На главную
+              {d.homeButton}
             </Link>
             <Link className="btn btn--secondary" href="/catalog">
-              Смотреть каталог
+              {d.catalogButton}
             </Link>
           </div>
           <div className="barcode"></div>

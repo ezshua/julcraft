@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
 import { getSettings } from "@/lib/get-settings";
 import { telHref } from "@/lib/settings";
+import { getDictionary, getLocale, t } from "@/lib/i18n";
 import Crumbs from "@/components/ui/Crumbs";
 import ContactForm from "@/components/contacts/ContactForm";
 import HoursBoard from "@/components/ui/HoursBoard";
 
-export const metadata: Metadata = {
-  title: "Контакты — JulCraft",
-  description:
-    "Контакты мастерской JulCraft: телефон, email, адрес, часы работы. Позвоните, напишите или зайдите на чай.",
-  alternates: { canonical: "/contacts" },
-  openGraph: {
-    title: "Контакты — JulCraft",
-    description:
-      "Контакты мастерской JulCraft: телефон, email, адрес, часы работы.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: t(dict, "meta.contacts.title"),
+    description: t(dict, "meta.contacts.description"),
+    alternates: { canonical: "/contacts" },
+    openGraph: {
+      title: t(dict, "meta.contacts.title"),
+      description: t(dict, "meta.contacts.descriptionOg"),
+      type: "website",
+    },
+  };
+}
 
 const ROW_STYLE: React.CSSProperties = {
   display: "flex",
@@ -27,34 +30,39 @@ const ROW_STYLE: React.CSSProperties = {
   fontSize: ".84rem",
 };
 
-export default function ContactsPage() {
+export default async function ContactsPage() {
   const settings = getSettings();
   const { contacts } = settings;
+  const dict = getDictionary(await getLocale());
+  const c = dict.contacts;
 
   return (
     <>
-      <Crumbs items={[{ label: "Главная", href: "/" }, { label: "Контакты" }]} />
+      <Crumbs
+        items={[
+          { label: c.crumbsHome, href: "/" },
+          { label: c.crumbsContacts },
+        ]}
+      />
 
       <div className="signboard signboard--small">
-        <p className="est">✹ всегда рады ✹</p>
-        <h1>Контакты</h1>
-        <p className="tagline">
-          позвоните, напишите или зайдите на чай — отвечаем быстрее, чем остывает чайник
-        </p>
+        <p className="est">{c.est}</p>
+        <h1>{c.title}</h1>
+        <p className="tagline">{c.tagline}</p>
       </div>
       <div className="zigzag"></div>
 
       <section className="sect">
         <div className="hours-grid" style={{ alignItems: "start" }}>
           {/* Левая колонка: форма в стиле чека */}
-          <ContactForm />
+          <ContactForm dict={c.form} />
 
           {/* Правая колонка: карта + контакты */}
           <div>
             <div className="item" style={{ overflow: "hidden", marginBottom: "22px" }}>
               {/* Решение №6 (Этап 6): Google Maps embed по адресу из Settings, без API-ключа */}
               <iframe
-                title={`Карта — ${contacts.address}`}
+                title={t(dict, "contacts.mapTitle", { address: contacts.address })}
                 src={`https://www.google.com/maps?q=${encodeURIComponent(contacts.address)}&output=embed`}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -77,33 +85,33 @@ export default function ContactsPage() {
                   textTransform: "uppercase",
                 }}
               >
-                Google Maps · {contacts.address}
+                {t(dict, "contacts.mapCaption", { address: contacts.address })}
               </span>
             </div>
 
             <div className="board board--paper">
               <div className="b-head">
-                <h3>Связаться напрямую</h3>
+                <h3>{c.directTitle}</h3>
               </div>
               <div className="b-body">
                 <div className="receipt-row" style={ROW_STYLE}>
-                  <span>ТЕЛЕФОН</span>
+                  <span>{c.rowPhone}</span>
                   <span>
                     <a href={telHref(contacts.phone)}>{contacts.phone}</a>
                   </span>
                 </div>
                 <div className="receipt-row" style={ROW_STYLE}>
-                  <span>EMAIL</span>
+                  <span>{c.rowEmail}</span>
                   <span>
                     <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
                   </span>
                 </div>
                 <div className="receipt-row" style={ROW_STYLE}>
-                  <span>АДРЕС</span>
+                  <span>{c.rowAddress}</span>
                   <span>{contacts.address}</span>
                 </div>
                 <div className="receipt-row" style={ROW_STYLE}>
-                  <span>СОЦСЕТИ</span>
+                  <span>{c.rowSocial}</span>
                   <span style={{ display: "flex", gap: "8px" }}>
                     <a href={contacts.instagram} aria-label="Instagram">
                       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#22242a" strokeWidth="2" strokeLinecap="round">

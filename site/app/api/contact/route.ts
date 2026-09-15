@@ -2,27 +2,34 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { orders } from "@/drizzle/schema";
 import { sendTelegram } from "@/lib/telegram";
+import { getLocale, getDictionary, t, type DictionaryKey } from "@/lib/i18n";
 
 const contactSchema = z.object({
-  name: z.string().trim().min(1, "Укажите имя"),
-  contact: z.string().trim().min(1, "Укажите контакт"),
-  message: z.string().trim().min(1, "Напишите сообщение"),
+  name: z.string().trim().min(1, "api.common.name"),
+  contact: z.string().trim().min(1, "api.common.contact"),
+  message: z.string().trim().min(1, "api.contact.message"),
   channel: z.enum(["phone", "telegram", "email"]).default("phone"),
 });
 
 // Форма обратной связи (D-14): сообщение пишется в Order с type=contact
 export async function POST(request: Request) {
+  const dict = getDictionary(await getLocale());
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Некорректный JSON" }, { status: 400 });
+    return Response.json(
+      { error: t(dict, "api.common.invalidJson") },
+      { status: 400 },
+    );
   }
 
   const parsed = contactSchema.safeParse(body);
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message ?? "Некорректные данные";
-    return Response.json({ error: message }, { status: 400 });
+    const key =
+      (parsed.error.issues[0]?.message ??
+        "api.common.invalidData") as DictionaryKey;
+    return Response.json({ error: t(dict, key) }, { status: 400 });
   }
 
   const { name, contact, message } = parsed.data;

@@ -5,30 +5,36 @@ import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice, asPriced, plural } from "@/lib/format";
+import { formatPrice, asPriced } from "@/lib/format";
 import { telHref } from "@/lib/settings";
+import { getDictionary, getLocale, plural, t } from "@/lib/i18n";
 import ProductCard from "@/components/product/ProductCard";
 import CategoryCard from "@/components/category/CategoryCard";
 import EmptyState from "@/components/ui/EmptyState";
 import HoursBoard from "@/components/ui/HoursBoard";
 
-export const metadata: Metadata = {
-  title: "JulCraft — витрина · эст. 2026",
-  description:
-    "Мастерская украшений JulCraft: броши, кулоны, серьги из бакелита, стекла и латуни. Всё в одном экземпляре — собрано вручную.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "JulCraft — витрина · эст. 2026",
-    description:
-      "Мастерская украшений JulCraft: броши, кулоны, серьги из бакелита, стекла и латуни. Всё в одном экземпляре.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: t(dict, "meta.home.title"),
+    description: t(dict, "meta.home.description"),
+    alternates: { canonical: "/" },
+    openGraph: {
+      title: t(dict, "meta.home.title"),
+      description: t(dict, "meta.home.descriptionOg"),
+      type: "website",
+    },
+  };
+}
 
 export default async function HomePage() {
   const settings = getSettings();
   const { finance } = settings;
   const currency = await getDisplayCurrency();
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const home = dict.home;
 
   // Витрина: правило R-1 — сначала избранное, затем новинки, затем остальные
   const allProducts = db.select().from(products).all();
@@ -57,23 +63,26 @@ export default async function HomePage() {
     return dot > 0 ? cat.description.slice(0, dot) : cat.description;
   };
   const countLabel = (cat: (typeof cats)[number], n: number) => {
-    if (cat.slug === "komplekty") return `${n} ${plural(n, ["комплект", "комплекта", "комплектов"])}`;
-    if (cat.slug === "vintazhnyj-remont") return `от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)}`;
-    return `${n} ${plural(n, ["изделие", "изделия", "изделий"])}`;
+    if (cat.slug === "komplekty") return `${n} ${plural(n, home.unitKomplekty, locale)}`;
+    if (cat.slug === "vintazhnyj-remont")
+      return t(dict, "home.unitRemontFrom", {
+        price: formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance),
+      });
+    return `${n} ${plural(n, home.unitDefault, locale)}`;
   };
 
   return (
     <>
       <div className="signboard">
-        <p className="est">✹ эст. 2026 · открыто снова ✹</p>
+        <p className="est">{home.est}</p>
         <h1>JulCraft</h1>
-        <p className="tagline">украшения · винтажная бижутерия · ремонт бабушкиных бус</p>
+        <p className="tagline">{home.tagline}</p>
         <div className="cta-row">
           <Link className="btn btn--primary" href="/catalog">
-            Смотреть каталог
+            {home.catalogCta}
           </Link>
           <Link className="btn btn--secondary" href="/configurator">
-            Собрать своё
+            {home.buildCta}
           </Link>
         </div>
       </div>
@@ -81,10 +90,8 @@ export default async function HomePage() {
 
       {/* Витрина: 12 изделий */}
       <section className="sect">
-        <h2 className="sec-h2">Сегодня на витрине</h2>
-        <p className="sec-sub">
-          {"// всё в одном экземпляре · металлы, стекло, настоящая ностальгия на полке"}
-        </p>
+        <h2 className="sec-h2">{home.showcaseTitle}</h2>
+        <p className="sec-sub">{home.showcaseSub}</p>
         {shelf.length === 0 ? (
           <EmptyState />
         ) : (
@@ -98,8 +105,8 @@ export default async function HomePage() {
 
       {/* Плитка категорий */}
       <section className="sect">
-        <h2 className="sec-h2">Разложено по полкам</h2>
-        <p className="sec-sub">{"// много разделов, в каждом — своё настроение"}</p>
+        <h2 className="sec-h2">{home.shelfTitle}</h2>
+        <p className="sec-sub">{home.shelfSub}</p>
         {cats.length === 0 ? (
           <EmptyState />
         ) : (
@@ -122,14 +129,11 @@ export default async function HomePage() {
       {/* CTA в конфигуратор */}
       <section className="sect">
         <div className="cta-banner">
-          <h2>Соберите своё украшение</h2>
-          <p>
-            Выберите категорию, добавьте камни и подвески со склада — калькулятор
-            сам посчитает цену и срок. Коллаж соберём прямо при вас.
-          </p>
+          <h2>{home.ctaBannerTitle}</h2>
+          <p>{home.ctaBannerText}</p>
           <div className="cta-row" style={{ justifyContent: "center" }}>
             <Link className="btn btn--primary" href="/configurator">
-              Открыть конфигуратор →
+              {home.ctaBannerButton}
             </Link>
           </div>
         </div>
@@ -138,7 +142,7 @@ export default async function HomePage() {
       {/* Чек-тизер + часы */}
       <div className="receipt-sec" id="about">
         <div className="receipt">
-          <h2>◍ ЧЕК ЗНАКОМСТВА ◍</h2>
+          <h2>{home.receiptTitle}</h2>
           {settings.about.short.rows.map((row, i) => (
             <div className="row" key={i}>
               <span>{row.label}</span>
@@ -153,19 +157,10 @@ export default async function HomePage() {
       <section className="sect">
         <div className="hours-grid">
           <div className="hours-txt">
-            <h2 className="sec-h2">Мастерская работает</h2>
-            <p className="sec-sub">
-              {"// приходите без спешки — у нас радио на кассете и запах воска"}
-            </p>
-            <p>
-              Витрина живёт по законам старых лавок: если свет горит — заходите,
-              даже если «закрыто». Юля на месте почти всегда: либо паяет, либо пьёт
-              чай с тем, кто зашёл «просто посмотреть».
-            </p>
-            <p>
-              Приносите бабушкины клипсы и одинокие серьги — половине украшений мы
-              дарим вторую жизнь прямо при вас.
-            </p>
+            <h2 className="sec-h2">{home.hoursTitle}</h2>
+            <p className="sec-sub">{home.hoursSub}</p>
+            <p>{home.hoursText1}</p>
+            <p>{home.hoursText2}</p>
             <a className="phone" href={telHref(settings.contacts.phone)}>
               ☎ {settings.contacts.phone}
             </a>

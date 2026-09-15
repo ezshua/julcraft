@@ -4,27 +4,33 @@ import { db } from "@/lib/db";
 import { categories, slotTemplates } from "@/drizzle/schema";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
-import { formatPrice, asPriced, plural } from "@/lib/format";
+import { formatPrice, asPriced } from "@/lib/format";
+import { getDictionary, getLocale, plural, t } from "@/lib/i18n";
 import Crumbs from "@/components/ui/Crumbs";
 import EmptyState from "@/components/ui/EmptyState";
 import CategoryCard from "@/components/category/CategoryCard";
 
-export const metadata: Metadata = {
-  title: "Конфигуратор — JulCraft",
-  description:
-    "Соберите украшение сами: выберите форму, камни и подвески со склада мастерской — калькулятор посчитает цену и срок.",
-  alternates: { canonical: "/configurator" },
-  openGraph: {
-    title: "Конфигуратор — JulCraft",
-    description:
-      "Соберите украшение сами из камней, подвесок и шнуров со склада мастерской.",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: t(dict, "meta.configurator.title"),
+    description: t(dict, "meta.configurator.description"),
+    alternates: { canonical: "/configurator" },
+    openGraph: {
+      title: t(dict, "meta.configurator.title"),
+      description: t(dict, "meta.configurator.descriptionOg"),
+      type: "website",
+    },
+  };
+}
 
 export default async function ConfiguratorPage() {
   const currency = await getDisplayCurrency();
   const { finance } = getSettings();
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const conf = dict.configurator;
   const cats = db
     .select()
     .from(categories)
@@ -43,30 +49,29 @@ export default async function ConfiguratorPage() {
     if (slots.length > 0) {
       slotDesc.set(
         cat.id,
-        `${slots.length} ${plural(slots.length, ["слот", "слота", "слотов"])}: ${slots.map((s) => s.name).join(", ")}`,
+        t(dict, "configurator.slotDesc", {
+          n: slots.length,
+          word: plural(slots.length, conf.slotWord, locale),
+          names: slots.map((s) => s.name).join(", "),
+        }),
       );
     }
   }
 
   return (
     <>
-      <Crumbs items={[{ label: "Главная", href: "/" }, { label: "Конфигуратор" }]} />
+      <Crumbs items={[{ label: conf.crumbsHome, href: "/" }, { label: conf.crumbsConfigurator }]} />
 
       <div className="signboard signboard--small">
-        <p className="est">✹ соберите своё ✹</p>
-        <h1>Конфигуратор</h1>
-        <p className="tagline">
-          выберите форму — дальше Юля соберёт украшение из камней и подвесок со
-          склада, а калькулятор посчитает цену и срок
-        </p>
+        <p className="est">{conf.est}</p>
+        <h1>{conf.title}</h1>
+        <p className="tagline">{conf.tagline}</p>
       </div>
       <div className="zigzag"></div>
 
       <section className="sect">
-        <h2 className="sec-h2">С чего начнём?</h2>
-        <p className="sec-sub">
-          {"// у каждой категории — свой набор слотов: камень, подвески, шнур, застёжка"}
-        </p>
+        <h2 className="sec-h2">{conf.chooseTitle}</h2>
+        <p className="sec-sub">{conf.chooseSub}</p>
         <div className="shelf">
           {withTemplate.length === 0 ? (
             <EmptyState />
@@ -78,7 +83,10 @@ export default async function ConfiguratorPage() {
                 name={cat.name}
                 desc={slotDesc.get(cat.id) ?? ""}
                 image={cat.image}
-                count={`работа от ${formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance)} · ${cat.baseWorkDays} дн`}
+                count={t(dict, "configurator.workFrom", {
+                  price: formatPrice(asPriced(cat.workPrice, cat.workPriceCurrency), currency, finance),
+                  n: cat.baseWorkDays,
+                })}
                 href={`/configurator/${cat.slug}`}
               />
             ))
@@ -89,8 +97,8 @@ export default async function ConfiguratorPage() {
               slug={repair.slug}
               name={repair.name}
               image={repair.image}
-              desc="нет шаблона слотов — это услуга"
-              count="через форму на контактах"
+              desc={conf.repairDesc}
+              count={conf.repairCount}
               href="/contacts"
               disabled
             />
@@ -98,12 +106,7 @@ export default async function ConfiguratorPage() {
         </div>
 
         <div className="mt-40">
-          <div className="notice notice--olive">
-            Цена = работа категории + стоимость комплектующих + обработка. Срок = база
-            категории + дни обработки + поставка «под заказ».
-            Точные формулы пересчитываются на сервере при отправке заявки — калькулятор
-            в макете показывает текущий расчёт, мастер уточнит и сообщит.
-          </div>
+          <div className="notice notice--olive">{conf.notice}</div>
         </div>
       </section>
 

@@ -2,39 +2,48 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import type { Dictionary } from "@/lib/dictionaries/ru";
 
 const ERROR_NAV = [
-  { href: "/", label: "Витрина" },
-  { href: "/catalog", label: "Каталог" },
-  { href: "/configurator", label: "Конфигуратор" },
-  { href: "/contacts", label: "Контакты" },
-  { href: "/about", label: "О нас" },
-];
+  { href: "/", key: "showcase" },
+  { href: "/catalog", key: "catalog" },
+  { href: "/configurator", key: "configurator" },
+  { href: "/contacts", key: "contacts" },
+  { href: "/about", key: "about" },
+] as const;
+
+type ErrorHeaderProps = {
+  layout: Dictionary["layout"];
+};
 
 // Шапка и мобильное меню страницы 404 — копия mockup/error.html
-export default function ErrorHeader() {
+export default function ErrorHeader({ layout }: ErrorHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const nav = ERROR_NAV.map((link) => ({
+    href: link.href,
+    label: layout.errorNav[link.key],
+  }));
   return (
     <>
       <header className="topbar">
         <Link className="logo" href="/">
-          JulCraft<small>мастерская украшений</small>
+          JulCraft<small>{layout.workshop}</small>
         </Link>
         <nav>
-          {ERROR_NAV.map((link) => (
+          {nav.map((link) => (
             <Link key={link.href} href={link.href}>
               {link.label}
             </Link>
           ))}
         </nav>
         <div className="actions">
-          <a className="icon-btn" href="/admin/login" title="Вход мастера">
+          <a className="icon-btn" href="/admin/login" title={layout.masterLoginTitle}>
             ⏻
           </a>
           <button
             className="burger"
             onClick={() => setMenuOpen(true)}
-            aria-label="Меню"
+            aria-label={layout.menu}
           >
             ☰
           </button>
@@ -47,12 +56,12 @@ export default function ErrorHeader() {
           <button
             className="icon-btn"
             onClick={() => setMenuOpen(false)}
-            aria-label="Закрыть"
+            aria-label={layout.close}
           >
             ✕
           </button>
         </div>
-        {ERROR_NAV.map((link) => (
+        {nav.map((link) => (
           <Link
             key={link.href}
             className="mm"
@@ -64,7 +73,7 @@ export default function ErrorHeader() {
         ))}
         <div className="mm-foot">
           <a href="/admin/login" style={{ color: "var(--rust)" }}>
-            Вход мастера →
+            {layout.masterLoginArrow}
           </a>
         </div>
       </div>

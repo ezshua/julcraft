@@ -13,7 +13,8 @@ import type {
   Selection,
 } from "@/lib/calc";
 import { buildSnapshot } from "@/lib/calc";
-import { plural } from "@/lib/format";
+import type { Dictionary } from "@/lib/dictionaries/ru";
+import { t, plural } from "./i18n-client";
 
 // Модалка заявки на собранное украшение — копия div.modal-overlay#modal
 // из mockup/configurator-config.html. Отправляет POST /api/orders с
@@ -31,6 +32,8 @@ export default function OrderRequestModal({
   summary,
   finance,
   currencyCode,
+  dict,
+  locale,
 }: {
   open: boolean;
   onClose: () => void;
@@ -44,6 +47,8 @@ export default function OrderRequestModal({
   summary: string;
   finance: FinanceSettings;
   currencyCode: string;
+  dict: Dictionary["configurator"];
+  locale: string;
 }) {
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
@@ -84,14 +89,14 @@ export default function OrderRequestModal({
       });
       if (!res.ok) {
         const text = await res.text();
-        setError(text || "Не получилось отправить заявку — попробуйте ещё раз");
+        setError(text || dict.submitError);
         setBusy(false);
         return;
       }
       const data = (await res.json()) as { id: number };
       router.push(`/order-success/${data.id}`);
     } catch {
-      setError("Не получилось отправить заявку — попробуйте ещё раз");
+      setError(dict.submitError);
       setBusy(false);
     }
   };
@@ -101,8 +106,8 @@ export default function OrderRequestModal({
         <div className={open ? "modal-overlay open" : "modal-overlay"} id="custom-modal">
       <div className="modal">
         <div className="m-head">
-          <h3>Заявка на {accusative}</h3>
-          <button className="icon-btn" onClick={onClose} aria-label="Закрыть">
+          <h3>{t(dict.requestTitle, { name: accusative })}</h3>
+          <button className="icon-btn" onClick={onClose} aria-label={dict.closeAria}>
             ✕
           </button>
         </div>
@@ -110,41 +115,41 @@ export default function OrderRequestModal({
           {collageDataUrl && (
             <div className="thumb">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={collageDataUrl} alt="Коллаж украшения" />
+              <img src={collageDataUrl} alt={dict.collageAlt} />
             </div>
           )}
           <div>
-            <b>{summary || "Пока ничего не выбрано"}</b>
+            <b>{summary || dict.emptySummary}</b>
             <small>
               {formatPrice(total, currency, finance)} ·{" "}
-              {days} {plural(days, ["день", "дня", "дней"])} · мастер свяжется сама
+              {days} {plural(days, dict.days, locale)} · {dict.masterNote}
             </small>
           </div>
         </div>
         <div className="field">
-          <label>Имя</label>
+          <label>{dict.fieldName}</label>
           <input
             type="text"
-            placeholder="Как к вам обращаться"
+            placeholder={dict.namePlaceholder}
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
         </div>
         <div className="field">
-          <label>Контакт</label>
+          <label>{dict.fieldContact}</label>
           <input
             type="tel"
-            placeholder="Телефон, email или Telegram"
+            placeholder={dict.contactPlaceholder}
             value={contact}
             onChange={(e) => setContact(e.target.value)}
             required
           />
         </div>
         <div className="field">
-          <label>Комментарий</label>
+          <label>{dict.fieldComment}</label>
           <textarea
-            placeholder="Пожелания к сборке, длине цепочки и т.п."
+            placeholder={dict.commentPlaceholder}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
@@ -156,14 +161,14 @@ export default function OrderRequestModal({
         )}
         <div className="m-actions">
           <button className="btn btn--primary" onClick={submit} disabled={busy}>
-            Отправить заявку
+            {dict.sendRequest}
           </button>
           <button className="btn btn--secondary" onClick={onClose} disabled={busy}>
-            Отмена
+            {dict.cancel}
           </button>
         </div>
         <p className="thanks" style={{ marginTop: "14px", textAlign: "center", fontSize: ".72rem" }}>
-          *** без предоплаты — цена и срок в чеке после звонка ***
+          {dict.noPrepayment}
           </p>
         </div>
       </div>,

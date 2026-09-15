@@ -1,18 +1,17 @@
 import Link from "next/link";
+import { getDictionary, getLocale } from "@/lib/i18n";
 
 // Копия div.empty-state из mockup/catalog.html (демо «Если полка опустеет»)
-export default function EmptyState() {
+export default async function EmptyState() {
+  const catalog = getDictionary(await getLocale()).catalog;
   return (
     <div className="empty-state">
       <div className="receipt" style={{ padding: "40px 30px" }}>
         <div className="es-big">☙</div>
-        <b>Здесь пока пусто</b>
-        <p>
-          В этом отделе пока ничего нет — но Юля уже греет бакелит на верстаке.
-          Загляните позже или соберите своё украшение в конфигураторе.
-        </p>
+        <b>{catalog.emptyTitle}</b>
+        <p>{catalog.emptyText}</p>
         <Link className="btn btn--primary btn--small" href="/configurator">
-          Собрать своё
+          {catalog.emptyButton}
         </Link>
       </div>
     </div>

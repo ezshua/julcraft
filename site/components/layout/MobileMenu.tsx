@@ -2,24 +2,32 @@
 
 import Link from "next/link";
 import { type SiteSettings } from "@/lib/settings";
-import { NAV_LINKS } from "./nav-links";
+import type { Dictionary } from "@/lib/dictionaries/ru";
+import { navLabels } from "./nav-links";
 
 type MobileMenuProps = {
   open: boolean;
   onClose: () => void;
   settings: SiteSettings;
+  layout: Dictionary["layout"];
 };
 
-export default function MobileMenu({ open, onClose, settings }: MobileMenuProps) {
+export default function MobileMenu({
+  open,
+  onClose,
+  settings,
+  layout,
+}: MobileMenuProps) {
+  const links = navLabels(layout);
   return (
     <div className={open ? "mobile-menu open" : "mobile-menu"} id="mm">
       <div className="mm-head">
         <b>JulCraft</b>
-        <button className="icon-btn" onClick={onClose} aria-label="Закрыть">
+        <button className="icon-btn" onClick={onClose} aria-label={layout.close}>
           ✕
         </button>
       </div>
-      {NAV_LINKS.map((link) => (
+      {links.map((link) => (
         <Link key={link.href} className="mm" href={link.href} onClick={onClose}>
           {link.label}
         </Link>

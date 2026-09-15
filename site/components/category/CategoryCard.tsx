@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getDictionary, getLocale } from "@/lib/i18n";
 
 type CategoryCardProps = {
   slug: string;
@@ -11,7 +12,7 @@ type CategoryCardProps = {
 };
 
 // Копия карточки категории из mockup/home.html: a.item.item--cat
-export default function CategoryCard({
+export default async function CategoryCard({
   slug,
   name,
   desc,
@@ -20,6 +21,7 @@ export default function CategoryCard({
   image,
   disabled,
 }: CategoryCardProps) {
+  const dict = getDictionary(await getLocale());
   const icon = image ? (
     <div className="cat-icon">
       <img src={image} alt="" />
@@ -30,7 +32,10 @@ export default function CategoryCard({
 
   if (disabled) {
     return (
-      <div className="item item--cat is-disabled" title="Нет шаблона слотов">
+      <div
+        className="item item--cat is-disabled"
+        title={dict.catalog.noSlotsTemplate}
+      >
         {icon}
         <div className="info">
           <h3>{name}</h3>

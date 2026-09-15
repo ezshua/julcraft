@@ -5,19 +5,24 @@ import { db } from "@/lib/db";
 import { categories, components, componentTypes, slotTemplates } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
+import { getDictionary, getLocale, t } from "@/lib/i18n";
 import ConfiguratorClient from "@/components/configurator/ConfiguratorClient";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await props.params;
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const category = db.select().from(categories).where(eq(categories.slug, slug)).get();
   const title = category
-    ? `Конфигуратор — ${category.name} · JulCraft`
-    : "Конфигуратор — JulCraft";
+    ? t(dict, "meta.configuratorCategory.title", { name: category.name })
+    : t(dict, "meta.configurator.title");
   const description = category
-    ? `Соберите ${category.name.toLowerCase()} сами: слоты, комплектующие со склада, калькулятор цены и срока.`
-    : "Конфигуратор украшений JulCraft";
+    ? t(dict, "meta.configuratorCategory.description", {
+        name: category.name.toLowerCase(),
+      })
+    : t(dict, "meta.configuratorFallback.description");
   return {
     title,
     description,
@@ -62,6 +67,8 @@ export default async function ConfiguratorCategoryPage(props: {
 
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   const slotTypes = [...new Set(slots.map((s) => s.componentType))];
 
@@ -102,6 +109,8 @@ export default async function ConfiguratorCategoryPage(props: {
         }))}
       finance={finance}
       currencyCode={currency.code}
+      dict={dict.configurator}
+      locale={locale}
     />
   );
 }

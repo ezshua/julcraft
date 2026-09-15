@@ -1,17 +1,23 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import type { Dictionary } from "@/lib/dictionaries/ru";
 
-const OPTIONS = [
-  { value: "new", label: "Сортировка: сначала новинки" },
-  { value: "cheap", label: "Сначала дешевле" },
-  { value: "expensive", label: "Сначала дороже" },
-];
+type CategorySortProps = {
+  sort: string;
+  labels: Dictionary["catalog"]["sort"];
+};
 
 // select сортировки из category.html; меняет URL (?sort=…), остальные параметры сохраняются
-export default function CategorySort({ sort }: { sort: string }) {
+export default function CategorySort({ sort, labels }: CategorySortProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const OPTIONS = [
+    { value: "new", label: labels.newest },
+    { value: "cheap", label: labels.cheap },
+    { value: "expensive", label: labels.expensive },
+  ];
 
   const onChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -23,7 +29,7 @@ export default function CategorySort({ sort }: { sort: string }) {
   return (
     <div className="field" style={{ margin: 0, maxWidth: "280px" }}>
       <select
-        aria-label="Сортировка"
+        aria-label={labels.ariaLabel}
         value={sort}
         onChange={(e) => onChange(e.target.value)}
       >

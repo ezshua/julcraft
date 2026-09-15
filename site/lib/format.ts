@@ -1,16 +1,13 @@
 // Утилиты форматирования (этап 3). Форматы — как в макете: "1 950.00 ₴", "3 дня" и т.п.
 // Цены (formatPrice) — мультивалютные, см. lib/currency.ts (plan-finances.md).
 
-const SHORT_DAYS = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
-const FULL_DAYS = [
-  "воскресенье",
-  "понедельник",
-  "вторник",
-  "среда",
-  "четверг",
-  "пятница",
-  "суббота",
-];
+import type { Locale } from "./i18n";
+import type { Dictionary } from "./dictionaries/ru";
+import { ru } from "./dictionaries/ru";
+import { en } from "./dictionaries/en";
+import { uk } from "./dictionaries/uk";
+
+const DICTS_BY_LOCALE: Record<Locale, Dictionary> = { ru, en, uk };
 
 const TRANSLIT: Record<string, string> = {
   а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e",
@@ -53,11 +50,11 @@ export function plural(
 }
 
 /** Короткий день недели из даты: "пт" (для полки) */
-export function reserveDayShort(d: Date): string {
-  return SHORT_DAYS[d.getDay()];
+export function reserveDayShort(d: Date, locale: Locale): string {
+  return DICTS_BY_LOCALE[locale].product.daysShort[d.getDay()];
 }
 
 /** Полный день недели из даты: "пятница" (для карточки товара и модалки) */
-export function reserveDayFull(d: Date): string {
-  return FULL_DAYS[d.getDay()];
+export function reserveDayFull(d: Date, locale: Locale): string {
+  return DICTS_BY_LOCALE[locale].product.daysFull[d.getDay()];
 }

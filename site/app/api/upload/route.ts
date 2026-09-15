@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { requireAdmin } from "@/lib/admin";
+import { getLocale, getDictionary, t } from "@/lib/i18n";
 
 const LIMITS: Record<string, { mime: string[]; max: number; ext: string }> = {
   products: {
@@ -26,33 +27,35 @@ const EXT_BY_MIME: Record<string, string> = {
 
 // Загрузка изображений (товары/комплектующие). Лимиты — из макетов.
 export async function POST(request: Request) {
+  const dict = getDictionary(await getLocale());
+
   if (!(await requireAdmin())) {
-    return Response.json({ error: "Не авторизован" }, { status: 401 });
+    return Response.json({ error: t(dict, "api.upload.unauthorized") }, { status: 401 });
   }
 
   let form: FormData;
   try {
     form = await request.formData();
   } catch {
-    return Response.json({ error: "Ожидался FormData" }, { status: 400 });
+    return Response.json({ error: t(dict, "api.upload.expectedFormData") }, { status: 400 });
   }
 
   const kind = String(form.get("kind") ?? "");
   const rule = LIMITS[kind];
   if (!rule) {
-    return Response.json({ error: "Некорректный kind" }, { status: 400 });
+    return Response.json({ error: t(dict, "api.upload.invalidKind") }, { status: 400 });
   }
 
   const file = form.get("file");
   if (!(file instanceof File)) {
-    return Response.json({ error: "Файл не передан" }, { status: 400 });
+    return Response.json({ error: t(dict, "api.upload.noFile") }, { status: 400 });
   }
 
   if (!rule.mime.includes(file.type)) {
-    return Response.json({ error: "Неверный формат файла" }, { status: 400 });
+    return Response.json({ error: t(dict, "api.upload.invalidFormat") }, { status: 400 });
   }
   if (file.size > rule.max) {
-    return Response.json({ error: "Файл слишком большой" }, { status: 400 });
+    return Response.json({ error: t(dict, "api.upload.tooBig") }, { status: 400 });
   }
 
   const ext =

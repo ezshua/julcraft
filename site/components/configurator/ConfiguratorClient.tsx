@@ -12,8 +12,10 @@ import {
   type CalcComponent,
   type Selection,
 } from "@/lib/calc";
-import { formatPrice, plural } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
+import type { Dictionary } from "@/lib/dictionaries/ru";
 import type { FinanceSettings } from "@/lib/currency";
+import { t, plural } from "./i18n-client";
 
 const CollageCanvas = dynamic(() => import("./CollageCanvas"), { ssr: false });
 
@@ -27,26 +29,7 @@ export type ConfiguratorSlot = {
 
 export type ConfiguratorComponent = CalcComponent & { photo: string };
 
-// «Собираем {винительный}»: грамматический падеж не выводится из данных —
-// статичная карта для существующих slug, фолбэк — имя категории (решение №4)
-const ACCUSATIVE: Record<string, string> = {
-  broshi: "брошь",
-  kulony: "кулон",
-  sergi: "серьги",
-  kolca: "кольцо",
-  braslety: "браслет",
-  "busy-i-ozherelya": "бусы",
-  komplekty: "комплект",
-  "klipsy-i-manzhety": "клипсы",
-  "amulety-i-podveski": "амулет",
-};
-
 const SQ_CLASSES = ["sq--mustard", "sq--rust", "sq--olive"];
-
-// tag-строка signboard: для Кулонов — копия макета; прочие — имена типов
-// комплектующих из справочника + хвост про коллаж (решение руководителя 2026-08-25)
-const KULONY_TAG =
-  "камень · подвески · шнур · застёжка — коллаж соберётся сам, вы можете двигать детали";
 
 export default function ConfiguratorClient({
   category,
@@ -56,6 +39,8 @@ export default function ConfiguratorClient({
   components,
   finance,
   currencyCode,
+  dict,
+  locale,
 }: {
   category: CalcCategory & { id: number; slug: string };
   slots: ConfiguratorSlot[];
@@ -64,7 +49,10 @@ export default function ConfiguratorClient({
   components: ConfiguratorComponent[];
   finance: FinanceSettings;
   currencyCode: string;
+  dict: Dictionary["configurator"];
+  locale: string;
 }) {
+  const conf = dict;
   const { currency } = useCurrency(finance, currencyCode);
 
   const [selections, setSelections] = useState<Record<number, number>>({});
@@ -135,12 +123,20 @@ export default function ConfiguratorClient({
     });
   };
 
-  const accusative = ACCUSATIVE[category.slug] ?? category.name;
-  const estLine = `${slots.length} ${plural(slots.length, ["слот", "слота", "слотов"])}: ${slots.map((s) => s.name).join(", ")}`;
+  // «Собираем {винительный}»: грамматический падеж не выводится из данных —
+  // статичная карта в словаре для существующих slug, фолбэк — имя категории
+  const accusative = conf.accusative[category.slug as keyof typeof conf.accusative] ?? category.name;
+  const estLine = t(conf.slotDesc, {
+    n: slots.length,
+    word: plural(slots.length, conf.slotWord, locale),
+    names: slots.map((s) => s.name).join(", "),
+  });
   const tagLine =
     category.slug === "kulony"
-      ? KULONY_TAG
-      : `${typeNames.map((t) => t.name.toLowerCase()).join(", ")} — коллаж соберётся сам, вы можете двигать детали`;
+      ? conf.kulonyTag
+      : t(conf.taglineCustom, {
+          names: typeNames.map((x) => x.name.toLowerCase()).join(", "),
+        });
 
   const selectedSummary = selectionList
     .map((s) => {
@@ -154,15 +150,15 @@ export default function ConfiguratorClient({
     <>
       <Crumbs
         items={[
-          { label: "Главная", href: "/" },
-          { label: "Конфигуратор", href: "/configurator" },
+          { label: conf.crumbsHome, href: "/" },
+          { label: conf.crumbsConfigurator, href: "/configurator" },
           { label: category.name },
         ]}
       />
 
       <div className="signboard signboard--small">
         <p className="est">✹ {category.slug} · {estLine} ✹</p>
-        <h1>Собираем {accusative}</h1>
+        <h1>{t(conf.assembling, { name: accusative })}</h1>
         <p className="tagline">{tagLine}</p>
       </div>
       <div className="zigzag"></div>
@@ -173,13 +169,13 @@ export default function ConfiguratorClient({
             className={panel === "canvas" ? "filter is-active" : "filter"}
             onClick={() => setPanel("canvas")}
           >
-            Коллаж
+            {conf.tabCollage}
           </span>
           <span
             className={panel === "slots" ? "filter is-active" : "filter"}
             onClick={() => setPanel("slots")}
           >
-            Слоты и цена
+            {conf.tabSlots}
           </span>
         </div>
 
@@ -195,6 +191,7 @@ export default function ConfiguratorClient({
                 }))
               }
               onDataUrl={setCollageDataUrl}
+              dict={conf}
             />
           </div>
 
@@ -239,26 +236,27 @@ export default function ConfiguratorClient({
                               <div className="info">
                                 <b>{comp.name}</b>
                                 <small>
-                                  {formatPrice(
-                                    { priceMinor: comp.priceMinor, priceCurrency: comp.priceCurrency },
-                                    currency,
-                                    finance,
-                                  )}{" "}
-                                  + обработка{" "}
-                                  {formatPrice(
-                                    {
-                                      priceMinor: comp.processingPriceMinor,
-                                      priceCurrency: comp.processingPriceCurrency,
-                                    },
-                                    currency,
-                                    finance,
-                                  )}
+                                  {t(conf.pricePlusProcessing, {
+                                    price: formatPrice(
+                                      { priceMinor: comp.priceMinor, priceCurrency: comp.priceCurrency },
+                                      currency,
+                                      finance,
+                                    ),
+                                    processing: formatPrice(
+                                      {
+                                        priceMinor: comp.processingPriceMinor,
+                                        priceCurrency: comp.processingPriceCurrency,
+                                      },
+                                      currency,
+                                      finance,
+                                    ),
+                                  })}
                                   {" · "}
                                   {available
                                     ? comp.stockQty > 0
-                                      ? "в наличии"
-                                      : `под заказ · ${comp.deliveryDays} дн`
-                                    : `${comp.stockQty} шт на складе`}
+                                      ? conf.inStock
+                                      : t(conf.madeToOrder, { n: comp.deliveryDays ?? 0 })
+                                    : t(conf.stockQty, { n: comp.stockQty })}
                                 </small>
                               </div>
                               <div className="side">
@@ -286,7 +284,7 @@ export default function ConfiguratorClient({
                                   </div>
                                 ) : (
                                   <span className={`tag ${comp.isOrderable ? "tag--order" : "tag--stock"}`}>
-                                    {comp.isOrderable ? `под заказ · ${comp.deliveryDays} дн` : "в наличии"}
+                                    {comp.isOrderable ? t(conf.madeToOrder, { n: comp.deliveryDays ?? 0 }) : conf.inStock}
                                   </span>
                                 )}
                               </div>
@@ -304,32 +302,37 @@ export default function ConfiguratorClient({
 
         <div className="calc">
           <div className="row--big row">
-            <div className="k">Итого · цена</div>
+            <div className="k">{conf.totalPrice}</div>
             <div className="v">{formatPrice(price.total, currency, finance)}</div>
             <div className="breakdown">
-              Работа: {formatPrice(price.work, currency, finance)} + Компоненты:{" "}
-              {formatPrice(price.componentsSum, currency, finance)}
+              {t(conf.workComponents, {
+                work: formatPrice(price.work, currency, finance),
+                components: formatPrice(price.componentsSum, currency, finance),
+              })}
             </div>
           </div>
           <div className="row">
-            <div className="k">Срок изготовления</div>
+            <div className="k">{conf.termTitle}</div>
             <div className="v--sm">
-              {term.days} {plural(term.days, ["день", "дня", "дней"])}
+              {term.days} {plural(term.days, conf.days, locale)}
             </div>
             <div className="breakdown">
-              База {category.baseWorkDays} дн + обработка {term.processingDays} дн + доставка{" "}
-              {term.deliveryDays} дн
+              {t(conf.termBreakdown, {
+                base: category.baseWorkDays,
+                processing: term.processingDays,
+                delivery: term.deliveryDays,
+              })}
             </div>
           </div>
           <button
             className="btn btn--primary"
             disabled={requiredMissing}
-            title={requiredMissing ? "Выберите компоненты" : undefined}
+            title={requiredMissing ? conf.chooseComponents : undefined}
             onClick={() => {
               setModalOpen(true);
             }}
           >
-            Оформить заявку
+            {conf.submit}
           </button>
         </div>
       </section>
@@ -347,6 +350,8 @@ export default function ConfiguratorClient({
         summary={selectedSummary}
         finance={finance}
         currencyCode={currencyCode}
+        dict={conf}
+        locale={locale}
       />
 
       <div className="zigzag"></div>

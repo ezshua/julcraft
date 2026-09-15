@@ -6,6 +6,7 @@ import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, asPriced, toUsdAmount } from "@/lib/format";
+import { getDictionary, getLocale, t } from "@/lib/i18n";
 import Crumbs from "@/components/ui/Crumbs";
 import ProductCard from "@/components/product/ProductCard";
 import EmptyState from "@/components/ui/EmptyState";
@@ -15,12 +16,14 @@ export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await props.params;
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const cat = db
     .select()
     .from(categories)
     .where(eq(categories.slug, slug))
     .get();
-  if (!cat) return { title: "Каталог — JulCraft" };
+  if (!cat) return { title: t(dict, "meta.catalog.title") };
 
   // OG-картинка — фото первого товара категории (если есть)
   const first = db
@@ -30,11 +33,11 @@ export async function generateMetadata(props: {
     .get();
 
   return {
-    title: `${cat.name} — JulCraft`,
+    title: t(dict, "meta.catalogCategory.title", { name: cat.name }),
     description: cat.description,
     alternates: { canonical: `/catalog/${cat.slug}` },
     openGraph: {
-      title: `${cat.name} — JulCraft`,
+      title: t(dict, "meta.catalogCategory.title", { name: cat.name }),
       description: cat.description,
       type: "website",
       images: first?.images[0] ? [{ url: first.images[0] }] : undefined,
@@ -43,13 +46,6 @@ export async function generateMetadata(props: {
 }
 
 const PAGE_SIZE = 9;
-
-const AVAIL_FILTERS = [
-  { value: "any", label: "Любое наличие" },
-  { value: "in", label: "В наличии" },
-  { value: "order", label: "Под заказ" },
-  { value: "new", label: "Только новинки" },
-];
 
 function buildUrl(base: string, params: Record<string, string | undefined>): string {
   const url = new URLSearchParams();
@@ -70,6 +66,10 @@ export default async function CategoryPage(props: {
   const cat = db.select().from(categories).where(eq(categories.slug, slug)).get();
   if (!cat) notFound();
 
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const catalog = dict.catalog;
+
   // Границы фильтра цены — из настроек как Priced (минора + валюта, D-23b);
   // метки и сравнение — через их валюту, сравниваем в USD.
   const { finance } = getSettings();
@@ -78,18 +78,25 @@ export default async function CategoryPage(props: {
   const usdFilterLow = toUsdAmount(asPriced(filterLow, filterLowCurrency), finance) * 100;
   const usdFilterHigh = toUsdAmount(asPriced(filterHigh, filterHighCurrency), finance) * 100;
   const PRICE_FILTERS = [
-    { value: "0", label: "Все" },
+    { value: "0", label: catalog.priceAll },
     {
       value: "1",
-      label: `Цена до ${formatPrice(asPriced(filterLow, filterLowCurrency), currency, finance)}`,
+      label: t(dict, "catalog.priceUpTo", {
+        price: formatPrice(asPriced(filterLow, filterLowCurrency), currency, finance),
+      }),
     },
     {
       value: "2",
-      label: `${formatPrice(asPriced(filterLow, filterLowCurrency), currency, finance)} — ${formatPrice(asPriced(filterHigh, filterHighCurrency), currency, finance)}`,
+      label: t(dict, "catalog.priceRange", {
+        from: formatPrice(asPriced(filterLow, filterLowCurrency), currency, finance),
+        to: formatPrice(asPriced(filterHigh, filterHighCurrency), currency, finance),
+      }),
     },
     {
       value: "3",
-      label: `От ${formatPrice(asPriced(filterHigh, filterHighCurrency), currency, finance)}`,
+      label: t(dict, "catalog.priceFrom", {
+        price: formatPrice(asPriced(filterHigh, filterHighCurrency), currency, finance),
+      }),
     },
   ];
 
@@ -97,6 +104,12 @@ export default async function CategoryPage(props: {
   const avail = ["in", "order", "new"].includes(sp.avail ?? "") ? sp.avail! : "any";
   const sort = ["cheap", "expensive"].includes(sp.sort ?? "") ? sp.sort! : "new";
   const page = Math.max(1, Number.parseInt(sp.page ?? "1", 10) || 1);
+  const AVAIL_FILTERS = [
+    { value: "any", label: catalog.avail.any },
+    { value: "in", label: catalog.avail.in },
+    { value: "order", label: catalog.avail.order },
+    { value: "new", label: catalog.avail.new },
+  ];
 
   // Фильтрация/сортировка: наличие — в SQL, цена — в памяти (валюты разные,
   // сравнение через USD, D-28). Границы фильтра — Priced, сводим к USD для сравнения.
@@ -154,14 +167,14 @@ export default async function CategoryPage(props: {
     <>
       <Crumbs
         items={[
-          { label: "Главная", href: "/" },
-          { label: "Каталог", href: "/catalog" },
+          { label: catalog.crumbsHome, href: "/" },
+          { label: catalog.crumbsCatalog, href: "/catalog" },
           { label: cat.name },
         ]}
       />
 
       <div className="signboard signboard--small">
-        <p className="est">✹ полка №{cat.sortOrder} ✹</p>
+        <p className="est">{t(dict, "catalog.shelfEst", { n: cat.sortOrder })}</p>
         <h1>{cat.name}</h1>
         <p className="tagline">{cat.description}</p>
       </div>
@@ -171,9 +184,9 @@ export default async function CategoryPage(props: {
         {/* Фильтры в панели-борде */}
         <div className="board board--paper mb-30">
           <div className="b-head">
-            <h3>Фильтры и сортировка</h3>
+            <h3>{catalog.filtersTitle}</h3>
             <span className="avail" style={{ color: "var(--olive)" }}>
-              найдено: {found}
+              {t(dict, "catalog.found", { n: found })}
             </span>
           </div>
           <div className="b-body">
@@ -205,7 +218,7 @@ export default async function CategoryPage(props: {
                 </a>
               ))}
             </div>
-            <CategorySort sort={sort} />
+            <CategorySort sort={sort} labels={catalog.sort} />
           </div>
         </div>
 

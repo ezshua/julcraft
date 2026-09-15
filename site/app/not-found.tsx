@@ -1,17 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ErrorHeader from "@/components/layout/ErrorHeader";
+import { getDictionary, getLocale, t } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Страница не найдена — JulCraft",
-  robots: { index: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: t(dict, "meta.notFound.title"),
+    robots: { index: false },
+  };
+}
 
-export default function NotFound() {
+export default async function NotFound() {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const e = dict.errors;
   return (
     <>
       {/* Копия mockup/error.html 1:1 (шапка и меню — свои, см. ErrorHeader) */}
-      <ErrorHeader />
+      <ErrorHeader layout={dict.layout} />
 
       <main>
         <div className="signboard" style={{ paddingBottom: "70px" }}>
@@ -31,18 +39,18 @@ export default function NotFound() {
               <path d="M12 9v4" stroke="var(--rust)" />
               <circle cx="12" cy="15.5" r=".5" fill="var(--rust)" stroke="none" />
             </svg>
-            <h1 style={{ fontSize: "clamp(2rem,7vw,4rem)" }}>Ой, 404</h1>
+            <h1 style={{ fontSize: "clamp(2rem,7vw,4rem)" }}>{e.notFoundTitle}</h1>
             <p style={{ color: "var(--cream)", fontFamily: "var(--font-mono)" }}>
-              Такой страницы нет — брошь здесь не висела.
+              {e.notFoundText}
               <br />
-              Проверьте, не потерялась ли она в каталоге.
+              {e.notFoundSecond}
             </p>
             <div className="cta-row">
               <Link className="btn btn--primary" href="/">
-                На главную
+                {e.homeButton}
               </Link>
               <Link className="btn btn--secondary" href="/catalog">
-                Смотреть каталог
+                {e.catalogButton}
               </Link>
             </div>
           </div>
@@ -57,10 +65,10 @@ export default function NotFound() {
             <span>ул. Мстислава Скрипника, 40А — на пятачке</span>
           </div>
           <div className="f-copy">
-            <span>© 2026 JulCraft · с 2002 года (почти)</span>
+            <span>{t(dict, "errors.copyright", { year: new Date().getFullYear() })}</span>
           </div>
           <div className="f-socials">
-            <a href="/contacts" aria-label="Контакты">
+            <a href="/contacts" aria-label={e.contactsAria}>
               ✉
             </a>
           </div>

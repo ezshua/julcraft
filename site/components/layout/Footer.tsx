@@ -1,10 +1,16 @@
 import Link from "next/link";
 import { telHref, type SiteSettings } from "@/lib/settings";
+import type { Dictionary } from "@/lib/dictionaries/ru";
+import { t } from "@/lib/i18n";
 
-export default function Footer({ settings }: { settings: SiteSettings }) {
+type FooterProps = {
+  settings: SiteSettings;
+  dict: Dictionary;
+};
+
+export default function Footer({ settings, dict }: FooterProps) {
   const { contacts } = settings;
-  // Подписи дней — статичная копия макета; значения — из Settings по индексу
-  const footerDayLabels = ["Понедельник", "Вт — Пт", "Суббота", "Воскресенье"];
+  const { layout } = dict;
   return (
     <footer className="footer">
       <div className="f-grid">
@@ -12,13 +18,13 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
           <div className="f-brand">
             JulCraft
             <span>
-              {contacts.address} · мастерская украшений · эст. 2002 (почти)
+              {contacts.address} · {layout.footer.brandTagline}
             </span>
           </div>
         </div>
         <div>
-          <h4>Часы работы</h4>
-          {footerDayLabels.map((label, i) => (
+          <h4>{layout.footer.hoursTitle}</h4>
+          {layout.footer.dayLabels.map((label, i) => (
             <div className="day" key={label}>
               <span>{label}</span>
               {contacts.hours[i]?.closed ? (
@@ -30,7 +36,7 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
           ))}
         </div>
         <div className="f-links">
-          <h4>Связаться</h4>
+          <h4>{layout.footer.contact}</h4>
           <a href={telHref(contacts.phone)}>☎ {contacts.phone}</a>
           <a href={`mailto:${contacts.email}`}>✉ {contacts.email}</a>
           <Link href="/contacts">⛭ {contacts.address}</Link>
@@ -51,7 +57,9 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
           </div>
         </div>
       </div>
-      <div className="f-copy">JulCraft · с 2002 года (почти) · © 2026</div>
+      <div className="f-copy">
+        JulCraft · {t(dict, "layout.footer.copyright", { year: new Date().getFullYear() })}
+      </div>
     </footer>
   );
 }

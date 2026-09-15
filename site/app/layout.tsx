@@ -1,15 +1,25 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { siteUrl } from "@/lib/site-url";
+import { getDictionary, getLocale, t } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl()),
-  title: "JulCraft",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  return {
+    metadataBase: new URL(siteUrl()),
+    title: t(dict, "meta.siteName"),
+  };
+}
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const locale = await getLocale();
   return (
-    <html lang="ru">
+    <html lang={locale}>
       <body>
         {/* Единственный stylesheet: его подменяет skin-switcher.js (как в макете).
             suppressHydrationWarning: скин из localStorage применяется скриптом,

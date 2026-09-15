@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Stage, Layer, Image as KonvaImage, Text, Group } from "react-konva";
 import type Konva from "konva";
 import type { CalcComponent, Selection } from "@/lib/calc";
+import type { Dictionary } from "@/lib/dictionaries/ru";
 
 // Коллаж (T-5.2): react-konva вместо div.canvas из макета.
 // Авторазмещение — сетка 3×N с лёгким случайным наклоном (seed по id компонента).
@@ -34,11 +35,13 @@ export default function CollageCanvas({
   componentsById,
   onRemove,
   onDataUrl,
+  dict,
 }: {
   selections: Selection[];
   componentsById: Map<number, CanvasComp>;
   onRemove: (componentId: number) => void;
   onDataUrl?: (dataUrl: string | null) => void;
+  dict: Dictionary["configurator"];
 }) {
   const stageRef = useRef<Konva.Stage>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -222,15 +225,18 @@ export default function CollageCanvas({
     <div className="canvas-area">
       <div className="ca-bar">
         <div>
-          <b>Ваш коллаж</b>
+          <b>{dict.collageTitle}</b>
           <br />
           <small>
-            {placed.length === 0 ? "пока пусто" : `${placed.length} деталей`} · перетаскивайте · Ctrl+колесо — зум
+            {placed.length === 0
+              ? dict.collageEmpty
+              : `${placed.length} ${dict.collageDetails}`}{" "}
+            · {dict.collageHint}
           </small>
         </div>
         <div className="tools">
           <span className="chip" onClick={resetView} style={{ cursor: "pointer" }}>
-            сброс
+            {dict.collageReset}
           </span>
         </div>
       </div>
@@ -332,7 +338,7 @@ export default function CollageCanvas({
             {placed.length === 0 && (
               <Group>
                 <Text
-                  text="Выберите камни и подвески слева —\nколлаж соберётся автоматически"
+                  text={dict.collagePlaceholder}
                   x={size / 2 - 180}
                   y={size / 2 - 20}
                   width={360}
@@ -347,7 +353,7 @@ export default function CollageCanvas({
       </div>
       <div className="ca-bar ca-bar--bottom">
         <button className="btn btn--secondary btn--small" onClick={() => bgInputRef.current?.click()}>
-          Загрузить фон
+          {dict.collageLoadBg}
         </button>
         {bgImage && (
           <button
@@ -357,7 +363,7 @@ export default function CollageCanvas({
               if (bgInputRef.current) bgInputRef.current.value = "";
             }}
           >
-            Очистить фон
+            {dict.collageClearBg}
           </button>
         )}
         <input

@@ -5,6 +5,7 @@
    кнопки валют из /api/currency).
    Выбор скина запоминается в localStorage; выбор валюты — в localStorage
    + cookie (SSR рендерит цены в выбранной валюте); панель внизу справа.
+   Язык (i18n): cookie + localStorage, как валюта (plan-3.md D-i18n-5).
    ============================================================ */
 (function () {
   'use strict';
@@ -15,6 +16,15 @@
 
   var CURRENCY_KEY = 'julcraft-currency';
   var CURRENCY_COOKIE = 'julcraft-currency';
+
+  var LOCALE_KEY = 'julcraft-locale';
+  var LOCALE_COOKIE = 'julcraft-locale';
+
+  var LOCALE_LABELS = {
+    ru: { label: 'Вид', aria: 'Переключатель вида' },
+    en: { label: 'View', aria: 'View switcher' },
+    uk: { label: 'Вигляд', aria: 'Перемикач вигляду' }
+  };
 
   // Инлайн-фолбэк, если /api/currency недоступен (например, на статичном макете)
   var FALLBACK_CURRENCIES = [
@@ -60,19 +70,33 @@
     return val;
   }
 
+  function savedLocale() {
+    var m = document.cookie.match(new RegExp('(?:^|;\\s*)' + LOCALE_COOKIE + '=([^;]*)'));
+    var val = m ? decodeURIComponent(m[1]) : null;
+    if (val !== 'en' && val !== 'uk') val = 'ru';
+    return val;
+  }
+
   function buildBar() {
     if (document.getElementById('skin-switcher')) return;
 
     var bar = document.createElement('div');
     bar.id = 'skin-switcher';
     bar.setAttribute('role', 'region');
-    bar.setAttribute('aria-label', 'Переключатель вида');
+    var texts = LOCALE_LABELS[savedLocale()] || LOCALE_LABELS.ru;
+    bar.setAttribute('aria-label', texts.aria);
     bar.innerHTML =
-      '<span class="ss-label">Вид</span>' +
+      '<span class="ss-label">' + texts.label + '</span>' +
       '<button type="button" data-skin="handmade">06 · Тёплый</button>' +
       '<button type="button" data-skin="memphis">12 · Мемфис</button>' +
       '<span class="ss-sep"></span>' +
-      '<span class="ss-currencies"></span>';
+      '<span class="ss-currencies"></span>' +
+      '<span class="ss-sep"></span>' +
+      '<span class="ss-locales">' +
+      '<button type="button" data-locale="ru">RU</button>' +
+      '<button type="button" data-locale="en">EN</button>' +
+      '<button type="button" data-locale="uk">UK</button>' +
+      '</span>';
     if (document.querySelector('.calc')) bar.classList.add('ss-above-calc');
     document.body.appendChild(bar);
 
@@ -140,6 +164,18 @@
       }
     }
 
+    function markLocaleButtons() {
+      var current = savedLocale();
+      var buttons = bar.querySelectorAll('.ss-locales button');
+      for (var i = 0; i < buttons.length; i++) {
+        if (buttons[i].getAttribute('data-locale') === current) {
+          buttons[i].classList.add('is-on');
+        } else {
+          buttons[i].classList.remove('is-on');
+        }
+      }
+    }
+
     function mark() {
       var buttons = bar.querySelectorAll('button[data-skin]');
       for (var i = 0; i < buttons.length; i++) {
@@ -149,12 +185,23 @@
         else b.classList.remove('is-on');
       }
       markCurrencyButtons();
+      markLocaleButtons();
     }
     mark();
 
     bar.addEventListener('click', function (ev) {
       var b = ev.target && ev.target.closest ? ev.target.closest('button') : null;
       if (!b) return;
+      var loc = b.getAttribute('data-locale');
+      if (loc) {
+        if (savedLocale() === loc) return;
+        try { localStorage.setItem(LOCALE_KEY, loc); } catch (e) {}
+        document.cookie = LOCALE_COOKIE + '=' + encodeURIComponent(loc) +
+          ';path=/;max-age=31536000';
+        markLocaleButtons();
+        location.reload();
+        return;
+      }
       var cur = b.getAttribute('data-currency');
       if (cur) {
         var current = savedCurrency();

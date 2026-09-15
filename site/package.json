@@ -12,6 +12,7 @@
     "db:migrate-currency": "tsx scripts/migrate-currency-fields.ts",
     "db:seed": "tsx scripts/seed.ts",
     "db:check": "tsx scripts/check-seed.ts",
+    "check:i18n": "tsx scripts/check-i18n.ts",
     "snapshot:capture": "tsx scripts/snapshot-capture.ts",
     "snapshot:restore": "tsx scripts/snapshot-restore.ts",
     "snapshot:check": "tsx scripts/check-snapshot.ts",
