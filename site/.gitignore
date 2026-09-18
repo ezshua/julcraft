@@ -36,6 +36,7 @@ yarn-error.log*
 
 # sqlite
 *.db
+*.db.*
 
 # uploads (реальные загрузки; SVG-заглушки комплектующих — часть репозитория)
 public/uploads/
@@ -50,3 +51,6 @@ next-env.d.ts
 
 # предзадачный слепок боевой БД (plan-snapshot Шаг 0)
 *.db.pre-snapshot-task
+
+# бекапы 
+*.zip

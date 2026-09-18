@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { categories, orders, products } from "@/drizzle/schema";
+import { firstLocale } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import type { OrderRow } from "@/components/admin/OrderModal";
@@ -55,6 +56,9 @@ export default async function AdminOrdersPage(props: {
 
   const productById = new Map(allProducts.map((p) => [p.id, p]));
   const categoryById = new Map(allCategories.map((c) => [c.id, c]));
+  const prodName = (p: (typeof allProducts)[number]) => firstLocale(p.name);
+  const catName = (c: (typeof allCategories)[number] | undefined) =>
+    c ? firstLocale(c.name) : null;
 
   const match = (o: (typeof allOrders)[number]) => {
     if (st !== "all" && o.status !== st) return false;
@@ -78,7 +82,7 @@ export default async function AdminOrdersPage(props: {
     const product = o.productId != null ? productById.get(o.productId) : undefined;
     const smallText =
       o.type === "product"
-        ? product?.name ?? "—"
+        ? prodName(product as (typeof allProducts)[number]) ?? "—"
         : o.type === "contact"
           ? "сообщение от контакта"
           : "коллаж из конфигуратора";
@@ -88,8 +92,8 @@ export default async function AdminOrdersPage(props: {
       customerName: o.customerName,
       contact: o.contact,
       message: o.message,
-      productName: product?.name ?? null,
-      categoryName: product ? categoryById.get(product.categoryId)?.name ?? null : null,
+      productName: product ? prodName(product as (typeof allProducts)[number]) ?? null : null,
+      categoryName: product ? catName(categoryById.get(product.categoryId) as (typeof allCategories)[number]) ?? null : null,
       configJson: o.configJson,
       collagePath: o.collagePath,
       calcPrice: o.calcPrice,
@@ -108,7 +112,7 @@ export default async function AdminOrdersPage(props: {
   const newCount = allOrders.filter((o) => o.status === "new").length;
 
   const smallText = (o: (typeof allOrders)[number]): string => {
-    if (o.type === "product") return productById.get(o.productId ?? 0)?.name ?? "—";
+    if (o.type === "product") return prodName(productById.get(o.productId ?? 0)!) ?? "—";
     if (o.type === "contact") return "записка";
     return "конфигуратор";
   };

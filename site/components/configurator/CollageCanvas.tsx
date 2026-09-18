@@ -5,6 +5,8 @@ import { Stage, Layer, Image as KonvaImage, Text, Group } from "react-konva";
 import type Konva from "konva";
 import type { CalcComponent, Selection } from "@/lib/calc";
 import type { Dictionary } from "@/lib/dictionaries/ru";
+import { L } from "@/lib/localize";
+import type { Locale } from "@/lib/i18n";
 
 // Коллаж (T-5.2): react-konva вместо div.canvas из макета.
 // Авторазмещение — сетка 3×N с лёгким случайным наклоном (seed по id компонента).
@@ -36,12 +38,14 @@ export default function CollageCanvas({
   onRemove,
   onDataUrl,
   dict,
+  locale,
 }: {
   selections: Selection[];
   componentsById: Map<number, CanvasComp>;
   onRemove: (componentId: number) => void;
   onDataUrl?: (dataUrl: string | null) => void;
   dict: Dictionary["configurator"];
+  locale: Locale;
 }) {
   const stageRef = useRef<Konva.Stage>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -118,7 +122,7 @@ export default function CollageCanvas({
     for (const sel of selections) {
       const comp = componentsById.get(sel.componentId);
       if (!comp || sel.qty <= 0) continue;
-      wanted.set(comp.id, { name: comp.name, photo: comp.photo, qty: sel.qty });
+      wanted.set(comp.id, { name: L(comp.name, locale), photo: comp.photo, qty: sel.qty });
       total += sel.qty;
     }
     const n = Math.max(total, 1);
@@ -172,7 +176,7 @@ export default function CollageCanvas({
       }
       return items;
     });
-  }, [selections, componentsById, size]);
+  }, [selections, componentsById, size, locale]);
 
   // Порядок отрисовки: поднятые кликом/drag элементы рисуются последними (сверху)
   const drawOrder = useMemo(

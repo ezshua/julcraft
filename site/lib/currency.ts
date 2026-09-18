@@ -1,3 +1,5 @@
+import { firstLocale, type LocalizedString } from "./localize";
+
 // Мультивалютность v2 (plan-finances2.md): цены хранятся в ИСХОДНОЙ валюте
 // как составное (priceMinor, priceCurrency) — целое число копеек исходной валюты
 // + код валюты. Отображение: в той же валюте — точно, без пересчёта; в другой —
@@ -77,7 +79,7 @@ export function parseFinance(
           name:
             typeof c.name === "string" && c.name.trim() !== ""
               ? c.name
-              : String(c.code),
+              : firstLocale(c.name as LocalizedString) || String(c.code),
           symbol: c.symbol as string,
           ratePerUsd: c.ratePerUsd as number,
         }))

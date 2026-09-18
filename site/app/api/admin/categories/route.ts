@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { categories, products, slotTemplates } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
+import { storeLS } from "@/lib/localize";
 
 // Список категорий со счётчиками (подписи левой панели)
 export async function GET() {
@@ -28,7 +29,11 @@ export async function GET() {
 }
 
 const createSchema = z.object({
-  name: z.string().trim().min(1, "Укажите название"),
+  name: z.preprocess((v) => (typeof v === "string" ? { ru: v } : v), z.object({
+    ru: z.string().trim().min(1, "Укажите название"),
+    en: z.string().trim().optional(),
+    uk: z.string().trim().optional(),
+  })),
   slug: z
     .string()
     .trim()
@@ -75,7 +80,7 @@ export async function POST(request: Request) {
   const res = db
     .insert(categories)
     .values({
-      name: data.name,
+      name: storeLS(data.name),
       slug: data.slug,
       description: "",
       image: data.image ?? null,

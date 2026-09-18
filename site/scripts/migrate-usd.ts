@@ -4,16 +4,17 @@ import { categories, components, orders, products, settings } from "../drizzle/s
 import { defaultFinance } from "../lib/currency";
 
 // ============================================================
-// Миграция цен рубль → USD-центы (plan-finances.md D-23).
+// Миграция цен рубль/гривна → USD-центы (plan-finances.md D-23).
 // Запускать ОДИН раз на существующей БД. Свежие БД (seed.ts) уже
 // сидятся в USD-центах — для них скрипт не нужен.
-// Курс рубля на момент миграции: env MIGRATE_USD_RATE, по умолчанию 85.
+// Курс гривны на момент миграции: env MIGRATE_USD_RATE, по умолчанию 44.
+// (RUB исключён решением 2026-09 — все цены хранятся в гривнах.)
 // ============================================================
 
 const UAH_RATE = Number(process.env.MIGRATE_USD_RATE ?? "44");
 
-function toUsdCents(rubles: number): number {
-  return Math.round((rubles * 100) / UAH_RATE);
+function toUsdCents(uahAmount: number): number {
+  return Math.round((uahAmount * 100) / UAH_RATE);
 }
 
 const marker = db

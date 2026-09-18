@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products, slotTemplates } from "@/drizzle/schema";
+import { firstLocale, toLS } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getComponentTypes } from "@/lib/component-types";
@@ -44,7 +45,7 @@ export default async function AdminCategoriesPage(props: {
 
   const listItems = allCategories.map((c) => ({
     id: c.id,
-    name: c.name,
+    name: firstLocale(c.name),
     productCount: productCount(c.id),
     workPrice: c.workPrice,
     workPriceCurrency: c.workPriceCurrency,
@@ -60,9 +61,9 @@ export default async function AdminCategoriesPage(props: {
   const editorCategory = active
     ? {
         id: active.id,
-        name: active.name,
+        name: toLS(active.name),
         slug: active.slug,
-        description: active.description,
+        description: toLS(active.description),
         image: active.image,
         workPrice: active.workPrice,
         workPriceCurrency: active.workPriceCurrency,
@@ -74,7 +75,7 @@ export default async function AdminCategoriesPage(props: {
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((s) => ({
             id: s.id,
-            name: s.name,
+            name: toLS(s.name),
             componentType: s.componentType,
             minQty: s.minQty,
             maxQty: s.maxQty,

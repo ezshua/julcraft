@@ -1,31 +1,32 @@
 import { defaultFinance, type FinanceSettings } from "./currency";
+import type { LocalizedString } from "./localize";
 
 export type HoursEntry = {
-  day: string;
-  value: string;
+  day: LocalizedString;
+  value: LocalizedString;
   closed?: boolean;
 };
 
-export type ReceiptRow = {
-  label: string;
-  value: string;
+export type LocalizedRow = {
+  label: LocalizedString;
+  value: LocalizedString;
 };
 
 export type Receipt = {
-  rows: ReceiptRow[];
-  thanks: string;
+  rows: LocalizedRow[];
+  thanks: LocalizedString;
 };
 
 export type Principle = {
-  title: string;
-  text: string;
+  title: LocalizedString;
+  text: LocalizedString;
 };
 
 export type SiteSettings = {
   contacts: {
     phone: string;
     email: string;
-    address: string;
+    address: LocalizedString;
     telegram: string;
     instagram: string;
     hours: HoursEntry[];
@@ -46,63 +47,63 @@ export const defaultSettings: SiteSettings = {
   contacts: {
     phone: "+38 095 358 48 11",
     email: "julcraft79@gmail.com",
-    address: "ул. Мстислава Скрипника, 40А",
+    address: { ru: "ул. Мстислава Скрипника, 40А" },
     telegram: "https://t.me/julcraft_79",
     instagram: "https://instagram.com/julcraft_79",
     hours: [
-      { day: "Понедельник", value: "выходной", closed: true },
-      { day: "Вторник — Пятница", value: "11:00 — 20:00" },
-      { day: "Суббота", value: "12:00 — 19:00" },
-      { day: "Воскресенье", value: "12:00 — 17:00" },
+      { day: { ru: "Понедельник" }, value: { ru: "выходной" }, closed: true },
+      { day: { ru: "Вторник — Пятница" }, value: { ru: "11:00 — 20:00" } },
+      { day: { ru: "Суббота" }, value: { ru: "12:00 — 19:00" } },
+      { day: { ru: "Воскресенье" }, value: { ru: "12:00 — 17:00" } },
     ],
   },
   about: {
     short: {
       rows: [
-        { label: "ХОЗЯЙКА", value: "Юля Крафт" },
-        { label: "СТАЖ ЗА ВЕРСТАКОМ", value: "12 лет" },
-        { label: "ЛЮБИМАЯ ЭПОХА", value: "1972–1981" },
-        { label: "ЛЮБИМЫЙ МАТЕРИАЛ", value: "бакелит" },
-        { label: "НЕЛЮБИМАЯ ФРАЗА", value: "«это сейчас не в моде»" },
-        { label: "ЧАЙ ПОКУПАТЕЛЯМ", value: "бесплатно" },
-        { label: "РЕМОНТ СТАРИНЫ", value: "от 300 ₴" },
+        { label: { ru: "ХОЗЯЙКА" }, value: { ru: "Юля Крафт" } },
+        { label: { ru: "СТАЖ ЗА ВЕРСТАКОМ" }, value: { ru: "12 лет" } },
+        { label: { ru: "ЛЮБИМАЯ ЭПОХА" }, value: { ru: "1972–1981" } },
+        { label: { ru: "ЛЮБИМЫЙ МАТЕРИАЛ" }, value: { ru: "бакелит" } },
+        { label: { ru: "НЕЛЮБИМАЯ ФРАЗА" }, value: { ru: "«это сейчас не в моде»" } },
+        { label: { ru: "ЧАЙ ПОКУПАТЕЛЯМ" }, value: { ru: "бесплатно" } },
+        { label: { ru: "РЕМОНТ СТАРИНЫ" }, value: { ru: "от 300 ₴" } },
       ],
-      thanks: "*** СПАСИБО ЗА ВИЗИТ. ВОЗВРАЩАЙТЕСЬ ***",
+      thanks: { ru: "*** СПАСИБО ЗА ВИЗИТ. ВОЗВРАЩАЙТЕСЬ ***" },
     },
     history: {
       rows: [
-        { label: "ХОЗЯЙКА", value: "Юля Крафт" },
-        { label: "СТАЖ ЗА ВЕРСТАКОМ", value: "12 лет" },
-        { label: "ПЕРВОЕ ИЗДЕЛИЕ", value: "бусы из бабушкиного стекляруса" },
-        { label: "ЛЮБИМАЯ ЭПОХА", value: "1972–1981" },
-        { label: "ЛЮБИМЫЙ МАТЕРИАЛ", value: "бакелит" },
-        { label: "ЛЮБИМЫЙ ИНСТРУМЕНТ", value: "паяльник «Чародейка»" },
-        { label: "НЕЛЮБИМАЯ ФРАЗА", value: "«это сейчас не в моде»" },
-        { label: "РЕМОНТ СТАРИНЫ", value: "от 300 ₴" },
-        { label: "СБОРКА НА ЗАКАЗ", value: "от 800 ₴ + материалы" },
-        { label: "СРОК ОБЫЧНОЙ РАБОТЫ", value: "3–7 дней" },
-        { label: "ГАРАНТИЯ", value: "пожизненный ремонт своих работ" },
-        { label: "ЧАЙ ПОКУПАТЕЛЯМ", value: "бесплатно" },
-        { label: "СДАЧА", value: "улыбка" },
+        { label: { ru: "ХОЗЯЙКА" }, value: { ru: "Юля Крафт" } },
+        { label: { ru: "СТАЖ ЗА ВЕРСТАКОМ" }, value: { ru: "12 лет" } },
+        { label: { ru: "ПЕРВОЕ ИЗДЕЛИЕ" }, value: { ru: "бусы из бабушкиного стекляруса" } },
+        { label: { ru: "ЛЮБИМАЯ ЭПОХА" }, value: { ru: "1972–1981" } },
+        { label: { ru: "ЛЮБИМЫЙ МАТЕРИАЛ" }, value: { ru: "бакелит" } },
+        { label: { ru: "ЛЮБИМЫЙ ИНСТРУМЕНТ" }, value: { ru: "паяльник «Чародейка»" } },
+        { label: { ru: "НЕЛЮБИМАЯ ФРАЗА" }, value: { ru: "«это сейчас не в моде»" } },
+        { label: { ru: "РЕМОНТ СТАРИНЫ" }, value: { ru: "от 300 ₴" } },
+        { label: { ru: "СБОРКА НА ЗАКАЗ" }, value: { ru: "от 800 ₴ + материалы" } },
+        { label: { ru: "СРОК ОБЫЧНОЙ РАБОТЫ" }, value: { ru: "3–7 дней" } },
+        { label: { ru: "ГАРАНТИЯ" }, value: { ru: "пожизненный ремонт своих работ" } },
+        { label: { ru: "ЧАЙ ПОКУПАТЕЛЯМ" }, value: { ru: "бесплатно" } },
+        { label: { ru: "СДАЧА" }, value: { ru: "улыбка" } },
       ],
-      thanks: "*** СПАСИБО ЗА ВНИМАНИЕ. ВОЗВРАЩАЙТЕСЬ С ИСТОРИЯМИ ***",
+      thanks: { ru: "*** СПАСИБО ЗА ВНИМАНИЕ. ВОЗВРАЩАЙТЕСЬ С ИСТОРИЯМИ ***" },
     },
     principles: [
       {
-        title: "Один экземпляр",
-        text: "каждая вещь делается один раз — повторить невозможно, даже если очень просят",
+        title: { ru: "Один экземпляр" },
+        text: { ru: "каждая вещь делается один раз — повторить невозможно, даже если очень просят" },
       },
       {
-        title: "Без спешки",
-        text: "срок в заявке честный, а не «как получится» — лучше подождать и получить как надо",
+        title: { ru: "Без спешки" },
+        text: { ru: "срок в заявке честный, а не «как получится» — лучше подождать и получить как надо" },
       },
       {
-        title: "Вторая жизнь",
-        text: "ремонт старины дешевле новой вещи — и честно интереснее",
+        title: { ru: "Вторая жизнь" },
+        text: { ru: "ремонт старины дешевле новой вещи — и честно интереснее" },
       },
       {
-        title: "Чай и радио",
-        text: "гость с историей — лучший посетитель. Приходите просто так",
+        title: { ru: "Чай и радио" },
+        text: { ru: "гость с историей — лучший посетитель. Приходите просто так" },
       },
     ],
   },

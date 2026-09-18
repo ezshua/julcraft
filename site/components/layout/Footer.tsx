@@ -1,16 +1,20 @@
 import Link from "next/link";
 import { telHref, type SiteSettings } from "@/lib/settings";
+import { L } from "@/lib/localize";
 import type { Dictionary } from "@/lib/dictionaries/ru";
+import type { Locale } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 
 type FooterProps = {
   settings: SiteSettings;
   dict: Dictionary;
+  locale: Locale;
 };
 
-export default function Footer({ settings, dict }: FooterProps) {
+export default function Footer({ settings, dict, locale }: FooterProps) {
   const { contacts } = settings;
   const { layout } = dict;
+  const address = L(contacts.address, locale);
   return (
     <footer className="footer">
       <div className="f-grid">
@@ -18,7 +22,7 @@ export default function Footer({ settings, dict }: FooterProps) {
           <div className="f-brand">
             JulCraft
             <span>
-              {contacts.address} · {layout.footer.brandTagline}
+              {address} · {layout.footer.brandTagline}
             </span>
           </div>
         </div>
@@ -28,9 +32,9 @@ export default function Footer({ settings, dict }: FooterProps) {
             <div className="day" key={label}>
               <span>{label}</span>
               {contacts.hours[i]?.closed ? (
-                <span className="closed">{contacts.hours[i].value}</span>
+                <span className="closed">{L(contacts.hours[i].value, locale)}</span>
               ) : (
-                <span>{contacts.hours[i]?.value ?? ""}</span>
+                <span>{L(contacts.hours[i]?.value, locale) ?? ""}</span>
               )}
             </div>
           ))}
@@ -39,7 +43,7 @@ export default function Footer({ settings, dict }: FooterProps) {
           <h4>{layout.footer.contact}</h4>
           <a href={telHref(contacts.phone)}>☎ {contacts.phone}</a>
           <a href={`mailto:${contacts.email}`}>✉ {contacts.email}</a>
-          <Link href="/contacts">⛭ {contacts.address}</Link>
+          <Link href="/contacts">⛭ {address}</Link>
           <div className="f-socials">
             <a href={contacts.instagram} aria-label="Instagram" title="Instagram">
               <svg viewBox="0 0 24 24" fill="none" stroke="#22242a" strokeWidth="2" strokeLinecap="round">

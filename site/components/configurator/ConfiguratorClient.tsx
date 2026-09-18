@@ -15,7 +15,9 @@ import {
 import { formatPrice } from "@/lib/format";
 import type { Dictionary } from "@/lib/dictionaries/ru";
 import type { FinanceSettings } from "@/lib/currency";
+import type { Locale } from "@/lib/i18n";
 import { t, plural } from "./i18n-client";
+import { L } from "@/lib/localize";
 
 const CollageCanvas = dynamic(() => import("./CollageCanvas"), { ssr: false });
 
@@ -50,7 +52,7 @@ export default function ConfiguratorClient({
   finance: FinanceSettings;
   currencyCode: string;
   dict: Dictionary["configurator"];
-  locale: string;
+  locale: Locale;
 }) {
   const conf = dict;
   const { currency } = useCurrency(finance, currencyCode);
@@ -135,13 +137,13 @@ export default function ConfiguratorClient({
     category.slug === "kulony"
       ? conf.kulonyTag
       : t(conf.taglineCustom, {
-          names: typeNames.map((x) => x.name.toLowerCase()).join(", "),
+          names: typeNames.map((x) => L(x.name, locale).toLowerCase()).join(", "),
         });
 
   const selectedSummary = selectionList
     .map((s) => {
       const c = componentsById.get(s.componentId);
-      return c ? (s.qty > 1 ? `${c.name} ×${s.qty}` : c.name) : "";
+      return c ? (s.qty > 1 ? `${L(c.name, locale)} ×${s.qty}` : L(c.name, locale)) : "";
     })
     .filter(Boolean)
     .join(" + ");
@@ -152,7 +154,7 @@ export default function ConfiguratorClient({
         items={[
           { label: conf.crumbsHome, href: "/" },
           { label: conf.crumbsConfigurator, href: "/configurator" },
-          { label: category.name },
+          { label: L(category.name, locale) },
         ]}
       />
 
@@ -192,6 +194,7 @@ export default function ConfiguratorClient({
               }
               onDataUrl={setCollageDataUrl}
               dict={conf}
+              locale={locale}
             />
           </div>
 
@@ -231,10 +234,10 @@ export default function ConfiguratorClient({
                             >
                               <div className="thumb">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={comp.photo} alt={comp.name} />
+                                <img src={comp.photo} alt={L(comp.name, locale)} />
                               </div>
                               <div className="info">
-                                <b>{comp.name}</b>
+                                <b>{L(comp.name, locale)}</b>
                                 <small>
                                   {t(conf.pricePlusProcessing, {
                                     price: formatPrice(

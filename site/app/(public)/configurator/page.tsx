@@ -6,6 +6,7 @@ import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
 import { formatPrice, asPriced } from "@/lib/format";
 import { getDictionary, getLocale, plural, t } from "@/lib/i18n";
+import { L } from "@/lib/localize";
 import Crumbs from "@/components/ui/Crumbs";
 import EmptyState from "@/components/ui/EmptyState";
 import CategoryCard from "@/components/category/CategoryCard";
@@ -52,7 +53,7 @@ export default async function ConfiguratorPage() {
         t(dict, "configurator.slotDesc", {
           n: slots.length,
           word: plural(slots.length, conf.slotWord, locale),
-          names: slots.map((s) => s.name).join(", "),
+          names: slots.map((s) => L(s.name, locale)).join(", "),
         }),
       );
     }
@@ -80,7 +81,7 @@ export default async function ConfiguratorPage() {
               <CategoryCard
                 key={cat.id}
                 slug={cat.slug}
-                name={cat.name}
+                name={L(cat.name, locale)}
                 desc={slotDesc.get(cat.id) ?? ""}
                 image={cat.image}
                 count={t(dict, "configurator.workFrom", {
@@ -95,7 +96,7 @@ export default async function ConfiguratorPage() {
           {repair && (
             <CategoryCard
               slug={repair.slug}
-              name={repair.name}
+              name={L(repair.name, locale)}
               image={repair.image}
               desc={conf.repairDesc}
               count={conf.repairCount}

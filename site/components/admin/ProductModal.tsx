@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PhotoGrid from "./PhotoGrid";
 import { slugify } from "@/lib/format";
+import { toLS } from "@/lib/localize";
+import LocalizedField, { type LocalizedValue } from "./LocalizedField";
 import {
   amountToMinor,
   minorToAmount,
@@ -27,21 +29,23 @@ type Props = {
   currencyCode: string;
 };
 
+const EMPTY: LocalizedValue = { ru: "", en: "", uk: "" };
+
 type FormState = {
-  name: string;
+  name: LocalizedValue;
   slug: string;
   categoryId: string;
   price: string;
   priceCurrency: string;
-  description: string;
+  description: LocalizedValue;
   isNew: boolean;
   isFeatured: boolean;
   availability: ProductAvailability;
   reserveUntil: string;
   orderDays: string;
   images: string[];
-  metaTitle: string;
-  metaDescription: string;
+  metaTitle: LocalizedValue;
+  metaDescription: LocalizedValue;
   ogImage: string;
 };
 
@@ -59,38 +63,38 @@ function fromDateInput(s: string): string | null {
 function buildSnapshot(p: Product | undefined, currencyCode: string): FormState {
   if (!p) {
     return {
-      name: "",
+      name: { ...EMPTY },
       slug: "",
       categoryId: "",
       price: "",
       priceCurrency: currencyCode,
-      description: "",
+      description: { ...EMPTY },
       isNew: false,
       isFeatured: false,
       availability: "in_stock",
       reserveUntil: "",
       orderDays: "7",
       images: [],
-      metaTitle: "",
-      metaDescription: "",
+      metaTitle: { ...EMPTY },
+      metaDescription: { ...EMPTY },
       ogImage: "",
     };
   }
   return {
-    name: p.name,
+    name: toLS(p.name),
     slug: p.slug,
     categoryId: String(p.categoryId),
     price: "", // заполняется после монтирования, см. useEffect
     priceCurrency: p.priceCurrency,
-    description: p.description,
+    description: toLS(p.description),
     isNew: p.isNew,
     isFeatured: p.isFeatured,
     availability: p.availability,
     reserveUntil: toDateInput(p.reserveUntil ?? null),
     orderDays: p.orderDays != null ? String(p.orderDays) : "7",
     images: [...p.images],
-    metaTitle: p.metaTitle ?? "",
-    metaDescription: p.metaDescription ?? "",
+    metaTitle: toLS(p.metaTitle),
+    metaDescription: toLS(p.metaDescription),
     ogImage: p.ogImage ?? "",
   };
 }
@@ -205,7 +209,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
 
   const autoSlug = async () => {
     if (form.slug) return;
-    const base = slugify(form.name);
+    const base = slugify(form.name.ru);
     if (!base) return;
     const res = await fetch("/api/admin/products/slugs");
     if (!res.ok) return;
@@ -319,13 +323,11 @@ export default function ProductModal({ categories, product, finance, currencyCod
 
           <div className="tab-pane" style={{ display: tab === 0 ? "" : "none" }}>
             <div className="field">
-              <label>Название</label>
-              <input
-                type="text"
-                placeholder="Брошь «...»"
+              <LocalizedField
                 value={form.name}
-                onChange={(e) => setField("name", e.target.value)}
-                onBlur={() => void autoSlug()}
+                onChange={(v) => setField("name", v)}
+                label="Название"
+                placeholder="Брошь «...»"
               />
             </div>
             <div className="field--row">
@@ -379,11 +381,12 @@ export default function ProductModal({ categories, product, finance, currencyCod
               </div>
             </div>
             <div className="field">
-              <label>Описание</label>
-              <textarea
-                placeholder="Что за вещь, из чего, какая история"
+              <LocalizedField
                 value={form.description}
-                onChange={(e) => setField("description", e.target.value)}
+                onChange={(v) => setField("description", v)}
+                label="Описание"
+                multiline
+                placeholder="Что за вещь, из чего, какая история"
               />
             </div>
             <div className="field" style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
@@ -455,20 +458,20 @@ export default function ProductModal({ categories, product, finance, currencyCod
           </div>
           <div className="tab-pane" style={{ display: tab === 2 ? "" : "none" }}>
             <div className="field">
-              <label>Meta title</label>
-              <input
-                type="text"
-                placeholder="Брошь «Ромашковая» — JulCraft"
+              <LocalizedField
                 value={form.metaTitle}
-                onChange={(e) => setField("metaTitle", e.target.value)}
+                onChange={(v) => setField("metaTitle", v)}
+                label="Meta title"
+                placeholder="Брошь «Ромашковая» — JulCraft"
               />
             </div>
             <div className="field">
-              <label>Meta description</label>
-              <textarea
-                placeholder="Эмаль по меди, ручная роспись, в одном экземпляре."
+              <LocalizedField
                 value={form.metaDescription}
-                onChange={(e) => setField("metaDescription", e.target.value)}
+                onChange={(v) => setField("metaDescription", v)}
+                label="Meta description"
+                multiline
+                placeholder="Эмаль по меди, ручная роспись, в одном экземпляре."
               />
             </div>
             <div className="field">

@@ -7,6 +7,7 @@ import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
 import { formatPrice, asPriced } from "@/lib/format";
 import { getDictionary, getLocale, plural, t } from "@/lib/i18n";
+import { L } from "@/lib/localize";
 import Crumbs from "@/components/ui/Crumbs";
 import CategoryCard from "@/components/category/CategoryCard";
 import EmptyState from "@/components/ui/EmptyState";
@@ -79,8 +80,8 @@ export default async function CatalogPage() {
               <CategoryCard
                 key={c.id}
                 slug={c.slug}
-                name={c.name}
-                desc={c.description}
+                name={L(c.name, locale)}
+                desc={L(c.description, locale)}
                 image={c.image}
                 count={countLabel(c, perCategory.get(c.id) ?? 0)}
                 href={c.slug === "vintazhnyj-remont" ? "/catalog" : `/catalog/${c.slug}`}

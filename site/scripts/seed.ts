@@ -13,97 +13,97 @@ import {
 } from "../drizzle/schema";
 import type { ComponentType, ProductAvailability } from "../drizzle/schema";
 import { amountToMinor } from "../lib/currency";
+import { type LocalizedString } from "../lib/localize";
 
 // ============================================================
 // Данные — точная копия макета mockup/ (источник истины, D-11)
 // ============================================================
 
-// Цены в макете — в рублях. В БД хранятся как Priced: минора в рублях + код "RUB".
+// Цены в макете — в гривнах. В БД хранятся как Priced: минора в гривнах + код "UAH" (RUB исключён, решение 2026-09).
 
 type CategorySeed = {
-  name: string;
+  name: LocalizedString;
   slug: string;
-  description: string;
+  description: LocalizedString;
   workPrice: number;
   baseWorkDays: number;
 };
 
 const categorySeed: CategorySeed[] = [
   {
-    name: "Броши",
+    name: { ru: "Броши" },
     slug: "broshi",
-    description: "эмаль, бакелит, перламутр. Прикалываются к пальто и сердцу.",
+    description: { ru: "эмаль, бакелит, перламутр. Прикалываются к пальто и сердцу." },
     workPrice: 1200,
     baseWorkDays: 3,
   },
   {
-    name: "Кулоны",
+    name: { ru: "Кулоны" },
     slug: "kulony",
-    description:
-      "стекло цвета бабушкиных ваз, эмаль, янтарь — на цепочке или вощёном шнуре",
+    description: { ru: "стекло цвета бабушкиных ваз, эмаль, янтарь — на цепочке или вощёном шнуре" },
     workPrice: 1000,
     baseWorkDays: 3,
   },
   {
-    name: "Серьги",
+    name: { ru: "Серьги" },
     slug: "sergi",
-    description: "хрусталь, бакелит, латунь. Лёгкие — даже не заметите.",
+    description: { ru: "хрусталь, бакелит, латунь. Лёгкие — даже не заметите." },
     workPrice: 900,
     baseWorkDays: 2,
   },
   {
-    name: "Кольца",
+    name: { ru: "Кольца" },
     slug: "kolca",
-    description: "бакелит, латунь 925. Сядут как влитые — проверено на витрине.",
+    description: { ru: "бакелит, латунь 925. Сядут как влитые — проверено на витрине." },
     workPrice: 800,
     baseWorkDays: 2,
   },
   {
-    name: "Браслеты",
+    name: { ru: "Браслеты" },
     slug: "braslety",
-    description: "винил, кожа, стекло. Под стать кассетнику в машине.",
+    description: { ru: "винил, кожа, стекло. Под стать кассетнику в машине." },
     workPrice: 1100,
     baseWorkDays: 3,
   },
   {
-    name: "Бусы и ожерелья",
+    name: { ru: "Бусы и ожерелья" },
     slug: "busy-i-ozherelya",
-    description: "стеклярус, бакелит. Нанизаны вручную, по минуте на бусину.",
+    description: { ru: "стеклярус, бакелит. Нанизаны вручную, по минуте на бусину." },
     workPrice: 1500,
     baseWorkDays: 4,
   },
   {
-    name: "Комплекты",
+    name: { ru: "Комплекты" },
     slug: "komplekty",
-    description: "серьги + брошь и другие дуэты. Уже подобраны, не ссорятся.",
+    description: { ru: "серьги + брошь и другие дуэты. Уже подобраны, не ссорятся." },
     workPrice: 2500,
     baseWorkDays: 5,
   },
   {
-    name: "Клипсы и манжеты",
+    name: { ru: "Клипсы и манжеты" },
     slug: "klipsy-i-manzhety",
-    description: "пластик, перламутр. Для ушей без проколов и смелых решений.",
+    description: { ru: "пластик, перламутр. Для ушей без проколов и смелых решений." },
     workPrice: 900,
     baseWorkDays: 2,
   },
   {
-    name: "Амулеты и подвески",
+    name: { ru: "Амулеты и подвески" },
     slug: "amulety-i-podveski",
-    description: "на удачу, по примете и просто потому что красиво.",
+    description: { ru: "на удачу, по примете и просто потому что красиво." },
     workPrice: 1000,
     baseWorkDays: 3,
   },
   {
-    name: "Винтажный ремонт",
+    name: { ru: "Винтажный ремонт" },
     slug: "vintazhnyj-remont",
-    description: "починим бабушкины клипсы и одинокие серьги. От 300 ₴.",
+    description: { ru: "починим бабушкины клипсы и одинокие серьги. От 300 ₴." },
     workPrice: 300,
     baseWorkDays: 0,
   },
 ];
 
 type SlotSeed = {
-  name: string;
+  name: LocalizedString;
   componentType: ComponentType;
   minQty: number;
   maxQty: number;
@@ -112,55 +112,55 @@ type SlotSeed = {
 // Составы слотов — из configurator.html; min/max Кулонов — из configurator-config.html
 const slotSeed: Record<string, SlotSeed[]> = {
   broshi: [
-    { name: "Основной камень", componentType: "stone", minQty: 1, maxQty: 1 },
-    { name: "Подвески-дополнения", componentType: "pendant", minQty: 0, maxQty: 3 },
-    { name: "Основа", componentType: "base", minQty: 1, maxQty: 1 },
+    { name: { ru: "Основной камень" }, componentType: "stone", minQty: 1, maxQty: 1 },
+    { name: { ru: "Подвески-дополнения" }, componentType: "pendant", minQty: 0, maxQty: 3 },
+    { name: { ru: "Основа" }, componentType: "base", minQty: 1, maxQty: 1 },
   ],
   kulony: [
-    { name: "Основной камень", componentType: "stone", minQty: 1, maxQty: 1 },
-    { name: "Подвески-дополнения", componentType: "pendant", minQty: 0, maxQty: 3 },
-    { name: "Цепь или шнур", componentType: "cord", minQty: 1, maxQty: 1 },
-    { name: "Застёжка", componentType: "clasp", minQty: 0, maxQty: 1 },
+    { name: { ru: "Основной камень" }, componentType: "stone", minQty: 1, maxQty: 1 },
+    { name: { ru: "Подвески-дополнения" }, componentType: "pendant", minQty: 0, maxQty: 3 },
+    { name: { ru: "Цепь или шнур" }, componentType: "cord", minQty: 1, maxQty: 1 },
+    { name: { ru: "Застёжка" }, componentType: "clasp", minQty: 0, maxQty: 1 },
   ],
   sergi: [
-    { name: "Основной камень", componentType: "stone", minQty: 1, maxQty: 1 },
-    { name: "Швензы", componentType: "base", minQty: 1, maxQty: 1 },
+    { name: { ru: "Основной камень" }, componentType: "stone", minQty: 1, maxQty: 1 },
+    { name: { ru: "Швензы" }, componentType: "base", minQty: 1, maxQty: 1 },
   ],
   kolca: [
-    { name: "Основной камень", componentType: "stone", minQty: 1, maxQty: 1 },
-    { name: "Основа", componentType: "base", minQty: 1, maxQty: 1 },
+    { name: { ru: "Основной камень" }, componentType: "stone", minQty: 1, maxQty: 1 },
+    { name: { ru: "Основа" }, componentType: "base", minQty: 1, maxQty: 1 },
   ],
   braslety: [
-    { name: "Бусины", componentType: "bead", minQty: 0, maxQty: 10 },
-    { name: "Подвески-дополнения", componentType: "pendant", minQty: 0, maxQty: 3 },
-    { name: "Замок", componentType: "clasp", minQty: 1, maxQty: 1 },
+    { name: { ru: "Бусины" }, componentType: "bead", minQty: 0, maxQty: 10 },
+    { name: { ru: "Подвески-дополнения" }, componentType: "pendant", minQty: 0, maxQty: 3 },
+    { name: { ru: "Замок" }, componentType: "clasp", minQty: 1, maxQty: 1 },
   ],
   "busy-i-ozherelya": [
-    { name: "Бусины", componentType: "bead", minQty: 0, maxQty: 10 },
-    { name: "Основной камень", componentType: "stone", minQty: 1, maxQty: 1 },
-    { name: "Подвески-дополнения", componentType: "pendant", minQty: 0, maxQty: 3 },
-    { name: "Замок", componentType: "clasp", minQty: 1, maxQty: 1 },
+    { name: { ru: "Бусины" }, componentType: "bead", minQty: 0, maxQty: 10 },
+    { name: { ru: "Основной камень" }, componentType: "stone", minQty: 1, maxQty: 1 },
+    { name: { ru: "Подвески-дополнения" }, componentType: "pendant", minQty: 0, maxQty: 3 },
+    { name: { ru: "Замок" }, componentType: "clasp", minQty: 1, maxQty: 1 },
   ],
   komplekty: [
-    { name: "Камень (серьги)", componentType: "stone", minQty: 1, maxQty: 1 },
-    { name: "Швензы", componentType: "base", minQty: 1, maxQty: 1 },
-    { name: "Камень (брошь)", componentType: "stone", minQty: 1, maxQty: 1 },
-    { name: "Подвески-дополнения", componentType: "pendant", minQty: 0, maxQty: 3 },
-    { name: "Основа броши", componentType: "base", minQty: 1, maxQty: 1 },
+    { name: { ru: "Камень (серьги)" }, componentType: "stone", minQty: 1, maxQty: 1 },
+    { name: { ru: "Швензы" }, componentType: "base", minQty: 1, maxQty: 1 },
+    { name: { ru: "Камень (брошь)" }, componentType: "stone", minQty: 1, maxQty: 1 },
+    { name: { ru: "Подвески-дополнения" }, componentType: "pendant", minQty: 0, maxQty: 3 },
+    { name: { ru: "Основа броши" }, componentType: "base", minQty: 1, maxQty: 1 },
   ],
   "klipsy-i-manzhety": [
-    { name: "Основной камень", componentType: "stone", minQty: 1, maxQty: 1 },
-    { name: "Основа", componentType: "base", minQty: 1, maxQty: 1 },
+    { name: { ru: "Основной камень" }, componentType: "stone", minQty: 1, maxQty: 1 },
+    { name: { ru: "Основа" }, componentType: "base", minQty: 1, maxQty: 1 },
   ],
   "amulety-i-podveski": [
-    { name: "Подвеска", componentType: "pendant", minQty: 1, maxQty: 1 },
-    { name: "Бусины", componentType: "bead", minQty: 0, maxQty: 10 },
-    { name: "Шнур", componentType: "cord", minQty: 1, maxQty: 1 },
+    { name: { ru: "Подвеска" }, componentType: "pendant", minQty: 1, maxQty: 1 },
+    { name: { ru: "Бусины" }, componentType: "bead", minQty: 0, maxQty: 10 },
+    { name: { ru: "Шнур" }, componentType: "cord", minQty: 1, maxQty: 1 },
   ],
 };
 
 type ComponentSeed = {
-  name: string;
+  name: LocalizedString;
   componentType: ComponentType;
   price: number;
   processingPrice: number;
@@ -172,31 +172,31 @@ type ComponentSeed = {
 
 // Склад — из admin/components.html (порядок строк таблицы = порядок SVG)
 const componentSeed: ComponentSeed[] = [
-  { name: "Камень «Око бакелита»", componentType: "stone", price: 350, processingPrice: 80, stockQty: 4, isOrderable: false, deliveryDays: null, photoFile: "oko-bakelita.svg" },
-  { name: "Камень «Гранёное стекло»", componentType: "stone", price: 180, processingPrice: 60, stockQty: 12, isOrderable: false, deliveryDays: null, photoFile: "granyone-steklo.svg" },
-  { name: "Камень «Хрустальная слеза»", componentType: "stone", price: 420, processingPrice: 90, stockQty: 0, isOrderable: true, deliveryDays: 10, photoFile: "hrustalnaya-sleza.svg" },
-  { name: "Камень «Коралловый сон»", componentType: "stone", price: 300, processingPrice: 70, stockQty: 6, isOrderable: false, deliveryDays: null, photoFile: "korallovyj-son.svg" },
-  { name: "Камень «Лунный агат»", componentType: "stone", price: 520, processingPrice: 100, stockQty: 0, isOrderable: true, deliveryDays: 14, photoFile: "lunnyj-agat.svg" },
-  { name: "Камень «Малахитовая капля»", componentType: "stone", price: 480, processingPrice: 90, stockQty: 3, isOrderable: false, deliveryDays: null, photoFile: "malahitovaya-kaplya.svg" },
-  { name: "Подвеска «Ромашка-76»", componentType: "pendant", price: 220, processingPrice: 50, stockQty: 9, isOrderable: false, deliveryDays: null, photoFile: "romashka-76.svg" },
-  { name: "Подвеска «Сердце из латуни»", componentType: "pendant", price: 160, processingPrice: 40, stockQty: 15, isOrderable: false, deliveryDays: null, photoFile: "serdce-iz-latuni.svg" },
-  { name: "Подвеска «Пуговица-счастье»", componentType: "pendant", price: 190, processingPrice: 45, stockQty: 7, isOrderable: false, deliveryDays: null, photoFile: "pugovica-schastie.svg" },
-  { name: "Подвеска «Ключик от чулана»", componentType: "pendant", price: 150, processingPrice: 40, stockQty: 11, isOrderable: false, deliveryDays: null, photoFile: "klyuchik-ot-chulana.svg" },
-  { name: "Подвеска «Рыбка-чешуйка»", componentType: "pendant", price: 210, processingPrice: 50, stockQty: 0, isOrderable: true, deliveryDays: 7, photoFile: "rybka-cheshujka.svg" },
-  { name: "Бусины бакелитовые, 10 шт", componentType: "bead", price: 240, processingPrice: 60, stockQty: 20, isOrderable: false, deliveryDays: null, photoFile: "businy-bakelitovye.svg" },
-  { name: "Бусины стеклярус, 10 шт", componentType: "bead", price: 120, processingPrice: 40, stockQty: 30, isOrderable: false, deliveryDays: null, photoFile: "businy-steklyarus.svg" },
-  { name: "Бусины деревянные «Ольха», 10 шт", componentType: "bead", price: 90, processingPrice: 30, stockQty: 40, isOrderable: false, deliveryDays: null, photoFile: "businy-olha.svg" },
-  { name: "Бусины янтарные, 10 шт", componentType: "bead", price: 350, processingPrice: 70, stockQty: 8, isOrderable: false, deliveryDays: null, photoFile: "businy-yantarnye.svg" },
-  { name: "Бусины костяные «Шашки», 10 шт", componentType: "bead", price: 300, processingPrice: 65, stockQty: 0, isOrderable: true, deliveryDays: 9, photoFile: "businy-shashki.svg" },
-  { name: "Шнур вощёный, 1 м", componentType: "cord", price: 60, processingPrice: 20, stockQty: 50, isOrderable: false, deliveryDays: null, photoFile: "shnur-voshyonyj.svg" },
-  { name: "Шнур кожаный, 1 м", componentType: "cord", price: 140, processingPrice: 25, stockQty: 22, isOrderable: false, deliveryDays: null, photoFile: "shnur-kozhanyj.svg" },
-  { name: "Цепь латунная, 50 см", componentType: "cord", price: 250, processingPrice: 40, stockQty: 14, isOrderable: false, deliveryDays: null, photoFile: "cep-latunnaya.svg" },
-  { name: "Цепь серебряная, 45 см", componentType: "cord", price: 900, processingPrice: 60, stockQty: 0, isOrderable: true, deliveryDays: 18, photoFile: "cep-serebryanaya.svg" },
-  { name: "Замок-карабин латунный", componentType: "clasp", price: 70, processingPrice: 30, stockQty: 35, isOrderable: false, deliveryDays: null, photoFile: "zamok-karabin.svg" },
-  { name: "Замок «торец» антик", componentType: "clasp", price: 110, processingPrice: 35, stockQty: 10, isOrderable: false, deliveryDays: null, photoFile: "zamok-torec.svg" },
-  { name: "Колпачки для бус, пара", componentType: "clasp", price: 40, processingPrice: 15, stockQty: 60, isOrderable: false, deliveryDays: null, photoFile: "kolpachki-dlya-bus.svg" },
-  { name: "Швензы латунные, пара", componentType: "base", price: 50, processingPrice: 20, stockQty: 45, isOrderable: false, deliveryDays: null, photoFile: "shvenzy-latunnye.svg" },
-  { name: "Основа броши-игла, латунь", componentType: "base", price: 80, processingPrice: 25, stockQty: 28, isOrderable: false, deliveryDays: null, photoFile: "osnova-broshi.svg" },
+  { name: { ru: "Камень «Око бакелита»" }, componentType: "stone", price: 350, processingPrice: 80, stockQty: 4, isOrderable: false, deliveryDays: null, photoFile: "oko-bakelita.svg" },
+  { name: { ru: "Камень «Гранёное стекло»" }, componentType: "stone", price: 180, processingPrice: 60, stockQty: 12, isOrderable: false, deliveryDays: null, photoFile: "granyone-steklo.svg" },
+  { name: { ru: "Камень «Хрустальная слеза»" }, componentType: "stone", price: 420, processingPrice: 90, stockQty: 0, isOrderable: true, deliveryDays: 10, photoFile: "hrustalnaya-sleza.svg" },
+  { name: { ru: "Камень «Коралловый сон»" }, componentType: "stone", price: 300, processingPrice: 70, stockQty: 6, isOrderable: false, deliveryDays: null, photoFile: "korallovyj-son.svg" },
+  { name: { ru: "Камень «Лунный агат»" }, componentType: "stone", price: 520, processingPrice: 100, stockQty: 0, isOrderable: true, deliveryDays: 14, photoFile: "lunnyj-agat.svg" },
+  { name: { ru: "Камень «Малахитовая капля»" }, componentType: "stone", price: 480, processingPrice: 90, stockQty: 3, isOrderable: false, deliveryDays: null, photoFile: "malahitovaya-kaplya.svg" },
+  { name: { ru: "Подвеска «Ромашка-76»" }, componentType: "pendant", price: 220, processingPrice: 50, stockQty: 9, isOrderable: false, deliveryDays: null, photoFile: "romashka-76.svg" },
+  { name: { ru: "Подвеска «Сердце из латуни»" }, componentType: "pendant", price: 160, processingPrice: 40, stockQty: 15, isOrderable: false, deliveryDays: null, photoFile: "serdce-iz-latuni.svg" },
+  { name: { ru: "Подвеска «Пуговица-счастье»" }, componentType: "pendant", price: 190, processingPrice: 45, stockQty: 7, isOrderable: false, deliveryDays: null, photoFile: "pugovica-schastie.svg" },
+  { name: { ru: "Подвеска «Ключик от чулана»" }, componentType: "pendant", price: 150, processingPrice: 40, stockQty: 11, isOrderable: false, deliveryDays: null, photoFile: "klyuchik-ot-chulana.svg" },
+  { name: { ru: "Подвеска «Рыбка-чешуйка»" }, componentType: "pendant", price: 210, processingPrice: 50, stockQty: 0, isOrderable: true, deliveryDays: 7, photoFile: "rybka-cheshujka.svg" },
+  { name: { ru: "Бусины бакелитовые, 10 шт" }, componentType: "bead", price: 240, processingPrice: 60, stockQty: 20, isOrderable: false, deliveryDays: null, photoFile: "businy-bakelitovye.svg" },
+  { name: { ru: "Бусины стеклярус, 10 шт" }, componentType: "bead", price: 120, processingPrice: 40, stockQty: 30, isOrderable: false, deliveryDays: null, photoFile: "businy-steklyarus.svg" },
+  { name: { ru: "Бусины деревянные «Ольха», 10 шт" }, componentType: "bead", price: 90, processingPrice: 30, stockQty: 40, isOrderable: false, deliveryDays: null, photoFile: "businy-olha.svg" },
+  { name: { ru: "Бусины янтарные, 10 шт" }, componentType: "bead", price: 350, processingPrice: 70, stockQty: 8, isOrderable: false, deliveryDays: null, photoFile: "businy-yantarnye.svg" },
+  { name: { ru: "Бусины костяные «Шашки», 10 шт" }, componentType: "bead", price: 300, processingPrice: 65, stockQty: 0, isOrderable: true, deliveryDays: 9, photoFile: "businy-shashki.svg" },
+  { name: { ru: "Шнур вощёный, 1 м" }, componentType: "cord", price: 60, processingPrice: 20, stockQty: 50, isOrderable: false, deliveryDays: null, photoFile: "shnur-voshyonyj.svg" },
+  { name: { ru: "Шнур кожаный, 1 м" }, componentType: "cord", price: 140, processingPrice: 25, stockQty: 22, isOrderable: false, deliveryDays: null, photoFile: "shnur-kozhanyj.svg" },
+  { name: { ru: "Цепь латунная, 50 см" }, componentType: "cord", price: 250, processingPrice: 40, stockQty: 14, isOrderable: false, deliveryDays: null, photoFile: "cep-latunnaya.svg" },
+  { name: { ru: "Цепь серебряная, 45 см" }, componentType: "cord", price: 900, processingPrice: 60, stockQty: 0, isOrderable: true, deliveryDays: 18, photoFile: "cep-serebryanaya.svg" },
+  { name: { ru: "Замок-карабин латунный" }, componentType: "clasp", price: 70, processingPrice: 30, stockQty: 35, isOrderable: false, deliveryDays: null, photoFile: "zamok-karabin.svg" },
+  { name: { ru: "Замок «торец» антик" }, componentType: "clasp", price: 110, processingPrice: 35, stockQty: 10, isOrderable: false, deliveryDays: null, photoFile: "zamok-torec.svg" },
+  { name: { ru: "Колпачки для бус, пара" }, componentType: "clasp", price: 40, processingPrice: 15, stockQty: 60, isOrderable: false, deliveryDays: null, photoFile: "kolpachki-dlya-bus.svg" },
+  { name: { ru: "Швензы латунные, пара" }, componentType: "base", price: 50, processingPrice: 20, stockQty: 45, isOrderable: false, deliveryDays: null, photoFile: "shvenzy-latunnye.svg" },
+  { name: { ru: "Основа броши-игла, латунь" }, componentType: "base", price: 80, processingPrice: 25, stockQty: 28, isOrderable: false, deliveryDays: null, photoFile: "osnova-broshi.svg" },
 ];
 
 // Типы комплектующих (план componentsExt): коды совпадают с историческими
@@ -204,22 +204,22 @@ const componentSeed: ComponentSeed[] = [
 // Seed делает полный пересид (решение по плану): кастомные типы стираются.
 const componentTypeSeed: Array<{
   code: string;
-  name: string;
+  name: LocalizedString;
   sortOrder: number;
 }> = [
-  { code: "stone", name: "Камень", sortOrder: 0 },
-  { code: "pendant", name: "Подвеска", sortOrder: 1 },
-  { code: "bead", name: "Бусина", sortOrder: 2 },
-  { code: "cord", name: "Шнур и цепь", sortOrder: 3 },
-  { code: "clasp", name: "Застёжка", sortOrder: 4 },
-  { code: "base", name: "Основа", sortOrder: 5 },
+  { code: "stone", name: { ru: "Камень" }, sortOrder: 0 },
+  { code: "pendant", name: { ru: "Подвеска" }, sortOrder: 1 },
+  { code: "bead", name: { ru: "Бусина" }, sortOrder: 2 },
+  { code: "cord", name: { ru: "Шнур и цепь" }, sortOrder: 3 },
+  { code: "clasp", name: { ru: "Застёжка" }, sortOrder: 4 },
+  { code: "base", name: { ru: "Основа" }, sortOrder: 5 },
 ];
 
 type ProductSeed = {
-  name: string;
+  name: LocalizedString;
   slug: string;
   categorySlug: string;
-  description: string;
+  description: LocalizedString;
   price: number;
   isNew: boolean;
   isFeatured: boolean;
@@ -233,10 +233,10 @@ type ProductSeed = {
 // Товары — home.html (12) + category.html (7 кулонов); slug'и — admin/products.html
 const productSeed: ProductSeed[] = [
   {
-    name: "Брошь «Ромашковая»",
+    name: { ru: "Брошь «Ромашковая»" },
     slug: "brosh-romashkovaya",
     categorySlug: "broshi",
-    description: "эмаль по меди, ручная роспись; застёжка-игла",
+    description: { ru: "эмаль по меди, ручная роспись; застёжка-игла" },
     price: 1950,
     isNew: false,
     isFeatured: true,
@@ -245,10 +245,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "brosh-romashkovaya.jpg",
   },
   {
-    name: "Серьги «Танец-76»",
+    name: { ru: "Серьги «Танец-76»" },
     slug: "sergi-tanec-76",
     categorySlug: "sergi",
-    description: "бакелитовые диски, латунь; вес пером, настроение — паркет",
+    description: { ru: "бакелитовые диски, латунь; вес пером, настроение — паркет" },
     price: 2300,
     isNew: false,
     isFeatured: false,
@@ -257,10 +257,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "sergi-tanec-76.jpg",
   },
   {
-    name: "Кулон «Телеграмма»",
+    name: { ru: "Кулон «Телеграмма»" },
     slug: "kulon-telegramma",
     categorySlug: "kulony",
-    description: "стекло цвета бабушкиной вазы; цепочка латунная, 50 см",
+    description: { ru: "стекло цвета бабушкиной вазы; цепочка латунная, 50 см" },
     price: 2700,
     isNew: true,
     isFeatured: true,
@@ -276,10 +276,10 @@ const productSeed: ProductSeed[] = [
     ],
   },
   {
-    name: "Брошь «Грибная поляна»",
+    name: { ru: "Брошь «Грибная поляна»" },
     slug: "brosh-gribnaya-polyana",
     categorySlug: "broshi",
-    description: "бакелит, янтарная крошка; три боровичка и мухомор",
+    description: { ru: "бакелит, янтарная крошка; три боровичка и мухомор" },
     price: 2450,
     isNew: true,
     isFeatured: false,
@@ -288,10 +288,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "brosh-gribnaya-polyana.jpg",
   },
   {
-    name: "Серьги «Капли дождя»",
+    name: { ru: "Серьги «Капли дождя»" },
     slug: "sergi-kapli-dozhdya",
     categorySlug: "sergi",
-    description: "горный хрусталь, латунь; звонкие, как град по крыше",
+    description: { ru: "горный хрусталь, латунь; звонкие, как град по крыше" },
     price: 1900,
     isNew: false,
     isFeatured: false,
@@ -300,10 +300,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "sergi-kapli-dozhdya.jpg",
   },
   {
-    name: "Кольцо «Воскресное»",
+    name: { ru: "Кольцо «Воскресное»" },
     slug: "kolco-voskresnoe",
     categorySlug: "kolca",
-    description: "бакелит, латунь 925; сядет как влитое, поверьте",
+    description: { ru: "бакелит, латунь 925; сядет как влитое, поверьте" },
     price: 1750,
     isNew: false,
     isFeatured: false,
@@ -312,10 +312,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "kolco-voskresnoe.jpg",
   },
   {
-    name: "Браслет «Кассета-минус»",
+    name: { ru: "Браслет «Кассета-минус»" },
     slug: "braslet-kasseta-minus",
     categorySlug: "braslety",
-    description: "винил, кожа, латунная застёжка; играет сингл 1978-го",
+    description: { ru: "винил, кожа, латунная застёжка; играет сингл 1978-го" },
     price: 2100,
     isNew: false,
     isFeatured: false,
@@ -324,10 +324,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "braslet-kasseta-minus.jpg",
   },
   {
-    name: "Бусы «Капсула времени»",
+    name: { ru: "Бусы «Капсула времени»" },
     slug: "busy-kapsula-vremeni",
     categorySlug: "busy-i-ozherelya",
-    description: "стеклярус, бакелит; вручную, каждая бусина — своя история",
+    description: { ru: "стеклярус, бакелит; вручную, каждая бусина — своя история" },
     price: 3200,
     isNew: true,
     isFeatured: false,
@@ -336,10 +336,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "busy-kapsula-vremeni.jpg",
   },
   {
-    name: "Кулон «Письмо из 76-го»",
+    name: { ru: "Кулон «Письмо из 76-го»" },
     slug: "kulon-pismo-iz-76",
     categorySlug: "kulony",
-    description: "эмаль, латунь; конверт-форма, внутри — секрет",
+    description: { ru: "эмаль, латунь; конверт-форма, внутри — секрет" },
     price: 2600,
     isNew: false,
     isFeatured: false,
@@ -348,10 +348,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "kulon-pismo-iz-76.jpg",
   },
   {
-    name: "Клипсы «Паркетный вальс»",
+    name: { ru: "Клипсы «Паркетный вальс»" },
     slug: "klipsy-parketnyj-vals",
     categorySlug: "klipsy-i-manzhety",
-    description: "пластик, перламутр; не отваливаются даже на танцполе",
+    description: { ru: "пластик, перламутр; не отваливаются даже на танцполе" },
     price: 1600,
     isNew: false,
     isFeatured: false,
@@ -360,10 +360,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "klipsy-parketnyj-vals.jpg",
   },
   {
-    name: "Комплект «Вечер на Радищева»",
+    name: { ru: "Комплект «Вечер на Радищева»" },
     slug: "komplekt-vecher-na-radishcheva",
     categorySlug: "komplekty",
-    description: "серьги + брошь, бакелит; для тех самых выходов",
+    description: { ru: "серьги + брошь, бакелит; для тех самых выходов" },
     price: 4200,
     isNew: false,
     isFeatured: true,
@@ -372,10 +372,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "komplekt-vecher-na-radishcheva.jpg",
   },
   {
-    name: "Амулет «Счастливая пуговица»",
+    name: { ru: "Амулет «Счастливая пуговица»" },
     slug: "amulet-schastlivaya-pugovica",
     categorySlug: "amulety-i-podveski",
-    description: "перламутр, латунь; от растерянности и скучных дней",
+    description: { ru: "перламутр, латунь; от растерянности и скучных дней" },
     price: 1450,
     isNew: false,
     isFeatured: false,
@@ -384,10 +384,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "amulet-schastlivaya-pugovica.jpg",
   },
   {
-    name: "Кулон «Лунный свет из чулана»",
+    name: { ru: "Кулон «Лунный свет из чулана»" },
     slug: "kulon-lunnyj-svet-iz-chulana",
     categorySlug: "kulony",
-    description: "полупрозрачное стекло; светится в темноте — почти",
+    description: { ru: "полупрозрачное стекло; светится в темноте — почти" },
     price: 2400,
     isNew: false,
     isFeatured: false,
@@ -396,10 +396,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "kulon-lunnyj-svet-iz-chulana.jpg",
   },
   {
-    name: "Кулон «Бабушкина ваза»",
+    name: { ru: "Кулон «Бабушкина ваза»" },
     slug: "kulon-babushkina-vaza",
     categorySlug: "kulony",
-    description: "бакелит с прожилками; точь-в-точь сервиз из серванта",
+    description: { ru: "бакелит с прожилками; точь-в-точь сервиз из серванта" },
     price: 2300,
     isNew: false,
     isFeatured: false,
@@ -408,10 +408,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "kulon-babushkina-vaza.jpg",
   },
   {
-    name: "Кулон «Радио-волна»",
+    name: { ru: "Кулон «Радио-волна»" },
     slug: "kulon-radio-volna",
     categorySlug: "kulony",
-    description: "эмаль, латунь; ловит волны 76-го диапазона",
+    description: { ru: "эмаль, латунь; ловит волны 76-го диапазона" },
     price: 2050,
     isNew: true,
     isFeatured: false,
@@ -420,10 +420,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "kulon-radio-volna.jpg",
   },
   {
-    name: "Кулон «Монета-76»",
+    name: { ru: "Кулон «Монета-76»" },
     slug: "kulon-moneta-76",
     categorySlug: "kulony",
-    description: "латунь, чеканка вручную; на счастье и сдачу",
+    description: { ru: "латунь, чеканка вручную; на счастье и сдачу" },
     price: 1900,
     isNew: false,
     isFeatured: false,
@@ -432,10 +432,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "kulon-moneta-76.jpg",
   },
   {
-    name: "Кулон «Северное сияние»",
+    name: { ru: "Кулон «Северное сияние»" },
     slug: "kulon-severnoe-siyanie",
     categorySlug: "kulony",
-    description: "стеклярус и ирисы; переливается даже в пасмурный день",
+    description: { ru: "стеклярус и ирисы; переливается даже в пасмурный день" },
     price: 2850,
     isNew: false,
     isFeatured: false,
@@ -444,10 +444,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "kulon-severnoe-siyanie.jpg",
   },
   {
-    name: "Кулон «Тишина в библиотеке»",
+    name: { ru: "Кулон «Тишина в библиотеке»" },
     slug: "kulon-tishina-v-biblioteke",
     categorySlug: "kulony",
-    description: "перламутр, латунь; не звенит, не отвлекает",
+    description: { ru: "перламутр, латунь; не звенит, не отвлекает" },
     price: 2200,
     isNew: false,
     isFeatured: false,
@@ -456,10 +456,10 @@ const productSeed: ProductSeed[] = [
     photoFile: "kulon-tishina-v-biblioteke.jpg",
   },
   {
-    name: "Кулон «Морской узел»",
+    name: { ru: "Кулон «Морской узел»" },
     slug: "kulon-morskoj-uzel",
     categorySlug: "kulony",
-    description: "кожаный шнур, латунный узел; не развяжется — проверено",
+    description: { ru: "кожаный шнур, латунный узел; не развяжется — проверено" },
     price: 1750,
     isNew: false,
     isFeatured: false,
@@ -470,55 +470,55 @@ const productSeed: ProductSeed[] = [
 ];
 
 const hoursSeed = [
-  { day: "Понедельник", value: "выходной", closed: true },
-  { day: "Вторник — Пятница", value: "11:00 — 20:00" },
-  { day: "Суббота", value: "12:00 — 19:00" },
-  { day: "Воскресенье", value: "12:00 — 17:00" },
+  { day: { ru: "Понедельник" }, value: { ru: "выходной" }, closed: true },
+  { day: { ru: "Вторник — Пятница" }, value: { ru: "11:00 — 20:00" } },
+  { day: { ru: "Суббота" }, value: { ru: "12:00 — 19:00" } },
+  { day: { ru: "Воскресенье" }, value: { ru: "12:00 — 17:00" } },
 ];
 
 const shortReceiptSeed = {
   rows: [
-    { label: "ХОЗЯЙКА", value: "Юля Крафт" },
-    { label: "СТАЖ ЗА ВЕРСТАКОМ", value: "12 лет" },
-    { label: "ЛЮБИМАЯ ЭПОХА", value: "1972–1981" },
-    { label: "ЛЮБИМЫЙ МАТЕРИАЛ", value: "бакелит" },
-    { label: "НЕЛЮБИМАЯ ФРАЗА", value: "«это сейчас не в моде»" },
-    { label: "ЧАЙ ПОКУПАТЕЛЯМ", value: "бесплатно" },
-    { label: "РЕМОНТ СТАРИНЫ", value: "от 300 ₴" },
+    { label: { ru: "ХОЗЯЙКА" }, value: { ru: "Юля Крафт" } },
+    { label: { ru: "СТАЖ ЗА ВЕРСТАКОМ" }, value: { ru: "12 лет" } },
+    { label: { ru: "ЛЮБИМАЯ ЭПОХА" }, value: { ru: "1972–1981" } },
+    { label: { ru: "ЛЮБИМЫЙ МАТЕРИАЛ" }, value: { ru: "бакелит" } },
+    { label: { ru: "НЕЛЮБИМАЯ ФРАЗА" }, value: { ru: "«это сейчас не в моде»" } },
+    { label: { ru: "ЧАЙ ПОКУПАТЕЛЯМ" }, value: { ru: "бесплатно" } },
+    { label: { ru: "РЕМОНТ СТАРИНЫ" }, value: { ru: "от 300 ₴" } },
   ],
-  thanks: "*** СПАСИБО ЗА ВИЗИТ. ВОЗВРАЩАЙТЕСЬ ***",
+  thanks: { ru: "*** СПАСИБО ЗА ВИЗИТ. ВОЗВРАЩАЙТЕСЬ ***" },
 };
 
 const historyReceiptSeed = {
   rows: [
-    { label: "ХОЗЯЙКА", value: "Юля Крафт" },
-    { label: "СТАЖ ЗА ВЕРСТАКОМ", value: "12 лет" },
-    { label: "ПЕРВОЕ ИЗДЕЛИЕ", value: "бусы из бабушкиного стекляруса" },
-    { label: "ЛЮБИМАЯ ЭПОХА", value: "1972–1981" },
-    { label: "ЛЮБИМЫЙ МАТЕРИАЛ", value: "бакелит" },
-    { label: "ЛЮБИМЫЙ ИНСТРУМЕНТ", value: "паяльник «Чародейка»" },
-    { label: "НЕЛЮБИМАЯ ФРАЗА", value: "«это сейчас не в моде»" },
-    { label: "РЕМОНТ СТАРИНЫ", value: "от 300 ₴" },
-    { label: "СБОРКА НА ЗАКАЗ", value: "от 800 ₴ + материалы" },
-    { label: "СРОК ОБЫЧНОЙ РАБОТЫ", value: "3–7 дней" },
-    { label: "ГАРАНТИЯ", value: "пожизненный ремонт своих работ" },
-    { label: "ЧАЙ ПОКУПАТЕЛЯМ", value: "бесплатно" },
-    { label: "СДАЧА", value: "улыбка" },
+    { label: { ru: "ХОЗЯЙКА" }, value: { ru: "Юля Крафт" } },
+    { label: { ru: "СТАЖ ЗА ВЕРСТАКОМ" }, value: { ru: "12 лет" } },
+    { label: { ru: "ПЕРВОЕ ИЗДЕЛИЕ" }, value: { ru: "бусы из бабушкиного стекляруса" } },
+    { label: { ru: "ЛЮБИМАЯ ЭПОХА" }, value: { ru: "1972–1981" } },
+    { label: { ru: "ЛЮБИМЫЙ МАТЕРИАЛ" }, value: { ru: "бакелит" } },
+    { label: { ru: "ЛЮБИМЫЙ ИНСТРУМЕНТ" }, value: { ru: "паяльник «Чародейка»" } },
+    { label: { ru: "НЕЛЮБИМАЯ ФРАЗА" }, value: { ru: "«это сейчас не в моде»" } },
+    { label: { ru: "РЕМОНТ СТАРИНЫ" }, value: { ru: "от 300 ₴" } },
+    { label: { ru: "СБОРКА НА ЗАКАЗ" }, value: { ru: "от 800 ₴ + материалы" } },
+    { label: { ru: "СРОК ОБЫЧНОЙ РАБОТЫ" }, value: { ru: "3–7 дней" } },
+    { label: { ru: "ГАРАНТИЯ" }, value: { ru: "пожизненный ремонт своих работ" } },
+    { label: { ru: "ЧАЙ ПОКУПАТЕЛЯМ" }, value: { ru: "бесплатно" } },
+    { label: { ru: "СДАЧА" }, value: { ru: "улыбка" } },
   ],
-  thanks: "*** СПАСИБО ЗА ВНИМАНИЕ. ВОЗВРАЩАЙТЕСЬ С ИСТОРИЯМИ ***",
+  thanks: { ru: "*** СПАСИБО ЗА ВНИМАНИЕ. ВОЗВРАЩАЙТЕСЬ С ИСТОРИЯМИ ***" },
 };
 
 const principlesSeed = [
-  { title: "Один экземпляр", text: "каждая вещь делается один раз — повторить невозможно, даже если очень просят" },
-  { title: "Без спешки", text: "срок в заявке честный, а не «как получится» — лучше подождать и получить как надо" },
-  { title: "Вторая жизнь", text: "ремонт старины дешевле новой вещи — и честно интереснее" },
-  { title: "Чай и радио", text: "гость с историей — лучший посетитель. Приходите просто так" },
+  { title: { ru: "Один экземпляр" }, text: { ru: "каждая вещь делается один раз — повторить невозможно, даже если очень просят" } },
+  { title: { ru: "Без спешки" }, text: { ru: "срок в заявке честный, а не «как получится» — лучше подождать и получить как надо" } },
+  { title: { ru: "Вторая жизнь" }, text: { ru: "ремонт старины дешевле новой вещи — и честно интереснее" } },
+  { title: { ru: "Чай и радио" }, text: { ru: "гость с историей — лучший посетитель. Приходите просто так" } },
 ];
 
 const settingsSeed: Record<string, string> = {
   "contacts.phone": "+38 095 358 48 11",
   "contacts.email": "julcraft79@gmail.com",
-  "contacts.address": "ул. Мстислава Скрипника, 40А",
+  "contacts.address": JSON.stringify({ ru: "ул. Мстислава Скрипника, 40А" }),
   "contacts.telegram": "https://t.me/julcraft_76",
   "contacts.instagram": "https://instagram.com/julcraft_76",
   "contacts.hours": JSON.stringify(hoursSeed),
@@ -526,18 +526,18 @@ const settingsSeed: Record<string, string> = {
   "about.history": JSON.stringify(historyReceiptSeed),
   "about.principles": JSON.stringify(principlesSeed),
   // plan-finances.md: мультивалютность. USD обязателен, курс 1; дефолт — гривна.
+  // RUB исключён (решение 2026-09): все цены хранятся в гривнах (UAH), рубли не используются.
   "finance.currencies": JSON.stringify([
-    { code: "USD", name: "Доллар", symbol: "$", ratePerUsd: 1 },
-    { code: "UAH", name: "Гривна", symbol: "₴", ratePerUsd: 44 },
-    { code: "RUB", name: "Рубль", symbol: "₽", ratePerUsd: 85 },
-    { code: "EUR", name: "Евро", symbol: "€", ratePerUsd: 0.92 },
+    { code: "USD", name: { ru: "Доллар" }, symbol: "$", ratePerUsd: 1 },
+    { code: "UAH", name: { ru: "Гривна" }, symbol: "₴", ratePerUsd: 44 },
+    { code: "EUR", name: { ru: "Евро" }, symbol: "€", ratePerUsd: 0.92 },
   ]),
   "finance.defaultCurrency": "UAH",
-  // Границы фильтра цены каталога как Priced в рублях (D-23b): «до 2 000 ₴ / от 2 500 ₴»
+  // Границы фильтра цены каталога как Priced в гривнах (D-23b): «до 2 000 ₴ / от 2 500 ₴»
   "finance.filterLow": String(amountToMinor(2000)),
-  "finance.filterLowCurrency": "RUB",
+  "finance.filterLowCurrency": "UAH",
   "finance.filterHigh": String(amountToMinor(2500)),
-  "finance.filterHighCurrency": "RUB",
+  "finance.filterHighCurrency": "UAH",
 };
 
 // ============================================================
@@ -593,12 +593,12 @@ function main() {
     const res = db
       .insert(categories)
       .values({
-        name: c.name,
+        name: JSON.stringify(c.name),
         slug: c.slug,
-        description: c.description,
+        description: JSON.stringify(c.description),
         image: null,
         workPrice: amountToMinor(c.workPrice),
-        workPriceCurrency: "RUB",
+        workPriceCurrency: "UAH",
         baseWorkDays: c.baseWorkDays,
         hasSlotTemplate: c.slug !== "vintazhnyj-remont",
         isActive: true,
@@ -610,7 +610,9 @@ function main() {
 
   // 1.1. Типы комплектующих (план componentsExt)
   componentTypeSeed.forEach((t) => {
-    db.insert(componentTypes).values(t).run();
+    db.insert(componentTypes)
+      .values({ code: t.code, name: JSON.stringify(t.name), sortOrder: t.sortOrder })
+      .run();
   });
 
   // 2. Шаблоны слотов
@@ -620,7 +622,7 @@ function main() {
       db.insert(slotTemplates)
         .values({
           categoryId: categoryIds.get(slug)!,
-          name: s.name,
+          name: JSON.stringify(s.name),
           componentType: s.componentType,
           minQty: s.minQty,
           maxQty: s.maxQty,
@@ -639,12 +641,12 @@ function main() {
     writeFileSync(resolve(componentsDir, c.photoFile), svgs[i], "utf8");
     db.insert(components)
       .values({
-        name: c.name,
+        name: JSON.stringify(c.name),
         componentType: c.componentType,
         price: amountToMinor(c.price),
-        priceCurrency: "RUB",
+        priceCurrency: "UAH",
         processingPrice: amountToMinor(c.processingPrice),
-        processingPriceCurrency: "RUB",
+        processingPriceCurrency: "UAH",
         processingDays: 0,
         stockQty: c.stockQty,
         isOrderable: c.isOrderable,
@@ -661,11 +663,11 @@ function main() {
     db.insert(products)
       .values({
         categoryId: categoryIds.get(p.categorySlug)!,
-        name: p.name,
+        name: JSON.stringify(p.name),
         slug: p.slug,
-        description: p.description,
+        description: JSON.stringify(p.description),
         price: amountToMinor(p.price),
-        priceCurrency: "RUB",
+        priceCurrency: "UAH",
         images: [`/uploads/products/${p.photoFile}`],
         materials: p.materials ?? [],
         specs: p.specs ?? [],
@@ -698,3 +700,4 @@ function main() {
 
 main();
 sqlite.close();
+

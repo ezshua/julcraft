@@ -2,6 +2,7 @@ import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { componentTypes } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
+import { storeLS } from "@/lib/localize";
 import {
   componentTypeCreateSchema,
   type ComponentTypeCreateInput,
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
       .insert(componentTypes)
       .values({
         code: data.code,
-        name: data.name,
+        name: storeLS(data.name),
         sortOrder: data.sortOrder,
         isActive: data.isActive,
       })

@@ -6,6 +6,8 @@ import {
   componentTypes,
   type ComponentTypeRow,
 } from "../drizzle/schema";
+import { L, type LocalizedString } from "./localize";
+import type { Locale } from "./i18n";
 
 // Доступ к редактируемым типам комплектующих (план componentsExt).
 // Источник истины — таблица componentTypes; при пустой таблице (до сида)
@@ -30,6 +32,18 @@ export const BASE_COMPONENT_TYPE_CODES: ReadonlySet<string> = new Set([
   "base",
 ]);
 
+// Fallback-подписи типов («Камень/Подвеска/…») — RU-значения по коду.
+// Используются и в витрине — конфигуратор; админские места до i18n-4
+// продолжают RU. Коды — стабильные идентификаторы, не зависят от языка.
+const TYPE_FALLBACK_LABELS: Record<string, LocalizedString> = {
+  stone: { ru: "Камень", en: "Stone", uk: "Камінь" },
+  pendant: { ru: "Подвеска", en: "Pendant", uk: "Підвіска" },
+  bead: { ru: "Бусина", en: "Bead", uk: "Бусина" },
+  cord: { ru: "Шнур и цепь", en: "Cord and chain", uk: "Шнур і ланцюг" },
+  clasp: { ru: "Застёжка", en: "Clasp", uk: "Застібка" },
+  base: { ru: "Основа", en: "Base", uk: "Основа" },
+};
+
 /** Все типы по порядку сортировки (включая неактивные). */
 export function getComponentTypes(): ComponentTypeRow[] {
   const rows = db
@@ -48,10 +62,12 @@ export function getActiveComponentTypes(): ComponentTypeRow[] {
 /**
  * Подпись типа по коду. Неизвестный/удалённый код не ломает вывод —
  * показываем сам код (исторические данные остаются читаемыми).
+ * Вывод — через L(): строка из БД (localized) или fallback-подпись на локаль.
  */
-export function getTypeLabel(code: string): string {
+export function getTypeLabel(code: string, locale: Locale): string {
   const found = getComponentTypes().find((t) => t.code === code);
-  return found ? found.name : code;
+  if (found) return L(found.name, locale);
+  return L(TYPE_FALLBACK_LABELS[code], locale) || code;
 }
 
 /** Существует ли такой код типа (активность не важна). */

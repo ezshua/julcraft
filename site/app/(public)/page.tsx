@@ -7,6 +7,7 @@ import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, asPriced } from "@/lib/format";
 import { telHref } from "@/lib/settings";
+import { L } from "@/lib/localize";
 import { getDictionary, getLocale, plural, t } from "@/lib/i18n";
 import ProductCard from "@/components/product/ProductCard";
 import CategoryCard from "@/components/category/CategoryCard";
@@ -115,7 +116,7 @@ export default async function HomePage() {
               <CategoryCard
                 key={cat.id}
                 slug={cat.slug}
-                name={cat.name}
+                name={L(cat.name, locale)}
                 desc={shortDesc(cat)}
                 image={cat.image}
                 count={countLabel(cat, perCategory.get(cat.id) ?? 0)}
@@ -145,11 +146,11 @@ export default async function HomePage() {
           <h2>{home.receiptTitle}</h2>
           {settings.about.short.rows.map((row, i) => (
             <div className="row" key={i}>
-              <span>{row.label}</span>
-              <span className="r">{row.value}</span>
+              <span>{L(row.label, locale)}</span>
+              <span className="r">{L(row.value, locale)}</span>
             </div>
           ))}
-          <p className="thanks">{settings.about.short.thanks}</p>
+          <p className="thanks">{L(settings.about.short.thanks, locale)}</p>
           <div className="barcode"></div>
         </div>
       </div>

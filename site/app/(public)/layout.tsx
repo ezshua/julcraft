@@ -9,12 +9,13 @@ export default async function PublicLayout({
   children: React.ReactNode;
 }) {
   const settings = getSettings();
-  const dict = getDictionary(await getLocale());
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   return (
     <>
-      <Header settings={settings} layout={dict.layout} />
+      <Header settings={settings} layout={dict.layout} locale={locale} />
       {children}
-      <Footer settings={settings} dict={dict} />
+      <Footer settings={settings} dict={dict} locale={locale} />
     </>
   );
 }

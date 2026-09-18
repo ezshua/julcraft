@@ -26,6 +26,18 @@ export function slugify(input: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+/** EN-транслит названия для автогенерации SEO (D-i18n-2): русское имя → латиница,
+ * сохраняя пробелы, кавычки и регистр («Broshi»), без slugify-нормализации. */
+export function enTranslit(input: string): string {
+  return input
+    .replace(/[А-ЯЁа-яё]/g, (ch) => {
+      const lower = ch.toLowerCase();
+      const tr = TRANSLIT[lower];
+      if (tr === undefined) return ch;
+      return ch === lower ? tr : tr.charAt(0).toUpperCase() + tr.slice(1);
+    });
+}
+
 export {
   formatPrice,
   formatMoney,

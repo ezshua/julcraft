@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
+import { firstLocale } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, asPriced } from "@/lib/format";
@@ -51,6 +52,8 @@ export default async function AdminProductsPage(props: {
 
   const allCats = db.select().from(categories).orderBy(asc(categories.sortOrder)).all();
   const allProducts = db.select().from(products).all();
+  const catName = (c: (typeof allCats)[number]) => firstLocale(c.name);
+  const prodName = (p: (typeof allProducts)[number]) => firstLocale(p.name);
 
   const countFor = (filter: FilterValue, cid: number) =>
     allProducts.filter((p) => {
@@ -90,7 +93,7 @@ export default async function AdminProductsPage(props: {
   const currentPage = Math.min(page, pages);
   const pageItems = found.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const catById = new Map(allCats.map((c) => [c.id, c]));
+  const catById = new Map(allCats.map((c) => [c.id, { id: c.id, name: catName(c) }]));
   const baseParams = { f: f !== "all" ? f : undefined, cat: catId ? String(catId) : undefined };
   const pageUrl = (p: number) =>
     buildUrl({ ...baseParams, page: p > 1 ? String(p) : undefined });
@@ -115,7 +118,7 @@ export default async function AdminProductsPage(props: {
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
           <span className="doodle">всё в одном экземпляре</span>
           <ProductModal
-            categories={allCats.map((c) => ({ id: c.id, name: c.name }))}
+            categories={allCats.map((c) => ({ id: c.id, name: catName(c) }))}
             finance={finance}
             currencyCode={currencyCode}
           />
@@ -148,7 +151,7 @@ export default async function AdminProductsPage(props: {
             ))}
           </div>
           <CatFilter
-            categories={allCats.map((c) => ({ id: c.id, name: c.name }))}
+            categories={allCats.map((c) => ({ id: c.id, name: catName(c) }))}
             value={catId}
             baseParams={baseParams}
           />
@@ -182,7 +185,7 @@ export default async function AdminProductsPage(props: {
                     </div>
                   </td>
                   <td className="cell-name">
-                    <b>{p.name}</b>
+                    <b>{prodName(p)}</b>
                     <small>ID (URL): {p.slug}</small>
                   </td>
                   <td>{catById.get(p.categoryId)?.name ?? "—"}</td>
@@ -195,14 +198,14 @@ export default async function AdminProductsPage(props: {
                   <td>
                     <div className="actions">
                       <ProductModal
-                        categories={allCats.map((c) => ({ id: c.id, name: c.name }))}
+                        categories={allCats.map((c) => ({ id: c.id, name: catName(c) }))}
                         product={p}
                         finance={finance}
                         currencyCode={currencyCode}
                       />
                       <DeleteButton
                         url={`/api/admin/products/${p.id}`}
-                        confirmText={`Удалить товар «${p.name}»?`}
+                        confirmText={`Удалить товар «${prodName(p)}»?`}
                       />
                     </div>
                   </td>

@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { categories, components, componentTypes, slotTemplates } from "@/drizzle/schema";
+import { categories, components, slotTemplates } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getDictionary, getLocale, t } from "@/lib/i18n";
+import { L } from "@/lib/localize";
+import { getTypeLabel } from "@/lib/component-types";
 import ConfiguratorClient from "@/components/configurator/ConfiguratorClient";
 
 export async function generateMetadata(props: {
@@ -16,11 +18,11 @@ export async function generateMetadata(props: {
   const dict = getDictionary(locale);
   const category = db.select().from(categories).where(eq(categories.slug, slug)).get();
   const title = category
-    ? t(dict, "meta.configuratorCategory.title", { name: category.name })
+    ? t(dict, "meta.configuratorCategory.title", { name: L(category.name, locale) })
     : t(dict, "meta.configurator.title");
   const description = category
     ? t(dict, "meta.configuratorCategory.description", {
-        name: category.name.toLowerCase(),
+        name: L(category.name, locale).toLowerCase(),
       })
     : t(dict, "meta.configuratorFallback.description");
   return {
@@ -54,17 +56,8 @@ export default async function ConfiguratorCategoryPage(props: {
     .orderBy(asc(components.id))
     .all();
 
-  // Человекочитаемые имена типов — из справочника БД (для tag-строки signboard)
-  const typeNames = new Map(
-    db
-      .select()
-      .from(componentTypes)
-      .orderBy(asc(componentTypes.sortOrder))
-      .all()
-      .filter((t) => t.isActive)
-      .map((t) => [t.code, t.name]),
-  );
-
+  // Человекочитаемые имена типов — из справочника БД (для tag-строки signboard),
+  // через L(): localizedString {ru,en,uk} с фолбэком на ru.
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
   const locale = await getLocale();
@@ -76,7 +69,7 @@ export default async function ConfiguratorCategoryPage(props: {
     <ConfiguratorClient
       category={{
         id: category.id,
-        name: category.name,
+        name: L(category.name, locale),
         slug: category.slug,
         workPriceMinor: category.workPrice,
         workPriceCurrency: category.workPriceCurrency,
@@ -84,13 +77,13 @@ export default async function ConfiguratorCategoryPage(props: {
       }}
       slots={slots.map((s) => ({
         id: s.id,
-        name: s.name,
+        name: L(s.name, locale),
         componentType: s.componentType,
         minQty: s.minQty,
         maxQty: s.maxQty,
       }))}
       slotTypes={slotTypes}
-      typeNames={slotTypes.map((code) => ({ code, name: typeNames.get(code) ?? code }))}
+      typeNames={slotTypes.map((code) => ({ code, name: getTypeLabel(code, locale) }))}
       components={comps
         .filter((c) => slotTypes.includes(c.componentType))
         .map((c) => ({

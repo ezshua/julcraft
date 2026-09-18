@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { firstLocale, toLS } from "@/lib/localize";
+import LocalizedField, { type LocalizedValue } from "./LocalizedField";
 
 export type ComponentTypeItem = {
   id: number;
@@ -26,11 +28,11 @@ type Props = {
 export default function ComponentTypesManager({ types }: Props) {
   const router = useRouter();
   const [code, setCode] = useState("");
-  const [name, setName] = useState("");
+  const [name, setName] = useState<LocalizedValue>({ ru: "", en: "", uk: "" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editName, setEditName] = useState("");
+  const [editName, setEditName] = useState<LocalizedValue>({ ru: "", en: "", uk: "" });
   const [editSortOrder, setEditSortOrder] = useState("0");
 
   const create = async () => {
@@ -43,7 +45,7 @@ export default function ComponentTypesManager({ types }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code: code.trim(),
-          name: name.trim(),
+          name,
           sortOrder:
             (types.length
               ? Math.max(...types.map((t) => t.sortOrder))
@@ -58,7 +60,7 @@ export default function ComponentTypesManager({ types }: Props) {
         return;
       }
       setCode("");
-      setName("");
+      setName({ ru: "", en: "", uk: "" });
       router.refresh();
     } catch {
       setError("Не получилось создать тип");
@@ -68,7 +70,7 @@ export default function ComponentTypesManager({ types }: Props) {
 
   const update = async (
     id: number,
-    payload: { name?: string; sortOrder?: number; isActive?: boolean },
+    payload: { name?: LocalizedValue; sortOrder?: number; isActive?: boolean },
   ) => {
     setError("");
     try {
@@ -91,7 +93,7 @@ export default function ComponentTypesManager({ types }: Props) {
   };
 
   const remove = async (t: ComponentTypeItem) => {
-    if (!confirm(`Удалить тип «${t.name}»?`)) return;
+    if (!confirm(`Удалить тип «${firstLocale(t.name)}»?`)) return;
     setError("");
     try {
       const res = await fetch(`/api/admin/component-types/${t.id}`, {
@@ -110,13 +112,13 @@ export default function ComponentTypesManager({ types }: Props) {
 
   const startEdit = (t: ComponentTypeItem) => {
     setEditingId(t.id);
-    setEditName(t.name);
+    setEditName(toLS(t.name));
     setEditSortOrder(String(t.sortOrder));
   };
 
   const saveEdit = async (id: number) => {
     const ok = await update(id, {
-      name: editName.trim() || "Без названия",
+      name: editName && editName.ru.trim() ? editName : undefined,
       sortOrder: Number(editSortOrder) || 0,
     });
     if (ok) setEditingId(null);
@@ -165,13 +167,13 @@ export default function ComponentTypesManager({ types }: Props) {
               </td>
               <td>
                 {editingId === t.id ? (
-                  <input
-                    type="text"
+                  <LocalizedField
                     value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
+                    onChange={setEditName}
+                    label="Название"
                   />
                 ) : (
-                  t.name
+                  firstLocale(t.name)
                 )}
               </td>
               <td style={{ width: 90 }}>
@@ -277,15 +279,15 @@ export default function ComponentTypesManager({ types }: Props) {
           <input
             type="text"
             placeholder="напр. Оплетка провода"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={name.ru}
+            onChange={(e) => setName({ ...name, ru: e.target.value })}
           />
         </div>
         <div className="field">
           <label>&nbsp;</label>
           <button
             className="btn btn--primary btn--small"
-            disabled={busy || !code.trim() || !name.trim()}
+            disabled={busy || !code.trim() || !name.ru.trim()}
             onClick={() => void create()}
           >
             + Добавить тип

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { SiteSettings } from "@/lib/settings";
+import { firstLocale, toLS } from "@/lib/localize";
+import LocalizedField, { type LocalizedValue } from "./LocalizedField";
 import {
   amountToMinor,
   minorToAmount,
@@ -13,8 +15,8 @@ import {
 import { useCurrency } from "@/lib/use-currency";
 import TelegramTestButton from "./TelegramTestButton";
 
-type Row = { label: string; value: string };
-type Principle = { title: string; text: string };
+type Row = { label: LocalizedValue; value: LocalizedValue };
+type Principle = { title: LocalizedValue; text: LocalizedValue };
 
 const HOUR_DAYS = ["Понедельник", "Вторник — Пятница", "Суббота", "Воскресенье"];
 
@@ -37,22 +39,26 @@ export default function SettingsPanel({
   // Контакты
   const [phone, setPhone] = useState(settings.contacts.phone);
   const [email, setEmail] = useState(settings.contacts.email);
-  const [address, setAddress] = useState(settings.contacts.address);
+  const [address, setAddress] = useState<LocalizedValue>(toLS(settings.contacts.address));
   const [tgram, setTgram] = useState(settings.contacts.telegram);
   const [instagram, setInstagram] = useState(settings.contacts.instagram);
-  const [hours, setHours] = useState<string[]>(
-    HOUR_DAYS.map((_, i) => settings.contacts.hours[i]?.value ?? ""),
+  const [hours, setHours] = useState<LocalizedValue[]>(
+    HOUR_DAYS.map((_, i) => toLS(settings.contacts.hours[i]?.value ?? "")),
   );
 
   // Тексты
-  const [shortRows, setShortRows] = useState<Row[]>(settings.about.short.rows);
-  const [shortThanks, setShortThanks] = useState(settings.about.short.thanks);
-  const [historyRows, setHistoryRows] = useState<Row[]>(settings.about.history.rows);
-  const [historyThanks, setHistoryThanks] = useState(settings.about.history.thanks);
+  const [shortRows, setShortRows] = useState<Row[]>(
+    settings.about.short.rows.map((r) => ({ label: toLS(r.label), value: toLS(r.value) })),
+  );
+  const [shortThanks, setShortThanks] = useState<LocalizedValue>(toLS(settings.about.short.thanks));
+  const [historyRows, setHistoryRows] = useState<Row[]>(
+    settings.about.history.rows.map((r) => ({ label: toLS(r.label), value: toLS(r.value) })),
+  );
+  const [historyThanks, setHistoryThanks] = useState<LocalizedValue>(toLS(settings.about.history.thanks));
   const [principles, setPrinciples] = useState<Principle[]>(
     settings.about.principles.length > 0
-      ? settings.about.principles
-      : [{ title: "", text: "" }],
+      ? settings.about.principles.map((p) => ({ title: toLS(p.title), text: toLS(p.text) }))
+      : [{ title: { ru: "", en: "", uk: "" }, text: { ru: "", en: "", uk: "" } }],
   );
 
   // Telegram
@@ -171,16 +177,16 @@ export default function SettingsPanel({
     save([
       { key: "contacts.phone", value: phone },
       { key: "contacts.email", value: email },
-      { key: "contacts.address", value: address },
+      { key: "contacts.address", value: JSON.stringify(address) },
       { key: "contacts.telegram", value: tgram },
       { key: "contacts.instagram", value: instagram },
       {
         key: "contacts.hours",
         value: JSON.stringify(
           HOUR_DAYS.map((day, i) => ({
-            day,
-            value: hours[i] ?? "",
-            closed: closedFrom(hours[i] ?? ""),
+            day: { ru: day },
+            value: hours[i] ?? { ru: "", en: "", uk: "" },
+            closed: closedFrom(hours[i]?.ru ?? ""),
           })),
         ),
       },
@@ -190,13 +196,24 @@ export default function SettingsPanel({
     save([
       {
         key: "about.short",
-        value: JSON.stringify({ rows: shortRows, thanks: shortThanks }),
+        value: JSON.stringify({
+          rows: shortRows.map((r) => ({ label: r.label, value: r.value })),
+          thanks: shortThanks,
+        }),
       },
       {
         key: "about.history",
-        value: JSON.stringify({ rows: historyRows, thanks: historyThanks }),
+        value: JSON.stringify({
+          rows: historyRows.map((r) => ({ label: r.label, value: r.value })),
+          thanks: historyThanks,
+        }),
       },
-      { key: "about.principles", value: JSON.stringify(principles) },
+      {
+        key: "about.principles",
+        value: JSON.stringify(
+          principles.map((p) => ({ title: p.title, text: p.text })),
+        ),
+      },
     ]);
 
   const saveTelegram = () =>
@@ -272,8 +289,11 @@ export default function SettingsPanel({
             </div>
           </div>
           <div className="field">
-            <label>Адрес мастерской</label>
-            <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+            <LocalizedField
+              value={address}
+              onChange={setAddress}
+              label="Адрес мастерской"
+            />
           </div>
           <div className="field--row">
             <div className="field">
@@ -287,45 +307,33 @@ export default function SettingsPanel({
           </div>
           <div className="field--row">
             <div className="field">
-              <label>Часы: {HOUR_DAYS[0]}</label>
-              <input
-                type="text"
-                value={hours[0] ?? ""}
-                onChange={(e) =>
-                  setHours(hours.map((h, i) => (i === 0 ? e.target.value : h)))
-                }
+              <LocalizedField
+                value={hours[0] ?? { ru: "", en: "", uk: "" }}
+                onChange={(v) => setHours(hours.map((h, i) => (i === 0 ? v : h)))}
+                label={`Часы: ${HOUR_DAYS[0]}`}
               />
             </div>
             <div className="field">
-              <label>Часы: {HOUR_DAYS[1]}</label>
-              <input
-                type="text"
-                value={hours[1] ?? ""}
-                onChange={(e) =>
-                  setHours(hours.map((h, i) => (i === 1 ? e.target.value : h)))
-                }
+              <LocalizedField
+                value={hours[1] ?? { ru: "", en: "", uk: "" }}
+                onChange={(v) => setHours(hours.map((h, i) => (i === 1 ? v : h)))}
+                label={`Часы: ${HOUR_DAYS[1]}`}
               />
             </div>
           </div>
           <div className="field--row">
             <div className="field">
-              <label>Часы: {HOUR_DAYS[2]}</label>
-              <input
-                type="text"
-                value={hours[2] ?? ""}
-                onChange={(e) =>
-                  setHours(hours.map((h, i) => (i === 2 ? e.target.value : h)))
-                }
+              <LocalizedField
+                value={hours[2] ?? { ru: "", en: "", uk: "" }}
+                onChange={(v) => setHours(hours.map((h, i) => (i === 2 ? v : h)))}
+                label={`Часы: ${HOUR_DAYS[2]}`}
               />
             </div>
             <div className="field">
-              <label>Часы: {HOUR_DAYS[3]}</label>
-              <input
-                type="text"
-                value={hours[3] ?? ""}
-                onChange={(e) =>
-                  setHours(hours.map((h, i) => (i === 3 ? e.target.value : h)))
-                }
+              <LocalizedField
+                value={hours[3] ?? { ru: "", en: "", uk: "" }}
+                onChange={(v) => setHours(hours.map((h, i) => (i === 3 ? v : h)))}
+                label={`Часы: ${HOUR_DAYS[3]}`}
               />
             </div>
           </div>
@@ -350,19 +358,19 @@ export default function SettingsPanel({
             {shortRows.map((r, i) => (
               <div className="field--row" key={i} style={{ marginBottom: "8px" }}>
                 <div className="field" style={{ margin: 0 }}>
-                  <input
-                    type="text"
-                    placeholder="Метка"
+                  <LocalizedField
+                    compact
                     value={r.label}
-                    onChange={(e) => patchRow(shortRows, setShortRows, i, { label: e.target.value })}
+                    onChange={(v) => patchRow(shortRows, setShortRows, i, { label: v })}
+                    label="Метка"
                   />
                 </div>
                 <div className="field" style={{ margin: 0 }}>
-                  <input
-                    type="text"
-                    placeholder="Значение"
+                  <LocalizedField
+                    compact
                     value={r.value}
-                    onChange={(e) => patchRow(shortRows, setShortRows, i, { value: e.target.value })}
+                    onChange={(v) => patchRow(shortRows, setShortRows, i, { value: v })}
+                    label="Значение"
                   />
                 </div>
                 <button
@@ -378,17 +386,16 @@ export default function SettingsPanel({
             <div style={{ marginTop: "4px" }}>
               <button
                 className="btn btn--secondary btn--small"
-                onClick={() => setShortRows([...shortRows, { label: "", value: "" }])}
+                onClick={() => setShortRows([...shortRows, { label: { ru: "", en: "", uk: "" }, value: { ru: "", en: "", uk: "" } }])}
               >
                 + Добавить строку
               </button>
             </div>
             <div className="field" style={{ marginTop: "10px", marginBottom: 0 }}>
-              <label>Подпись (thanks)</label>
-              <input
-                type="text"
+              <LocalizedField
                 value={shortThanks}
-                onChange={(e) => setShortThanks(e.target.value)}
+                onChange={setShortThanks}
+                label="Подпись (thanks)"
               />
             </div>
           </div>
@@ -398,19 +405,19 @@ export default function SettingsPanel({
             {historyRows.map((r, i) => (
               <div className="field--row" key={i} style={{ marginBottom: "8px" }}>
                 <div className="field" style={{ margin: 0 }}>
-                  <input
-                    type="text"
-                    placeholder="Метка"
+                  <LocalizedField
+                    compact
                     value={r.label}
-                    onChange={(e) => patchRow(historyRows, setHistoryRows, i, { label: e.target.value })}
+                    onChange={(v) => patchRow(historyRows, setHistoryRows, i, { label: v })}
+                    label="Метка"
                   />
                 </div>
                 <div className="field" style={{ margin: 0 }}>
-                  <input
-                    type="text"
-                    placeholder="Значение"
+                  <LocalizedField
+                    compact
                     value={r.value}
-                    onChange={(e) => patchRow(historyRows, setHistoryRows, i, { value: e.target.value })}
+                    onChange={(v) => patchRow(historyRows, setHistoryRows, i, { value: v })}
+                    label="Значение"
                   />
                 </div>
                 <button
@@ -426,17 +433,16 @@ export default function SettingsPanel({
             <div style={{ marginTop: "4px" }}>
               <button
                 className="btn btn--secondary btn--small"
-                onClick={() => setHistoryRows([...historyRows, { label: "", value: "" }])}
+                onClick={() => setHistoryRows([...historyRows, { label: { ru: "", en: "", uk: "" }, value: { ru: "", en: "", uk: "" } }])}
               >
                 + Добавить строку
               </button>
             </div>
             <div className="field" style={{ marginTop: "10px", marginBottom: 0 }}>
-              <label>Подпись (thanks)</label>
-              <input
-                type="text"
+              <LocalizedField
                 value={historyThanks}
-                onChange={(e) => setHistoryThanks(e.target.value)}
+                onChange={setHistoryThanks}
+                label="Подпись (thanks)"
               />
             </div>
           </div>
@@ -446,23 +452,23 @@ export default function SettingsPanel({
             {principles.map((p, i) => (
               <div className="field--row" key={i} style={{ marginBottom: "8px" }}>
                 <div className="field" style={{ margin: 0 }}>
-                  <input
-                    type="text"
-                    placeholder="Заголовок"
+                  <LocalizedField
+                    compact
                     value={p.title}
-                    onChange={(e) =>
-                      setPrinciples(principles.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)))
+                    onChange={(v) =>
+                      setPrinciples(principles.map((x, j) => (j === i ? { ...x, title: v } : x)))
                     }
+                    label="Заголовок"
                   />
                 </div>
                 <div className="field" style={{ margin: 0 }}>
-                  <input
-                    type="text"
-                    placeholder="Текст"
+                  <LocalizedField
+                    compact
                     value={p.text}
-                    onChange={(e) =>
-                      setPrinciples(principles.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))
+                    onChange={(v) =>
+                      setPrinciples(principles.map((x, j) => (j === i ? { ...x, text: v } : x)))
                     }
+                    label="Текст"
                   />
                 </div>
                 <button
@@ -478,7 +484,7 @@ export default function SettingsPanel({
             <div style={{ marginTop: "4px" }}>
               <button
                 className="btn btn--secondary btn--small"
-                onClick={() => setPrinciples([...principles, { title: "", text: "" }])}
+                onClick={() => setPrinciples([...principles, { title: { ru: "", en: "", uk: "" }, text: { ru: "", en: "", uk: "" } }])}
               >
                 + Добавить карточку
               </button>

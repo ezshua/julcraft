@@ -9,6 +9,7 @@ import {
   slotTemplates,
 } from "../drizzle/schema";
 import { getSettings } from "../lib/get-settings";
+import { firstLocale } from "../lib/localize";
 
 // ============================================================
 // snapshot:check (plan-snapshot.md Шаг 3)
@@ -116,8 +117,8 @@ console.log("--- Settings ---");
 const s = getSettings();
 assert(s.contacts.phone.trim() !== "", `contacts.phone не пуст (${s.contacts.phone})`);
 assert(s.contacts.email.trim() !== "", `contacts.email не пуст (${s.contacts.email})`);
-assert(s.contacts.address.trim() !== "", `contacts.address не пуст (${s.contacts.address})`);
-assert(s.contacts.hours.length > 0 && s.contacts.hours.some((h) => h.value.trim() !== ""), "contacts.hours не пуст");
+assert(firstLocale(s.contacts.address).trim() !== "", `contacts.address не пуст (${firstLocale(s.contacts.address)})`);
+assert(s.contacts.hours.length > 0 && s.contacts.hours.some((h) => firstLocale(h.value).trim() !== ""), "contacts.hours не пуст");
 assert(s.about.short.rows.length > 0, "about.short не пуст");
 assert(s.about.history.rows.length > 0, "about.history не пуст");
 assert(s.about.principles.length > 0, "about.principles не пуст");

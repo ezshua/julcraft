@@ -5,13 +5,28 @@ import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice, asPriced } from "@/lib/format";
+import { formatPrice, asPriced, enTranslit } from "@/lib/format";
 import { getDictionary, getLocale, t } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
+import { L } from "@/lib/localize";
 import Crumbs from "@/components/ui/Crumbs";
 import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
 import OrderModal from "@/components/product/OrderModal";
 import { AvailProduct, availFullText } from "@/components/ui/Avail";
+
+// Автогенерация SEO-названия товара под локаль (D-i18n-2):
+// ручной ввод хранится как введён; без него — RU-шаблон из названия,
+// EN — транслит названия + EN-шаблон, UK — RU-фолбэк.
+function autoTitle(name: string, locale: Locale): string {
+  const translated = L(name, locale);
+  if (locale === "en") return `${enTranslit(translated)} — JulCraft`;
+  return `${translated} — JulCraft`;
+}
+
+function autoDescription(desc: string, locale: Locale): string {
+  return L(desc, locale).slice(0, 160);
+}
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -20,10 +35,14 @@ export async function generateMetadata(props: {
   const product = db.select().from(products).where(eq(products.slug, slug)).get();
   if (!product) return { title: "Каталог — JulCraft" };
 
-  // SEO-поля из админки; пустые — фолбэк на название/описание/первое фото
-  const title = product.metaTitle || `${product.name} — JulCraft`;
+  const locale = await getLocale();
+
+  // SEO-поля из админки; пустые — фолбэк на название/описание/первое фото.
+  // Ручной ввод (metaTitle/metaDescription) хранится как введён мастером
+  // (D-i18n-2); автогенерация — per-locale (EN — транслит названия).
+  const title = L(product.metaTitle, locale) || autoTitle(product.name, locale);
   const description =
-    product.metaDescription || product.description.slice(0, 160);
+    L(product.metaDescription, locale) || autoDescription(product.description, locale);
   const image = product.ogImage || product.images[0];
 
   return {
@@ -74,27 +93,27 @@ export default async function ProductPage(props: {
         items={[
           { label: catalogDict.crumbsHome, href: "/" },
           { label: catalogDict.crumbsCatalog, href: "/catalog" },
-          ...(category ? [{ label: category.name, href: `/catalog/${category.slug}` }] : []),
-          { label: product.name },
+          ...(category ? [{ label: L(category.name, locale), href: `/catalog/${category.slug}` }] : []),
+          { label: L(product.name, locale) },
         ]}
       />
 
       <section className="sect">
-        <ProductGallery images={product.images} alt={product.name} dict={productDict} />
+        <ProductGallery images={product.images} alt={L(product.name, locale)} dict={productDict} />
 
         <div className="product-info mt-40" style={{ maxWidth: "640px" }}>
-          <h1>{product.name}</h1>
+          <h1>{L(product.name, locale)}</h1>
           <span className="price">
             {formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)}
           </span>
-          <p className="p-desc">{product.description}</p>
+          <p className="p-desc">{L(product.description, locale)}</p>
           <p className="p-desc muted">{productDict.staticSecondParagraph}</p>
 
           {product.materials.length > 0 && (
             <div className="chips mb-20">
               {product.materials.map((m, i) => (
                 <span className={i % 2 === 1 ? "chip chip--mustard" : "chip"} key={i}>
-                  {m}
+                  {L(m, locale)}
                 </span>
               ))}
             </div>
@@ -103,7 +122,7 @@ export default async function ProductPage(props: {
           {product.specs.length > 0 && (
             <ul>
               {product.specs.map((s, i) => (
-                <li key={i}>{s}</li>
+                <li key={i}>{L(s, locale)}</li>
               ))}
             </ul>
           )}
@@ -117,7 +136,8 @@ export default async function ProductPage(props: {
               currencyCode={currency.code}
               dict={productDict}
               availText={availFullText(product, dict, locale)}
-              modalTitle={t(dict, "product.modalTitle", { name: product.name })}
+              modalTitle={t(dict, "product.modalTitle", { name: L(product.name, locale) })}
+              locale={locale}
             />
             <a className="btn btn--secondary" href={`/configurator/${category?.slug ?? ""}`}>
               {productDict.buildSimilar}

@@ -5,15 +5,17 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { telHref, type SiteSettings } from "@/lib/settings";
 import type { Dictionary } from "@/lib/dictionaries/ru";
+import type { Locale } from "@/lib/i18n";
 import MobileMenu from "./MobileMenu";
 import { navLabels } from "./nav-links";
 
 type HeaderProps = {
   settings: SiteSettings;
   layout: Dictionary["layout"];
+  locale: Locale;
 };
 
-export default function Header({ settings, layout }: HeaderProps) {
+export default function Header({ settings, layout, locale }: HeaderProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const links = navLabels(layout);
@@ -60,6 +62,7 @@ export default function Header({ settings, layout }: HeaderProps) {
         onClose={() => setMenuOpen(false)}
         settings={settings}
         layout={layout}
+        locale={locale}
       />
     </>
   );

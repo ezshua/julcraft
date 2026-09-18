@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ComponentTypeOption } from "./ComponentModal";
 import { plural } from "@/lib/format";
+import { toLS } from "@/lib/localize";
+import LocalizedField, { type LocalizedValue } from "./LocalizedField";
 import {
   amountToMinor,
   minorToAmount,
@@ -12,7 +14,7 @@ import {
 
 export type EditorSlot = {
   id: number | null;
-  name: string;
+  name: LocalizedValue;
   componentType: string;
   minQty: number;
   maxQty: number;
@@ -20,9 +22,9 @@ export type EditorSlot = {
 
 export type EditorCategory = {
   id: number;
-  name: string;
+  name: LocalizedValue;
   slug: string;
-  description: string;
+  description: LocalizedValue;
   image: string | null;
   workPrice: number;
   workPriceCurrency: string;
@@ -53,9 +55,9 @@ export default function CategoryEditor({
 }: Props) {
   const router = useRouter();
   const keyCounter = useRef(1000);
-  const [name, setName] = useState(category.name);
+  const [name, setName] = useState(toLS(category.name));
   const [slug, setSlug] = useState(category.slug);
-  const [description, setDescription] = useState(category.description);
+  const [description, setDescription] = useState(toLS(category.description));
   const [image, setImage] = useState(category.image ?? "");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dzDrag, setDzDrag] = useState(false);
@@ -96,7 +98,7 @@ export default function CategoryEditor({
   const [isActive, setIsActive] = useState(category.isActive);
   const [hasSlotTemplate, setHasSlotTemplate] = useState(category.hasSlotTemplate);
   const [slots, setSlots] = useState<SlotState[]>(
-    category.slots.map((s, i) => ({ ...s, key: i + 1 })),
+    category.slots.map((s, i) => ({ ...s, name: toLS(s.name), key: i + 1 })),
   );
 
   const [error, setError] = useState("");
@@ -123,6 +125,9 @@ export default function CategoryEditor({
   const patchSlot = (key: number, patch: Partial<SlotState>) =>
     setSlots((prev) => prev.map((s) => (s.key === key ? { ...s, ...patch } : s)));
 
+  const patchSlotName = (key: number, next: LocalizedValue) =>
+    setSlots((prev) => prev.map((s) => (s.key === key ? { ...s, name: next } : s)));
+
   const moveSlot = (index: number, dir: -1 | 1) =>
     setSlots((prev) => {
       const next = [...prev];
@@ -141,7 +146,7 @@ export default function CategoryEditor({
       {
         key: ++keyCounter.current,
         id: null,
-        name: "Новый слот",
+        name: { ru: "Новый слот", en: "", uk: "" },
         componentType: "stone",
         minQty: 1,
         maxQty: 1,
@@ -194,23 +199,28 @@ export default function CategoryEditor({
   return (
     <div className="board board--paper" style={{ padding: "18px 20px" }}>
       <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
-        Редактор категории «{name}»
+        Редактор категории «{name.ru}»
       </h3>
 
       <div className="field">
-        <label>Название</label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        <LocalizedField
+          value={name}
+          onChange={setName}
+          label="Название"
+          placeholder="Браслеты"
+        />
       </div>
       <div className="field">
         <label>ID (URL)</label>
         <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} />
       </div>
       <div className="field">
-        <label>Описание</label>
-        <textarea
-          placeholder="Что показывать в шапке категории"
+        <LocalizedField
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={setDescription}
+          label="Описание"
+          multiline
+          placeholder="Что показывать в шапке категории"
         />
       </div>
       <div className="field">
@@ -369,7 +379,7 @@ export default function CategoryEditor({
         {slots.map((s, i) => (
           <div className="slot is-open" key={s.key}>
             <div className="slot-head">
-              ⣿ {s.name}
+              ⣿ {s.name.ru}
               <small>
                 тип: {s.componentType} · {s.minQty}–{s.maxQty}{" "}
                 {plural(s.maxQty, ["позиция", "позиции", "позиций"])} · порядок {i + 1}
@@ -378,11 +388,10 @@ export default function CategoryEditor({
             <div className="slot-body">
               <div className="field--row">
                 <div className="field">
-                  <label>Название</label>
-                  <input
-                    type="text"
+                  <LocalizedField
                     value={s.name}
-                    onChange={(e) => patchSlot(s.key, { name: e.target.value })}
+                    onChange={(next) => patchSlotName(s.key, next)}
+                    label="Название"
                   />
                 </div>
                 <div className="field">

@@ -8,6 +8,7 @@ import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
 import { formatPrice, asPriced } from "@/lib/format";
 import { getDictionary, getLocale, plural as pluralForms, t } from "@/lib/i18n";
+import { L } from "@/lib/localize";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -64,7 +65,7 @@ function receiptRows(
       label: d.rowComposition,
       value: config.length
         ? config
-            .map((c) => `${c.name ?? ""} ×${c.qty ?? 1}`)
+            .map((c) => `${L(c.name ?? "", locale)} ×${c.qty ?? 1}`)
             .join(" + ")
         : "—",
     });
@@ -112,7 +113,7 @@ export default async function OrderSuccessPage(props: {
   let productImage: string | null = null;
   if (order.productId) {
     const product = db.select().from(products).where(eq(products.id, order.productId)).get();
-    productName = product?.name ?? null;
+    productName = L(product?.name, locale) || null;
     productImage = product?.images?.[0] ?? null;
   }
 

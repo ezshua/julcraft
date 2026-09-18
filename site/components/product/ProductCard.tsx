@@ -4,6 +4,7 @@ import { formatPrice, asPriced } from "@/lib/format";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
 import { getDictionary, getLocale } from "@/lib/i18n";
+import { L } from "@/lib/localize";
 import type { Product } from "@/drizzle/schema";
 import { AvailShelf } from "@/components/ui/Avail";
 
@@ -23,14 +24,14 @@ export default async function ProductCard({ product }: { product: Product }) {
       <div className="photo" style={{ position: "relative" }}>
         <Image
           src={product.images[0]}
-          alt={product.name}
+          alt={L(product.name, locale)}
           fill
           sizes="(max-width: 767px) 100vw, (max-width: 1079px) 50vw, 33vw"
         />
       </div>
       <div className="info">
-        <h3>{product.name}</h3>
-        <p className="desc">{product.description}</p>
+        <h3>{L(product.name, locale)}</h3>
+        <p className="desc">{L(product.description, locale)}</p>
         <div className="tag-row">
           <span className="price">
             {formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)}

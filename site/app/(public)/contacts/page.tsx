@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSettings } from "@/lib/get-settings";
 import { telHref } from "@/lib/settings";
+import { L } from "@/lib/localize";
 import { getDictionary, getLocale, t } from "@/lib/i18n";
 import Crumbs from "@/components/ui/Crumbs";
 import ContactForm from "@/components/contacts/ContactForm";
@@ -33,8 +34,10 @@ const ROW_STYLE: React.CSSProperties = {
 export default async function ContactsPage() {
   const settings = getSettings();
   const { contacts } = settings;
-  const dict = getDictionary(await getLocale());
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const c = dict.contacts;
+  const address = L(contacts.address, locale);
 
   return (
     <>
@@ -62,8 +65,8 @@ export default async function ContactsPage() {
             <div className="item" style={{ overflow: "hidden", marginBottom: "22px" }}>
               {/* Решение №6 (Этап 6): Google Maps embed по адресу из Settings, без API-ключа */}
               <iframe
-                title={t(dict, "contacts.mapTitle", { address: contacts.address })}
-                src={`https://www.google.com/maps?q=${encodeURIComponent(contacts.address)}&output=embed`}
+                title={t(dict, "contacts.mapTitle", { address })}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 allowFullScreen
@@ -85,7 +88,7 @@ export default async function ContactsPage() {
                   textTransform: "uppercase",
                 }}
               >
-                {t(dict, "contacts.mapCaption", { address: contacts.address })}
+                {t(dict, "contacts.mapCaption", { address })}
               </span>
             </div>
 
@@ -108,7 +111,7 @@ export default async function ContactsPage() {
                 </div>
                 <div className="receipt-row" style={ROW_STYLE}>
                   <span>{c.rowAddress}</span>
-                  <span>{contacts.address}</span>
+                  <span>{address}</span>
                 </div>
                 <div className="receipt-row" style={ROW_STYLE}>
                   <span>{c.rowSocial}</span>

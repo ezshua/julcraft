@@ -1,4 +1,3 @@
 # настройки исключений для git
 .qwen/
 sample-design/images/
-site/*.zip

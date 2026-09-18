@@ -2,6 +2,7 @@ import Link from "next/link";
 import { and, desc, eq, gte, lt } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { components, orders, products } from "@/drizzle/schema";
+import { firstLocale } from "@/lib/localize";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
 import { formatPrice, asPriced, plural } from "@/lib/format";
@@ -95,16 +96,18 @@ export default async function DashboardPage() {
     .limit(5)
     .all();
   const productById = new Map(allProducts.map((p) => [p.id, p]));
+  const prodName = (p: (typeof allProducts)[number]) => firstLocale(p.name) as string;
 
   // Та же подпись под именем клиента, что в /admin/orders (OrderRow.smallText)
   const smallTextFor = (o: (typeof lastOrders)[number]): string => {
     const product = o.productId ? productById.get(o.productId) : null;
-    if (o.type === "product") return product?.name ?? "—";
+    if (o.type === "product") return prodName(product!) ?? "—";
     if (o.type === "contact") return "сообщение от контакта";
     return "коллаж из конфигуратора";
   };
 
   const stockComponents = db.select().from(components).all();
+  const compName = (c: (typeof stockComponents)[number]) => firstLocale(c.name) as string;
   const low = stockComponents.filter((c) => c.stockQty <= 5);
   const inStock = stockComponents.some((c) => c.stockQty > 5);
 

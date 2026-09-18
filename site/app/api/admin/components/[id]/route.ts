@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { components } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
 import { isValidComponentTypeCode } from "@/lib/component-types";
+import { storeLS } from "@/lib/localize";
 import { componentSchema, type ComponentInput } from "@/lib/schemas";
 
 export async function PUT(
@@ -51,7 +52,7 @@ export async function PUT(
 
   db.update(components)
     .set({
-      name: data.name,
+      name: storeLS(data.name),
       componentType: data.componentType,
       price: data.price,
       priceCurrency: data.priceCurrency,

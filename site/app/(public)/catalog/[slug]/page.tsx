@@ -5,12 +5,21 @@ import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
-import { formatPrice, asPriced, toUsdAmount } from "@/lib/format";
+import { formatPrice, asPriced, toUsdAmount, enTranslit } from "@/lib/format";
 import { getDictionary, getLocale, t } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
+import { L } from "@/lib/localize";
 import Crumbs from "@/components/ui/Crumbs";
 import ProductCard from "@/components/product/ProductCard";
 import EmptyState from "@/components/ui/EmptyState";
 import CategorySort from "@/components/category/CategorySort";
+
+// Автогенерация SEO-названия категории под локаль (D-i18n-2):
+// EN — транслит названия, RU/UK — как есть (RU-фолбэк для UK).
+function catTitleName(name: string, locale: Locale): string {
+  const translated = L(name, locale);
+  return locale === "en" ? enTranslit(translated) : translated;
+}
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -33,12 +42,12 @@ export async function generateMetadata(props: {
     .get();
 
   return {
-    title: t(dict, "meta.catalogCategory.title", { name: cat.name }),
-    description: cat.description,
+    title: t(dict, "meta.catalogCategory.title", { name: catTitleName(cat.name, locale) }),
+    description: L(cat.description, locale),
     alternates: { canonical: `/catalog/${cat.slug}` },
     openGraph: {
-      title: t(dict, "meta.catalogCategory.title", { name: cat.name }),
-      description: cat.description,
+      title: t(dict, "meta.catalogCategory.title", { name: catTitleName(cat.name, locale) }),
+      description: L(cat.description, locale),
       type: "website",
       images: first?.images[0] ? [{ url: first.images[0] }] : undefined,
     },
@@ -169,14 +178,14 @@ export default async function CategoryPage(props: {
         items={[
           { label: catalog.crumbsHome, href: "/" },
           { label: catalog.crumbsCatalog, href: "/catalog" },
-          { label: cat.name },
+          { label: L(cat.name, locale) },
         ]}
       />
 
       <div className="signboard signboard--small">
         <p className="est">{t(dict, "catalog.shelfEst", { n: cat.sortOrder })}</p>
-        <h1>{cat.name}</h1>
-        <p className="tagline">{cat.description}</p>
+        <h1>{L(cat.name, locale)}</h1>
+        <p className="tagline">{L(cat.description, locale)}</p>
       </div>
       <div className="zigzag"></div>
 

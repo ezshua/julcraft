@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { categories, slotTemplates, products } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
 import { isValidComponentTypeCode } from "@/lib/component-types";
+import { storeLS } from "@/lib/localize";
 import { categorySchema, type CategoryInput } from "@/lib/schemas";
 
 // Категория + слоты (редактор правой панели)
@@ -101,9 +102,9 @@ export async function PUT(
 
   db.update(categories)
     .set({
-      name: data.name,
+      name: storeLS(data.name),
       slug: data.slug,
-      description: data.description,
+      description: storeLS(data.description),
       image: data.image === undefined ? existing.image : data.image,
       workPrice: data.workPrice,
       workPriceCurrency: data.workPriceCurrency,
@@ -126,7 +127,7 @@ export async function PUT(
   let order = 1;
   for (const s of data.slots) {
     const values = {
-      name: s.name,
+      name: storeLS(s.name),
       componentType: s.componentType,
       minQty: s.minQty,
       maxQty: s.maxQty,

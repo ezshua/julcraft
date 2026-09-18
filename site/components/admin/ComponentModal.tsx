@@ -2,6 +2,8 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toLS } from "@/lib/localize";
+import LocalizedField, { type LocalizedValue } from "./LocalizedField";
 import {
   amountToMinor,
   minorToAmount,
@@ -50,7 +52,7 @@ export default function ComponentModal({
     );
   };
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState(component?.name ?? "");
+  const [name, setName] = useState<LocalizedValue>(toLS(component?.name ?? ""));
   const [componentType, setComponentType] = useState(
     component?.componentType ?? "",
   );
@@ -298,12 +300,11 @@ export default function ComponentModal({
           </div>
 
           <div className="field">
-            <label>Название</label>
-            <input
-              type="text"
-              placeholder="Камень «...»"
+            <LocalizedField
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={setName}
+              label="Название"
+              placeholder="Камень «...»"
             />
           </div>
           <div className="field--row">

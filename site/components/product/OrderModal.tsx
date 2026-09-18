@@ -7,6 +7,8 @@ import { formatPrice, asPriced } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
 import type { FinanceSettings } from "@/lib/currency";
 import type { Dictionary } from "@/lib/dictionaries/ru";
+import { L } from "@/lib/localize";
+import type { Locale } from "@/lib/i18n";
 import type { Product } from "@/drizzle/schema";
 
 // Модалка заявки на товар — копия div.modal-overlay#modal из mockup/product.html.
@@ -18,6 +20,7 @@ export default function OrderModal({
   dict,
   availText,
   modalTitle,
+  locale,
 }: {
   product: Product;
   finance: FinanceSettings;
@@ -25,6 +28,7 @@ export default function OrderModal({
   dict: Dictionary["product"];
   availText: string;
   modalTitle: string;
+  locale: Locale;
 }) {
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
@@ -86,10 +90,10 @@ export default function OrderModal({
           <div className="m-photo">
             <div className="thumb">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={product.images[0]} alt={product.name} />
+              <img src={product.images[0]} alt={L(product.name, locale)} />
             </div>
             <div>
-              <b>{product.name}</b>
+              <b>{L(product.name, locale)}</b>
               <small>
                 {formatPrice(asPriced(product.price, product.priceCurrency), currency, finance)} · {availText} · {dict.masterNote}
               </small>

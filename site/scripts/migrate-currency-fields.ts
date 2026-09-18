@@ -50,7 +50,8 @@ console.log(
 
 // Конвертация старых границ фильтра (USD-центы) в нативную валюту (D-23b):
 // добавляем маркер валюты и пересчитываем миноры. Идемпотентно — только если
-// маркера ещё нет. По умолчанию выбираем UAH (исторически границы задавались в ₴).
+// маркера ещё нет. Границы задавались в ₴, поэтому конвертируем в UAH.
+// (RUB исключён решением 2026-09 — все цены хранятся в гривнах.)
 function getSetting(key: string): string | undefined {
   return db
     .select()
@@ -68,18 +69,18 @@ function upsertSetting(key: string, value: string): void {
 }
 
 if (!getSetting("finance.filterLowCurrency")) {
-  // Курс рубля из настроек (по умолчанию 85)
-  let rubRate = 85;
+  // Курс гривны из настроек (по умолчанию 44)
+  let uahRate = 44;
   try {
     const arr = JSON.parse(getSetting("finance.currencies") ?? "[]") as unknown[];
     const r = (arr as Array<{ code: string; ratePerUsd: number }>).find(
       (c) => c.code === "UAH",
     );
-    if (r && r.ratePerUsd) rubRate = r.ratePerUsd;
+    if (r && r.ratePerUsd) uahRate = r.ratePerUsd;
   } catch {
     // дефолт
   }
-  const toNativeMinor = (usdCents: number) => Math.round(usdCents * rubRate);
+  const toNativeMinor = (usdCents: number) => Math.round(usdCents * uahRate);
   const low = Number(getSetting("finance.filterLow") ?? "0");
   const high = Number(getSetting("finance.filterHigh") ?? "0");
   upsertSetting("finance.filterLow", String(toNativeMinor(low)));
@@ -87,7 +88,7 @@ if (!getSetting("finance.filterLowCurrency")) {
   upsertSetting("finance.filterHigh", String(toNativeMinor(high)));
   upsertSetting("finance.filterHighCurrency", "UAH");
   console.log(
-    `finance.filterLow/High: USD-центы → рубли (rate ${rubRate}); маркер UAH добавлен.`,
+    `finance.filterLow/High: USD-центы → гривна (rate ${uahRate}); маркер UAH добавлен.`,
   );
 } else {
   console.log("finance.filterLow/High: уже в нативной валюте — пропускаем");

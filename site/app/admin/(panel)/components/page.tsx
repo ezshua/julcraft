@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { components } from "@/drizzle/schema";
+import { firstLocale } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getActiveComponentTypes, getComponentTypes } from "@/lib/component-types";
 import { getDisplayCurrency } from "@/lib/currency-server";
@@ -50,13 +51,15 @@ export default async function AdminComponentsPage(props: {
   const allTypes = getComponentTypes();
   const typeFilters = [
     { value: "", label: "Все" },
-    ...activeTypes.map((ty) => ({ value: ty.code, label: ty.name })),
+    ...activeTypes.map((ty) => ({ value: ty.code, label: typeName(ty) })),
   ];
   const t = typeFilters.some((x) => x.value === sp.t) ? sp.t! : "";
   const st = ["any", "in", "zero"].includes(sp.st ?? "") ? sp.st! : "any";
   const page = Math.max(1, Number.parseInt(sp.page ?? "1", 10) || 1);
 
   const allComponents = db.select().from(components).orderBy(asc(components.id)).all();
+  const compName = (c: (typeof allComponents)[number]) => firstLocale(c.name);
+  const typeName = (ty: (typeof allTypes)[number]) => firstLocale(ty.name);
 
   const match = (c: (typeof allComponents)[number]) => {
     if (t && c.componentType !== t) return false;
@@ -103,7 +106,7 @@ export default async function AdminComponentsPage(props: {
             currencyCode={currencyCode}
             typeOptions={activeTypes.map((ty) => ({
               value: ty.code,
-              label: ty.name,
+              label: typeName(ty),
             }))}
           />
         </div>
@@ -164,7 +167,7 @@ export default async function AdminComponentsPage(props: {
                     </div>
                   </td>
                   <td className="cell-name">
-                    <b>{c.name}</b>
+                    <b>{compName(c)}</b>
                     <small>type: {c.componentType}</small>
                   </td>
                   <td>
@@ -177,10 +180,7 @@ export default async function AdminComponentsPage(props: {
                       }`}
                       title={allTypes.find((ty) => ty.code === c.componentType)?.isActive === false ? "тип деактивирован" : undefined}
                     >
-                      {
-                        allTypes.find((ty) => ty.code === c.componentType)?.name ??
-                        c.componentType
-                      }
+                      {typeName(allTypes.find((ty) => ty.code === c.componentType)!) ?? c.componentType}
                     </span>
                   </td>
                   <td className="cell-price">{formatPrice(asPriced(c.price, c.priceCurrency), currency, finance)}</td>
@@ -204,12 +204,12 @@ export default async function AdminComponentsPage(props: {
                         currencyCode={currencyCode}
                         typeOptions={activeTypes.map((ty) => ({
                           value: ty.code,
-                          label: ty.name,
+                          label: typeName(ty),
                         }))}
                       />
                       <DeleteButton
                         url={`/api/admin/components/${c.id}`}
-                        confirmText={`Удалить комплектующее «${c.name}»?`}
+                        confirmText={`Удалить комплектующее «${compName(c)}»?`}
                       />
                     </div>
                   </td>

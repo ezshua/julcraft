@@ -9,6 +9,7 @@ import {
   slotTemplates,
 } from "../drizzle/schema";
 import { getSettings } from "../lib/get-settings";
+import { firstLocale } from "../lib/localize";
 
 function assert(condition: boolean, label: string) {
   console.log(`${condition ? "OK " : "FAIL"} ${label}`);
@@ -117,11 +118,11 @@ console.log("--- Settings из БД ---");
 const siteSettings = getSettings();
 console.log(`phone: ${siteSettings.contacts.phone}`);
 console.log(`email: ${siteSettings.contacts.email}`);
-console.log(`address: ${siteSettings.contacts.address}`);
-console.log(`hours[1]: ${siteSettings.contacts.hours[1].day} — ${siteSettings.contacts.hours[1].value}`);
+console.log(`address: ${firstLocale(siteSettings.contacts.address)}`);
+console.log(`hours[1]: ${firstLocale(siteSettings.contacts.hours[1].day)} — ${firstLocale(siteSettings.contacts.hours[1].value)}`);
 assert(siteSettings.contacts.phone === "+38 095 358 48 11", "phone из БД = +38 095 358 48 11");
 assert(
-  siteSettings.contacts.hours.length === 4 && siteSettings.contacts.hours[0].value === "выходной",
+  siteSettings.contacts.hours.length === 4 && firstLocale(siteSettings.contacts.hours[0].value) === "выходной",
   "часы: 4 строки, Пн — выходной",
 );
 assert(

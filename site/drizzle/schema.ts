@@ -1,6 +1,11 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
+// i18n-2: текстовые поля контента (categories.name/description, products.name/
+// description/metaTitle/metaDescription, components.name и т.п.) готовятся к
+// хранению JSON (LocalizedString {ru,en,uk}). Сейчас поля остаются text();
+// миграция mode="json" + конвертация legacy-строк — в шаге 2.
+
 // DEPRECATED как источник истины: оставлен только как fallback при пустой
 // таблице componentTypes (см. lib/component-types.ts). Редактируемый список
 // типов живёт в БД (админка → Категории → вкладка «Типы компонентов»).

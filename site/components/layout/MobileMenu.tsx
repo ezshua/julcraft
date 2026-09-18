@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { type SiteSettings } from "@/lib/settings";
+import { L } from "@/lib/localize";
 import type { Dictionary } from "@/lib/dictionaries/ru";
+import type { Locale } from "@/lib/i18n";
 import { navLabels } from "./nav-links";
 
 type MobileMenuProps = {
@@ -10,6 +12,7 @@ type MobileMenuProps = {
   onClose: () => void;
   settings: SiteSettings;
   layout: Dictionary["layout"];
+  locale: Locale;
 };
 
 export default function MobileMenu({
@@ -17,6 +20,7 @@ export default function MobileMenu({
   onClose,
   settings,
   layout,
+  locale,
 }: MobileMenuProps) {
   const links = navLabels(layout);
   return (
@@ -33,7 +37,7 @@ export default function MobileMenu({
         </Link>
       ))}
       <div className="mm-foot">
-        {settings.contacts.address} · ☎ {settings.contacts.phone}
+        {L(settings.contacts.address, locale)} · ☎ {settings.contacts.phone}
       </div>
     </div>
   );

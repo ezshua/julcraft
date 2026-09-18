@@ -7,6 +7,7 @@ import {
 } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
 import { BASE_COMPONENT_TYPE_CODES } from "@/lib/component-types";
+import { storeLS } from "@/lib/localize";
 import {
   componentTypeUpdateSchema,
   type ComponentTypeUpdateInput,
@@ -70,7 +71,7 @@ export async function PUT(
 
   db.update(componentTypes)
     .set({
-      name: data.name,
+      name: data.name === undefined ? undefined : storeLS(data.name),
       sortOrder: data.sortOrder,
       isActive: data.isActive,
     })

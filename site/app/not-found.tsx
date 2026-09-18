@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ErrorHeader from "@/components/layout/ErrorHeader";
+import { getSettings } from "@/lib/get-settings";
+import { L } from "@/lib/localize";
 import { getDictionary, getLocale, t } from "@/lib/i18n";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,6 +18,8 @@ export default async function NotFound() {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const e = dict.errors;
+  const settings = getSettings();
+  const address = L(settings.contacts.address, locale);
   return (
     <>
       {/* Копия mockup/error.html 1:1 (шапка и меню — свои, см. ErrorHeader) */}
@@ -62,7 +66,7 @@ export default async function NotFound() {
         <div className="f-grid">
           <div className="f-brand">
             <b>JulCraft</b>
-            <span>ул. Мстислава Скрипника, 40А — на пятачке</span>
+            <span>{address} — на пятачке</span>
           </div>
           <div className="f-copy">
             <span>{t(dict, "errors.copyright", { year: new Date().getFullYear() })}</span>

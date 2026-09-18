@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
+import { storeLS } from "@/lib/localize";
 import { productSchema, type ProductInput } from "@/lib/schemas";
 
 export async function PUT(
@@ -58,10 +59,10 @@ export async function PUT(
 
   db.update(products)
     .set({
-      name: data.name,
+      name: storeLS(data.name),
       slug: data.slug,
       categoryId: data.categoryId,
-      description: data.description,
+      description: storeLS(data.description),
       price: data.price,
       priceCurrency: data.priceCurrency,
       images: data.images,
@@ -70,8 +71,8 @@ export async function PUT(
       availability: data.availability,
       reserveUntil: data.reserveUntil ? new Date(data.reserveUntil) : null,
       orderDays: data.orderDays,
-      metaTitle: data.metaTitle ?? null,
-      metaDescription: data.metaDescription ?? null,
+      metaTitle: storeLS(data.metaTitle) || null,
+      metaDescription: storeLS(data.metaDescription) || null,
       ogImage: data.ogImage ?? null,
       updatedAt: new Date(),
     })

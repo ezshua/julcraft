@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getSettings } from "@/lib/get-settings";
 import { telHref } from "@/lib/settings";
+import { L } from "@/lib/localize";
 import { getDictionary, getLocale, t } from "@/lib/i18n";
 import HoursBoard from "@/components/ui/HoursBoard";
 
@@ -22,8 +23,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AboutPage() {
   const settings = getSettings();
-  const dict = getDictionary(await getLocale());
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const a = dict.about;
+  const address = L(settings.contacts.address, locale);
 
   return (
     <>
@@ -64,11 +67,11 @@ export default async function AboutPage() {
           <h2>{a.receiptTitle}</h2>
           {settings.about.history.rows.map((row, i) => (
             <div className="row" key={i}>
-              <span>{row.label}</span>
-              <span className="r">{row.value}</span>
+              <span>{L(row.label, locale)}</span>
+              <span className="r">{L(row.value, locale)}</span>
             </div>
           ))}
-          <p className="thanks">{settings.about.history.thanks}</p>
+          <p className="thanks">{L(settings.about.history.thanks, locale)}</p>
           <div className="barcode"></div>
         </div>
       </div>
@@ -104,8 +107,8 @@ export default async function AboutPage() {
                 )}
               </div>
               <div className="info">
-                <h3>{p.title}</h3>
-                <p className="desc">{p.text}</p>
+                <h3>{L(p.title, locale)}</h3>
+                <p className="desc">{L(p.text, locale)}</p>
               </div>
             </div>
           ))}
@@ -118,7 +121,7 @@ export default async function AboutPage() {
           <div className="hours-txt">
             <h2 className="sec-h2">{a.visitTitle}</h2>
             <p className="sec-sub">
-              {t(dict, "about.visitSub", { address: settings.contacts.address })}
+              {t(dict, "about.visitSub", { address })}
             </p>
             <p>{a.visitP1}</p>
             <p>{a.visitP2}</p>

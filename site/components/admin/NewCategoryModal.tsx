@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { amountToMinor, type FinanceSettings } from "@/lib/currency";
 import { useCurrency } from "@/lib/use-currency";
 import { slugify } from "@/lib/format";
+import LocalizedField, { type LocalizedValue } from "./LocalizedField";
 
 // Модалка «Новая категория» — копия div.modal-overlay#modal-cat из mockup/admin/categories.html.
 // «Стоимость работы» — в текущей валюте «Вид» (D-24): сохраняем «как ввели» + workPriceCurrency.
@@ -18,7 +19,7 @@ export default function NewCategoryModal({
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState<LocalizedValue>({ ru: "", en: "", uk: "" });
   const [slug, setSlug] = useState("");
   const [image, setImage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +62,7 @@ export default function NewCategoryModal({
 
   // Каждое открытие — чистая форма: состояние не переживает закрытие модалки.
   const openModal = () => {
-    setName("");
+    setName({ ru: "", en: "", uk: "" });
     setSlug("");
     setImage("");
     setWorkPrice("500");
@@ -76,7 +77,7 @@ export default function NewCategoryModal({
   // заполнен вручную — генерируем уникальный slugify(name) с суффиксом при коллизии.
   const autoSlug = async () => {
     if (slug) return;
-    const base = slugify(name);
+    const base = slugify(name.ru);
     if (base.length < 3) return;
     try {
       const res = await fetch("/api/admin/categories/slugs");
@@ -145,13 +146,11 @@ export default function NewCategoryModal({
           </div>
 
           <div className="field">
-            <label>Название</label>
-            <input
-              type="text"
-              placeholder="Браслеты"
+            <LocalizedField
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              onBlur={() => void autoSlug()}
+              onChange={setName}
+              label="Название"
+              placeholder="Браслеты"
             />
           </div>
           <div className="field">
