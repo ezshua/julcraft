@@ -6,16 +6,19 @@ type Props = {
   categories: { id: number; name: string }[];
   value: number;
   baseParams: Record<string, string | undefined>;
+  /** Срез словаря для метки селекта */
+  dict: { labelCategoryAll: string; labelCategory: string };
 };
 
 // Select «Категория: все» — переход по ?cat= (остальные фильтры сохраняются).
-export default function CatFilter({ categories, value, baseParams }: Props) {
+export default function CatFilter({ categories, value, baseParams, dict }: Props) {
+  const d = dict;
   const router = useRouter();
 
   return (
     <div className="field" style={{ margin: 0, minWidth: 220 }}>
       <select
-        aria-label="Категория"
+        aria-label={d.labelCategory}
         value={value}
         onChange={(e) => {
           const url = new URLSearchParams();
@@ -26,7 +29,7 @@ export default function CatFilter({ categories, value, baseParams }: Props) {
           router.push(`/admin/products${url.toString() ? `?${url.toString()}` : ""}`);
         }}
       >
-        <option value="">Категория: все</option>
+        <option value="">{d.labelCategoryAll}</option>
         {categories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}

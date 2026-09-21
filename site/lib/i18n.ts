@@ -50,9 +50,10 @@ export async function getLocale(): Promise<Locale> {
     const saved = (await cookies()).get(LOCALE_STORAGE_KEY)?.value;
     if (isLocale(saved)) return saved;
   } catch {
-    return "ru";
+    // вне HTTP-запроса (например, статическая генерация) — дефолт
   }
-  // i18n-3: здесь появится слой .env DEFAULT_LOCALE (cookie → .env → ru)
+  const env = process.env.DEFAULT_LOCALE;
+  if (isLocale(env)) return env;
   return "ru";
 }
 

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useAdminDict } from "./admin-dict-context";
 
-const MIN_VISIBLE = 0.05; // 5% от размера картинки должно оставаться в кадре
+const MIN_VISIBLE = 0.05; // 5% of the image must stay in frame
 const FIT_PADDING_X = 0.92; // 92vw
 const FIT_PADDING_Y = 0.88; // 88vh
 
@@ -164,12 +165,14 @@ export default function CollageLightbox({ src }: { src: string }) {
     }
   };
 
+  const d = useAdminDict().orders;
+
   return (
     <>
       <button
         className="icon-btn"
         style={{ width: 32, height: 32 }}
-        title="Смотреть коллаж"
+        title={d.lightboxView}
         onClick={(e) => {
           e.stopPropagation();
           setOpen(true);
@@ -214,7 +217,7 @@ export default function CollageLightbox({ src }: { src: string }) {
             <img
               ref={imgRef}
               src={src}
-              alt="Коллаж заявки"
+              alt={d.lightboxAlt}
               draggable={false}
               onLoad={(e) => {
                 const el = e.currentTarget;
@@ -267,7 +270,7 @@ export default function CollageLightbox({ src }: { src: string }) {
             <button
               className="icon-btn"
               style={{ width: 36, height: 36, background: "var(--paper)" }}
-              title="Уменьшить"
+              title={d.lightboxShrink}
               onClick={() => setScale((s) => Math.max(1, +(s - 0.25).toFixed(2)))}
             >
               −
@@ -275,15 +278,15 @@ export default function CollageLightbox({ src }: { src: string }) {
             <button
               className="icon-btn"
               style={{ width: 36, height: 36, background: "var(--paper)" }}
-              title="Сбросить масштаб"
+              title={d.lightboxReset}
               onClick={reset}
             >
-              1:1
+              {d.lightboxResetLabel}
             </button>
             <button
               className="icon-btn"
               style={{ width: 36, height: 36, background: "var(--paper)" }}
-              title="Увеличить"
+              title={d.lightboxZoom}
               onClick={() => setScale((s) => Math.min(8, +(s + 0.25).toFixed(2)))}
             >
               +
@@ -291,8 +294,8 @@ export default function CollageLightbox({ src }: { src: string }) {
             <button
               className="icon-btn"
               style={{ width: 36, height: 36, background: "var(--paper)" }}
-              title="Закрыть"
-              aria-label="Закрыть"
+              title={d.lightboxClose}
+              aria-label={d.lightboxClose}
               onClick={() => setOpen(false)}
             >
               ✕

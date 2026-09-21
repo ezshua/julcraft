@@ -8,8 +8,9 @@ import OrderModal, {
 import CollageLightbox from "@/components/admin/CollageLightbox";
 import { formatPrice, asPriced } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
-import { ORDER_STATUS_LABELS } from "@/lib/order-status-labels";
+import { useAdminDict } from "./admin-dict-context";
 import type { FinanceSettings } from "@/lib/currency";
+import type { OrderStatus } from "@/drizzle/schema";
 
 const TYPE_TAGS: Record<string, string> = {
   product: "tag--new",
@@ -17,10 +18,10 @@ const TYPE_TAGS: Record<string, string> = {
   contact: "tag--olive",
 };
 
-const TYPE_LABELS: Record<string, string> = {
-  product: "товар",
-  custom: "сборка",
-  contact: "записка",
+const TYPE_LABEL_KEYS: Record<string, "typeProduct" | "typeCustom" | "typeContact"> = {
+  product: "typeProduct",
+  custom: "typeCustom",
+  contact: "typeContact",
 };
 
 function fmtDate(d: Date): string {
@@ -39,6 +40,12 @@ export default function OrderRow({
   finance: FinanceSettings;
   currencyCode: string;
 }) {
+  const d = useAdminDict();
+  const statusLabels = d.statusLabels as unknown as Record<OrderStatus, string>;
+  const typeLabels = d.orders as unknown as Record<
+    "typeProduct" | "typeCustom" | "typeContact",
+    string
+  >;
   const modalRef = useRef<OrderModalHandle>(null);
   const { currency } = useCurrency(finance, currencyCode);
 
@@ -52,7 +59,9 @@ export default function OrderRow({
     <tr onClick={onRowClick} style={{ cursor: "pointer" }}>
       <td className="num">#{order.id}</td>
       <td>
-        <span className={`tag ${TYPE_TAGS[order.type]}`}>{TYPE_LABELS[order.type]}</span>
+        <span className={`tag ${TYPE_TAGS[order.type]}`}>
+          {typeLabels[TYPE_LABEL_KEYS[order.type]]}
+        </span>
       </td>
       <td className="cell-name">
         <b>{order.customerName}</b>
@@ -63,20 +72,39 @@ export default function OrderRow({
       </td>
       <td className="cell-price">
         {order.type === "contact"
-          ? "—"
-          : formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance)}
+          ? d.orders.emptyDash
+          : formatPrice(
+              asPriced(order.calcPrice, order.calcPriceCurrency),
+              currency,
+              finance,
+            )}
       </td>
       <td className="num">
-        {order.type === "custom" && order.calcDays > 0 ? `${order.calcDays} дн` : "—"}
+        {order.type === "custom" && order.calcDays > 0
+          ? `${order.calcDays} ${d.orders.daysShort}`
+          : d.orders.emptyDash}
       </td>
-      <td>{order.collagePath ? <CollageLightbox src={order.collagePath} /> : "—"}</td>
       <td>
-        <span className={`tag tag--${order.status}`}>{ORDER_STATUS_LABELS[order.status]}</span>
+        {order.collagePath ? (
+          <CollageLightbox src={order.collagePath} />
+        ) : (
+          d.orders.emptyDash
+        )}
+      </td>
+      <td>
+        <span className={`tag tag--${order.status}`}>
+          {statusLabels[order.status]}
+        </span>
       </td>
       <td className="num">{fmtDate(order.createdAt)}</td>
       <td>
         <div className="actions">
-          <OrderModal ref={modalRef} order={order} finance={finance} currencyCode={currencyCode} />
+          <OrderModal
+            ref={modalRef}
+            order={order}
+            finance={finance}
+            currencyCode={currencyCode}
+          />
         </div>
       </td>
     </tr>

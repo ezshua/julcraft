@@ -8,9 +8,9 @@ import { getSettings } from "@/lib/get-settings";
 import { formatPrice, asPriced, plural } from "@/lib/format";
 import { sumPriced } from "@/lib/currency";
 import { ORDER_STATUS_LABELS } from "@/lib/order-status-labels";
+import { getDictionary, getLocale } from "@/lib/i18n";
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-const SHORT_DAYS = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 function startOfDay(d: Date): Date {
@@ -20,14 +20,17 @@ function startOfDay(d: Date): Date {
 }
 
 // Дата как в демо дашборда: «сегодня 18:04», «вчера 20:15», «пн 17:38»
-function relDate(d: Date): string {
+function relDate(
+  d: Date,
+  dict: { today: string; yesterday: string; weekdays: string[] },
+): string {
   const now = new Date();
   const today = startOfDay(now);
   const day = startOfDay(d);
   const hhmm = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-  if (day.getTime() === today.getTime()) return `сегодня ${hhmm}`;
-  if (day.getTime() === today.getTime() - DAY_MS) return `вчера ${hhmm}`;
-  return `${SHORT_DAYS[d.getDay()]} ${hhmm}`;
+  if (day.getTime() === today.getTime()) return `${dict.today} ${hhmm}`;
+  if (day.getTime() === today.getTime() - DAY_MS) return `${dict.yesterday} ${hhmm}`;
+  return `${dict.weekdays[d.getDay()]} ${hhmm}`;
 }
 
 // Бейдж типа заявки — те же классы, что в /admin/orders (TYPE_TAGS/TYPE_LABELS)
@@ -37,16 +40,19 @@ const TYPE_TAGS: Record<string, string> = {
   contact: "tag--olive",
 };
 
-const TYPE_LABELS: Record<string, string> = {
-  product: "товар",
-  custom: "сборка",
-  contact: "записка",
+const TYPE_LABEL_KEYS: Record<string, "typeProduct" | "typeCustom" | "typeContact"> = {
+  product: "typeProduct",
+  custom: "typeCustom",
+  contact: "typeContact",
 };
 
 // Подпись заявки в колонке «Тип» (как демо: «custom · кулон», «product · брошь»)
 
 
 export default async function DashboardPage() {
+  const dict = getDictionary(await getLocale());
+  const d = dict.admin.dashboard;
+  const od = dict.admin.orders;
   const currency = await getDisplayCurrency();
   const { finance } = getSettings();
   const now = new Date();
@@ -101,9 +107,9 @@ export default async function DashboardPage() {
   // Та же подпись под именем клиента, что в /admin/orders (OrderRow.smallText)
   const smallTextFor = (o: (typeof lastOrders)[number]): string => {
     const product = o.productId ? productById.get(o.productId) : null;
-    if (o.type === "product") return prodName(product!) ?? "—";
-    if (o.type === "contact") return "сообщение от контакта";
-    return "коллаж из конфигуратора";
+    if (o.type === "product") return prodName(product!) ?? d.productUnknown;
+    if (o.type === "contact") return d.contactMessage;
+    return d.collageFromConfig;
   };
 
   const stockComponents = db.select().from(components).all();
@@ -114,8 +120,8 @@ export default async function DashboardPage() {
   return (
     <>
       <div className="page-title">
-        <h1>Панель мастера</h1>
-        <span className="doodle">добрый вечер, Юля ☕</span>
+        <h1>{d.title}</h1>
+        <span className="doodle">{d.greeting}</span>
       </div>
 
       {/* ===== Метрики (D-10, Решения 2/2026-08-20) ===== */}
@@ -123,29 +129,29 @@ export default async function DashboardPage() {
         <div className="metrics">
           <div className="stat-card stat-card--mustard">
             <div className="num">{allProducts.length}</div>
-            <div className="lbl">Товаров на витрине</div>
+            <div className="lbl">{d.products}</div>
             <div className="sub">
-              из них {newCount} {plural(newCount, ["новинка", "новинки", "новинок"])} ·{" "}
-              {reserveCount} в резерве
+              {d.productsSubPrefix} {newCount} {plural(newCount, [d.productsSubNew, d.productsSubNewPlural, d.productsSubNewMany])} ·{" "}
+              {reserveCount} {d.productsSubReserve}
             </div>
           </div>
           <div className="stat-card stat-card--rust">
             <div className="num">{weekOrders.length}</div>
-            <div className="lbl">Заявок за неделю</div>
+            <div className="lbl">{d.ordersWeek}</div>
             <div className="sub">
-              {delta > 0 ? `+${delta} к прошлой неделе` : "как на прошлой неделе"}
+              {delta > 0 ? d.ordersWeekUp.replace("{n}", String(delta)) : d.ordersWeekFlat}
             </div>
           </div>
           <div className="stat-card stat-card--olive">
             <div className="num">{inProgress.length}</div>
-            <div className="lbl">В работе сейчас</div>
-            <div className="sub">в работе: {inProgress.length}</div>
+            <div className="lbl">{d.inProgress}</div>
+            <div className="sub">{d.inProgressSub.replace("{n}", String(inProgress.length))}</div>
           </div>
           <div className="stat-card stat-card--brown">
             <div className="num">{formatPrice(revenuePriced, currency, finance)}</div>
-            <div className="lbl">Выручка за неделю</div>
+            <div className="lbl">{d.revenueWeek}</div>
             <div className="sub">
-              из них {formatPrice(revenueCustomPriced, currency, finance)} — конфигуратор
+              {d.revenueSubPrefix} {formatPrice(revenueCustomPriced, currency, finance)} — {d.revenueConfig}
             </div>
           </div>
         </div>
@@ -155,22 +161,22 @@ export default async function DashboardPage() {
       <div className="admin-section">
         <div className="board">
           <div className="b-head">
-            <h3>Последние заявки</h3>
+            <h3>{d.recentOrders}</h3>
             <Link className="btn btn--mustard btn--small" href="/admin/orders">
-              Все заявки →
+              {d.allOrders}
             </Link>
           </div>
           <div className="table-wrap">
             <table className="tbl">
               <thead>
                 <tr>
-                  <th>№</th>
-                  <th>Тип</th>
-                  <th>Клиент</th>
-                  <th>Сумма</th>
-                  <th>Срок</th>
-                  <th>Статус</th>
-                  <th>Дата</th>
+                  <th>{od.colNum}</th>
+                  <th>{od.colType}</th>
+                  <th>{od.colClient}</th>
+                  <th>{od.colAmount}</th>
+                  <th>{od.colTerm}</th>
+                  <th>{od.colStatus}</th>
+                  <th>{od.colDate}</th>
                 </tr>
               </thead>
               <tbody>
@@ -179,29 +185,29 @@ export default async function DashboardPage() {
                      <tr key={o.id}>
                        <td className="num">{o.id}</td>
                        <td>
-                         <span className={`tag ${TYPE_TAGS[o.type]}`}>{TYPE_LABELS[o.type]}</span>
+                         <span className={`tag ${TYPE_TAGS[o.type]}`}>{d[TYPE_LABEL_KEYS[o.type]]}</span>
                        </td>
                        <td className="cell-name">
                          <b>{o.customerName}</b>
                          <small>{smallTextFor(o)}</small>
                        </td>
                        <td className="cell-price">
-                         {o.type === "contact" ? "—" : formatPrice(asPriced(o.calcPrice, o.calcPriceCurrency), currency, finance)}
+                         {o.type === "contact" ? d.productUnknown : formatPrice(asPriced(o.calcPrice, o.calcPriceCurrency), currency, finance)}
                        </td>
-                       <td>{o.type === "custom" ? `${o.calcDays} дн` : "—"}</td>
+                       <td>{o.type === "custom" ? `${o.calcDays} ${d.daysShort}` : d.productUnknown}</td>
                        <td>
                          <span className={`tag tag--${o.status}`}>
                            {ORDER_STATUS_LABELS[o.status]}
                          </span>
                        </td>
-                       <td>{relDate(o.createdAt)}</td>
+                       <td>{relDate(o.createdAt, { today: d.today, yesterday: d.yesterday, weekdays: d.weekdays })}</td>
                      </tr>
                    );
                  })}
                 {lastOrders.length === 0 && (
                   <tr>
                     <td colSpan={7} style={{ textAlign: "center", color: "var(--muted)" }}>
-                      Заявок пока нет
+                      {d.emptyOrders}
                     </td>
                   </tr>
                 )}
@@ -215,9 +221,9 @@ export default async function DashboardPage() {
       <div className="admin-section">
         <div className="board board--paper">
           <div className="b-head">
-            <h3>Склад: что кончается</h3>
+            <h3>{d.stockTitle}</h3>
             <Link className="btn btn--secondary btn--small" href="/admin/components">
-              На склад →
+              {d.stockToStock}
             </Link>
           </div>
           <div className="b-body">
@@ -229,10 +235,10 @@ export default async function DashboardPage() {
                     key={c.id}
                     className={`chip ${c.stockQty === 0 ? "chip--rust" : "chip--mustard"}`}
                   >
-                    {c.name} — {c.stockQty === 0 ? "0 шт" : `${c.stockQty} шт`}
+                    {c.name} — {c.stockQty === 0 ? d.stockZero : d.stockQty.replace("{n}", String(c.stockQty))}
                   </span>
                 ))}
-              {inStock && <span className="chip chip--olive">Остальное — в норме</span>}
+              {inStock && <span className="chip chip--olive">{d.stockNormal}</span>}
             </div>
           </div>
         </div>

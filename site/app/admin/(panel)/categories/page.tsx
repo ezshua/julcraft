@@ -6,19 +6,24 @@ import { firstLocale, toLS } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getComponentTypes } from "@/lib/component-types";
+import { getDictionary, getLocale, t, type DictionaryKey } from "@/lib/i18n";
 import AdminTabs from "@/components/admin/AdminTabs";
 import ComponentTypesManager from "@/components/admin/ComponentTypesManager";
 import CategoryList from "@/components/admin/CategoryList";
 import CategoryEditor from "@/components/admin/CategoryEditor";
 import NewCategoryModal from "@/components/admin/NewCategoryModal";
+import { AdminDictProvider } from "@/components/admin/admin-dict-context";
 
-export const metadata: Metadata = {
-  title: "Категории — JulCraft Админ",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const dict = getDictionary(await getLocale());
+  return { title: t(dict, "admin.categories.title" as DictionaryKey) };
+}
 
 export default async function AdminCategoriesPage(props: {
   searchParams: Promise<{ id?: string }>;
 }) {
+  const dict = getDictionary(await getLocale());
+
   const sp = await props.searchParams;
 
   const { finance } = getSettings();
@@ -115,30 +120,32 @@ export default async function AdminCategoriesPage(props: {
       ) : (
         <div className="board board--paper" style={{ padding: "18px 20px" }}>
           <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
-            Редактор категории
+            {dict.admin.categories.editorTitle}
           </h3>
-          <small className="muted">Выберите категорию слева</small>
+          <small className="muted">{dict.admin.categories.selectCategory}</small>
         </div>
       )}
     </div>
   );
 
   return (
+    <AdminDictProvider dict={dict.admin}>
     <>
       <div className="page-title">
-        <h1>Категории и слоты</h1>
+        <h1>{dict.admin.categories.heading}</h1>
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
-          <span className="doodle">порядок = drag&drop</span>
+          <span className="doodle">{dict.admin.categories.doodle}</span>
           <NewCategoryModal finance={finance} currencyCode={currencyCode} />
         </div>
       </div>
 
       <AdminTabs
-        firstLabel="Категории"
-        secondLabel="Типы комплектующих"
+        firstLabel={dict.admin.categories.tabCategories}
+        secondLabel={dict.admin.categories.tabTypes}
         first={categoriesTab}
         second={typesTab}
       />
     </>
+    </AdminDictProvider>
   );
 }

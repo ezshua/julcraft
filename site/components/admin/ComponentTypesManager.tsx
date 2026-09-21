@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAdminDict } from "./admin-dict-context";
 import { useRouter } from "next/navigation";
 import { firstLocale, toLS } from "@/lib/localize";
 import LocalizedField, { type LocalizedValue } from "./LocalizedField";
@@ -13,7 +14,7 @@ export type ComponentTypeItem = {
   isActive: boolean;
 };
 
-// Коды базовых типов сида — дублируют lib/component-types.ts (клиент не
+// d.colCodeы базовых типов сида — дублируют lib/component-types.ts (клиент не
 // импортирует server-only модуль): их нельзя удалить, только деактивировать.
 const BASE_CODES = new Set(["stone", "pendant", "bead", "cord", "clasp", "base"]);
 
@@ -22,10 +23,11 @@ type Props = {
 };
 
 // Управление типами комплектующих (план componentsExt): создание, переименование,
-// порядок, вкл/выкл. Код после создания не редактируется (стабильные ссылки);
+// порядок, d.activeOn/d.activeOff. d.colCode после создания не редактируется (стабильные ссылки);
 // удаление — только для неиспользуемых кастомных типов (кнопка 🗑 приходит с
 // сервера как DeleteButton, здесь — переключатели и формы).
 export default function ComponentTypesManager({ types }: Props) {
+  const d = useAdminDict().components;
   const router = useRouter();
   const [code, setCode] = useState("");
   const [name, setName] = useState<LocalizedValue>({ ru: "", en: "", uk: "" });
@@ -55,7 +57,7 @@ export default function ComponentTypesManager({ types }: Props) {
       });
       const text = await res.text();
       if (!res.ok) {
-        setError(text || "Не получилось создать тип");
+        setError(text || d.error);
         setBusy(false);
         return;
       }
@@ -63,7 +65,7 @@ export default function ComponentTypesManager({ types }: Props) {
       setName({ ru: "", en: "", uk: "" });
       router.refresh();
     } catch {
-      setError("Не получилось создать тип");
+      setError(d.error);
     }
     setBusy(false);
   };
@@ -81,19 +83,19 @@ export default function ComponentTypesManager({ types }: Props) {
       });
       if (!res.ok) {
         const text = await res.text();
-        setError(text || "Не получилось сохранить тип");
+        setError(text || d.error);
         return false;
       }
       router.refresh();
       return true;
     } catch {
-      setError("Не получилось сохранить тип");
+      setError(d.error);
       return false;
     }
   };
 
   const remove = async (t: ComponentTypeItem) => {
-    if (!confirm(`Удалить тип «${firstLocale(t.name)}»?`)) return;
+    if (!confirm(d.confirmDelete.replace("{name}", firstLocale(t.name)))) return;
     setError("");
     try {
       const res = await fetch(`/api/admin/component-types/${t.id}`, {
@@ -101,12 +103,12 @@ export default function ComponentTypesManager({ types }: Props) {
       });
       if (!res.ok) {
         const text = await res.text();
-        setError(text || "Не получилось удалить тип");
+        setError(text || d.error);
         return;
       }
       router.refresh();
     } catch {
-      setError("Не получилось удалить тип");
+      setError(d.error);
     }
   };
 
@@ -143,20 +145,20 @@ export default function ComponentTypesManager({ types }: Props) {
   return (
     <div className="board board--paper" style={{ padding: "18px 20px" }}>
       <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "6px" }}>
-        Типы комплектующих
+        {d.newTypeTitle}
       </h3>
       <small className="muted">
-        Код используется в данных и не меняется; название и порядок можно править.
+        {d.typesHint}
       </small>
 
       <table className="tbl" style={{ marginTop: "14px" }}>
         <thead>
           <tr>
-            <th>Код</th>
-            <th>Название</th>
-            <th>Порядок</th>
-            <th>Включён</th>
-            <th>Действия</th>
+            <th>{d.colCode}</th>
+            <th>{d.colName}</th>
+            <th>{d.colSortOrder}</th>
+            <th>{d.colActive}</th>
+            <th>{d.colActions}</th>
           </tr>
         </thead>
         <tbody>
@@ -170,7 +172,7 @@ export default function ComponentTypesManager({ types }: Props) {
                   <LocalizedField
                     value={editName}
                     onChange={setEditName}
-                    label="Название"
+                    label={d.colName}
                   />
                 ) : (
                   firstLocale(t.name)
@@ -192,11 +194,11 @@ export default function ComponentTypesManager({ types }: Props) {
                 <button
                   className={t.isActive ? "tag tag--order" : "tag tag--none"}
                   title={
-                    t.isActive ? "Выключить (скрыть из списков)" : "Включить"
+                    t.isActive ? d.activeOffLabel : d.activeOnLabel
                   }
                   onClick={() => void toggleActive(t)}
                 >
-                  {t.isActive ? "вкл" : "выкл"}
+                  {t.isActive ? d.activeOn : d.activeOff}
                 </button>
               </td>
               <td>
@@ -207,13 +209,13 @@ export default function ComponentTypesManager({ types }: Props) {
                         className="btn btn--primary btn--small"
                         onClick={() => void saveEdit(t.id)}
                       >
-                        Сохранить
+                        {d.save}
                       </button>
                       <button
                         className="btn btn--small"
                         onClick={() => setEditingId(null)}
                       >
-                        Отмена
+                        {d.cancel}
                       </button>
                     </>
                   ) : (
@@ -221,7 +223,7 @@ export default function ComponentTypesManager({ types }: Props) {
                       <button
                         className="icon-btn"
                         style={{ width: 32, height: 32 }}
-                        title="Порядок выше"
+                        title={d.moveUp}
                         onClick={() => void move(t, -1)}
                       >
                         ↑
@@ -229,7 +231,7 @@ export default function ComponentTypesManager({ types }: Props) {
                       <button
                         className="icon-btn"
                         style={{ width: 32, height: 32 }}
-                        title="Порядок ниже"
+                        title={d.moveDown}
                         onClick={() => void move(t, 1)}
                       >
                         ↓
@@ -237,7 +239,7 @@ export default function ComponentTypesManager({ types }: Props) {
                       <button
                         className="icon-btn"
                         style={{ width: 32, height: 32 }}
-                        title="Переименовать"
+                        title={d.rename}
                         onClick={() => startEdit(t)}
                       >
                         ✎
@@ -246,7 +248,7 @@ export default function ComponentTypesManager({ types }: Props) {
                         <button
                           className="icon-btn icon-btn--rust"
                           style={{ width: 32, height: 32 }}
-                          title="Удалить"
+                          title={d.deleteTitle}
                           onClick={() => void remove(t)}
                         >
                           🗑
@@ -266,19 +268,19 @@ export default function ComponentTypesManager({ types }: Props) {
         style={{ marginTop: "16px", alignItems: "center", gap: "12px" }}
       >
         <div className="field">
-          <label>Новый код (латиница/дефис)</label>
+          <label>{d.newCodeLabel}</label>
           <input
             type="text"
-            placeholder="напр. wire-guard"
+            placeholder={d.newCodePlaceholder}
             value={code}
             onChange={(e) => setCode(e.target.value)}
           />
         </div>
         <div className="field">
-          <label>Название</label>
+          <label>{d.colName}</label>
           <input
             type="text"
-            placeholder="напр. Оплетка провода"
+            placeholder={d.newNamePlaceholder}
             value={name.ru}
             onChange={(e) => setName({ ...name, ru: e.target.value })}
           />
@@ -290,7 +292,7 @@ export default function ComponentTypesManager({ types }: Props) {
             disabled={busy || !code.trim() || !name.ru.trim()}
             onClick={() => void create()}
           >
-            + Добавить тип
+            {d.addType}
           </button>
         </div>
       </div>

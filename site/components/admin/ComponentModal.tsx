@@ -13,6 +13,7 @@ import {
   type FinanceSettings,
 } from "@/lib/currency";
 import type { Component } from "@/drizzle/schema";
+import { useAdminDict } from "./admin-dict-context";
 
 // Опция выбора типа — данные из таблицы componentTypes (план componentsExt).
 export type ComponentTypeOption = { value: string; label: string };
@@ -37,6 +38,7 @@ export default function ComponentModal({
   typeOptions,
 }: Props) {
   const router = useRouter();
+  const d = useAdminDict().components;
 
   // Пересчёт числа поля при смене его валюты (полная точность, округление на выводе)
   const reprice = (
@@ -69,7 +71,7 @@ export default function ComponentModal({
   const selectOptions =
     component && !typeKnown
       ? [
-          { value: componentType, label: componentType + " (текущий тип)" },
+          { value: componentType, label: componentType + " (current type)" },
           ...typeOptions,
         ]
       : typeOptions;
@@ -101,7 +103,7 @@ export default function ComponentModal({
   const uploadPhoto = async (file: File | undefined) => {
     if (!file || uploadBusy) return;
     if (file.size > 2 * 1024 * 1024) {
-      setUploadError("Файл больше 2 МБ");
+      setUploadError(d.photoTooBig);
       return;
     }
     setUploadBusy(true);
@@ -113,13 +115,13 @@ export default function ComponentModal({
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const text = await res.text();
       if (!res.ok) {
-        setUploadError(text || "Не получилось загрузить файл");
+        setUploadError(text || d.photoError);
         return;
       }
       const data = JSON.parse(text) as { path: string };
       setPhoto(data.path);
     } catch {
-      setUploadError("Не получилось загрузить файл");
+      setUploadError(d.photoError);
     } finally {
       setUploadBusy(false);
     }
@@ -157,14 +159,14 @@ export default function ComponentModal({
       );
       const text = await res.text();
       if (!res.ok) {
-        setError(text || "Не получилось сохранить комплектующее");
+        setError(text || d.error);
         setBusy(false);
         return;
       }
       setOpen(false);
       router.refresh();
     } catch {
-      setError("Не получилось сохранить комплектующее");
+      setError(d.error);
       setBusy(false);
     }
   };
@@ -175,7 +177,7 @@ export default function ComponentModal({
         <button
           className="icon-btn"
           style={{ width: 32, height: 32 }}
-          title="Редактировать"
+          title={d.modalEdit}
           onClick={() => {
             setError("");
             setPrice(String(minorToAmount(component.price)));
@@ -196,7 +198,7 @@ export default function ComponentModal({
             setOpen(true);
           }}
         >
-          + Добавить комплектующее
+          {d.newButton}
         </button>
       )}
 
@@ -204,12 +206,12 @@ export default function ComponentModal({
         <div className="modal modal--wide">
           <div className="m-head">
             <h3>
-              {component ? "Редактировать комплектующее" : "Новое комплектующее на склад"}
+              {component ? d.modalEdit : d.modalCreate}
             </h3>
             <button
               className="icon-btn"
               onClick={() => setOpen(false)}
-              aria-label="Закрыть"
+              aria-label={d.modalCloseAria}
             >
               ✕
             </button>
@@ -236,11 +238,11 @@ export default function ComponentModal({
               <>
                 <div className="dz-preview">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={photo} alt="Фото комплектующего" />
+                  <img src={photo} alt={d.labelPhoto} />
                 </div>
                 <div className="dz-meta">
-                  <b>{uploadBusy ? "Загружаем…" : "Заменить фото"}</b>
-                  <small>прозрачный или белый фон · один ракурс · квадрат · до 2 МБ</small>
+                  <b>{uploadBusy ? d.uploading : d.dzReplace}</b>
+                  <small>{d.dzHint}</small>
                   {uploadError && (
                     <small style={{ color: "var(--rust)", display: "block", marginTop: 6 }}>
                       {uploadError}
@@ -254,7 +256,7 @@ export default function ComponentModal({
                       setPhoto("");
                     }}
                   >
-                    Убрать фото
+                    {d.dzRemove}
                   </button>
                 </div>
               </>
@@ -265,8 +267,8 @@ export default function ComponentModal({
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
                   </svg>
                 </div>
-                <b>{uploadBusy ? "Загружаем…" : "Перетащите PNG сюда или нажмите"}</b>
-                <small>прозрачный или белый фон · один ракурс · квадрат · до 2 МБ</small>
+                <b>{uploadBusy ? d.uploading : d.dzUpload}</b>
+                <small>{d.dzHint}</small>
                 {uploadError && (
                   <small style={{ color: "var(--rust)", display: "block", marginTop: 6 }}>
                     {uploadError}
@@ -283,7 +285,7 @@ export default function ComponentModal({
                       <path d="M12 2l7 7-7 13L5 9z" fill="#d0785a" stroke="#22242a" strokeWidth="2" />
                     </svg>
                   </div>
-                  <span>так — хорошо</span>
+                  <span>{d.dzExample}</span>
                 </div>
               </>
             )}
@@ -303,13 +305,13 @@ export default function ComponentModal({
             <LocalizedField
               value={name}
               onChange={setName}
-              label="Название"
-              placeholder="Камень «...»"
+              label={d.labelName}
+              placeholder={d.placeholderName}
             />
           </div>
           <div className="field--row">
             <div className="field">
-              <label>Тип (componentType)</label>
+              <label>{d.labelType}</label>
               <select
                 value={selectValue}
                 onChange={(e) => setComponentType(e.target.value)}
@@ -322,10 +324,10 @@ export default function ComponentModal({
               </select>
             </div>
             <div className="field">
-              <label>Остаток, шт</label>
+              <label>{d.labelStock}</label>
               <input
                 type="number"
-                placeholder="0"
+                placeholder={d.placeholderDays}
                 value={stockQty}
                 onChange={(e) => setStockQty(e.target.value)}
               />
@@ -333,17 +335,17 @@ export default function ComponentModal({
           </div>
            <div className="field--row">
             <div className="field">
-              <label>Цена</label>
+              <label>{d.labelPrice}</label>
               <input
                 type="number"
                 step="0.01"
-                placeholder="200"
+                placeholder={d.placeholderPrice}
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
               />
             </div>
             <div className="field">
-              <label>Валюта цены</label>
+              <label>{d.labelCurrency}</label>
               <select
                 value={priceCurrency}
                 onChange={(e) => {
@@ -360,17 +362,17 @@ export default function ComponentModal({
               </select>
             </div>
             <div className="field">
-              <label>Обработка</label>
+              <label>{d.labelProcessing}</label>
               <input
                 type="number"
                 step="0.01"
-                placeholder="50"
+                placeholder={d.placeholderProcessing}
                 value={processingPrice}
                 onChange={(e) => setProcessingPrice(e.target.value)}
               />
             </div>
             <div className="field">
-              <label>Валюта обработки</label>
+              <label>{d.labelProcessingCurrency}</label>
               <select
                 value={processingPriceCurrency}
                 onChange={(e) => {
@@ -387,10 +389,10 @@ export default function ComponentModal({
               </select>
             </div>
             <div className="field">
-              <label>Дни обработки</label>
+              <label>{d.labelDays}</label>
               <input
                 type="number"
-                placeholder="0"
+                placeholder={d.placeholderDays}
                 value={processingDays}
                 onChange={(e) => setProcessingDays(e.target.value)}
               />
@@ -403,7 +405,7 @@ export default function ComponentModal({
                 checked={isOrderable}
                 onChange={(e) => setIsOrderable(e.target.checked)}
               />{" "}
-              Можно заказать у поставщика
+              {d.labelOrderable}
             </label>
             <label className="checkbox">
               <input
@@ -411,14 +413,14 @@ export default function ComponentModal({
                 checked={isActive}
                 onChange={(e) => setIsActive(e.target.checked)}
               />{" "}
-              Активно на складе
+              {d.labelActive}
             </label>
           </div>
           <div className="field">
-            <label>Срок поставки, дн</label>
+            <label>{d.labelDelivery}</label>
             <input
               type="number"
-              placeholder="7"
+              placeholder={d.placeholderDelivery}
               value={deliveryDays}
               onChange={(e) => setDeliveryDays(e.target.value)}
             />
@@ -432,14 +434,14 @@ export default function ComponentModal({
 
           <div className="m-actions">
             <button className="btn btn--primary" onClick={() => void save()} disabled={busy}>
-              Сохранить на склад
+              {d.saveComponent}
             </button>
             <button
               className="btn btn--secondary"
               onClick={() => setOpen(false)}
               disabled={busy}
             >
-              Отмена
+              {d.cancel}
             </button>
           </div>
         </div>

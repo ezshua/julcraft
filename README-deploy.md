@@ -111,6 +111,9 @@ nano /opt/julcraft/site/.env
 | `AUTH_TRUST_HOST` | `true` |
 | `AUTH_URL` | `https://julcraft.zapto.org` |
 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | значения из настроек (env-приоритет) |
+| `DEFAULT_SKIN` | `memphis` (по умолч.) — скин для новых клиентов без сохранённого выбора; `handmade` = «Тёплый» |
+| `DEFAULT_CURRENCY` | пусто (по умолч.) — .env **перекрывает** Settings-дефолт, если код есть в списке валют; невалидное значение игнорируется + warning в логах сервера |
+| `DEFAULT_LOCALE` | `ru` (по умолч.) — язык для новых клиентов; допустимо `ru`/`en`/`uk`. Cookie клиента приоритетнее |
 
 Затем повторно (продолжит с места остановки):
 

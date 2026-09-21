@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useAdminDict } from "./admin-dict-context";
 import { useRouter } from "next/navigation";
 import { amountToMinor, type FinanceSettings } from "@/lib/currency";
 import { useCurrency } from "@/lib/use-currency";
@@ -17,6 +18,7 @@ export default function NewCategoryModal({
   currencyCode: string;
 }) {
   const router = useRouter();
+  const d = useAdminDict().categories;
   const { currency } = useCurrency(finance, currencyCode);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState<LocalizedValue>({ ru: "", en: "", uk: "" });
@@ -30,7 +32,7 @@ export default function NewCategoryModal({
   const uploadPhoto = async (file: File | undefined) => {
     if (!file || uploadBusy) return;
     if (file.size > 2 * 1024 * 1024) {
-      setUploadError("Файл больше 2 МБ");
+      setUploadError(d.errorTooBig);
       return;
     }
     setUploadBusy(true);
@@ -42,13 +44,13 @@ export default function NewCategoryModal({
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const text = await res.text();
       if (!res.ok) {
-        setUploadError(text || "Не получилось загрузить файл");
+        setUploadError(text || d.errorUpload);
         return;
       }
       const data = JSON.parse(text) as { path: string };
       setImage(data.path);
     } catch {
-      setUploadError("Не получилось загрузить файл");
+      setUploadError(d.errorUpload);
     } finally {
       setUploadBusy(false);
     }
@@ -112,7 +114,7 @@ export default function NewCategoryModal({
       });
       const text = await res.text();
       if (!res.ok) {
-        setError(text || "Не получилось создать категорию");
+        setError(text || d.errorCreate);
         setBusy(false);
         return;
       }
@@ -121,7 +123,7 @@ export default function NewCategoryModal({
       router.push(`/admin/categories?id=${data.id}`);
       router.refresh();
     } catch {
-      setError("Не получилось создать категорию");
+      setError(d.errorCreate);
       setBusy(false);
     }
   };
@@ -129,17 +131,17 @@ export default function NewCategoryModal({
   return (
     <>
       <button className="btn btn--primary btn--small" onClick={openModal}>
-        + Новая категория
+        {d.newButton}
       </button>
 
       <div className={open ? "modal-overlay open" : "modal-overlay"} id="modal-cat">
         <div className="modal">
           <div className="m-head">
-            <h3>Новая категория</h3>
+            <h3>{d.modalTitle}</h3>
             <button
               className="icon-btn"
               onClick={() => setOpen(false)}
-              aria-label="Закрыть"
+              aria-label={d.modalCloseAria}
             >
               ✕
             </button>
@@ -149,12 +151,12 @@ export default function NewCategoryModal({
             <LocalizedField
               value={name}
               onChange={setName}
-              label="Название"
-              placeholder="Браслеты"
+              label={d.labelName}
+              placeholder={d.placeholderName}
             />
           </div>
           <div className="field">
-            <label>ID (URL)</label>
+            <label>{d.labelSlug}</label>
             <input
               type="text"
               placeholder="brs"
@@ -163,7 +165,7 @@ export default function NewCategoryModal({
             />
           </div>
           <div className="field">
-            <label>Изображение категории</label>
+            <label>{d.labelImage}</label>
             <div
               className={
                 image ? "dropzone has-photo" : dzDrag ? "dropzone is-drag" : "dropzone"
@@ -184,11 +186,11 @@ export default function NewCategoryModal({
               {image ? (
                 <>
                   <div className="dz-preview">
-                    <img src={image} alt="Изображение категории" />
+                    <img src={image} alt={d.photoAlt} />
                   </div>
                   <div className="dz-meta">
-                    <b>{uploadBusy ? "Загружаем…" : "Заменить изображение"}</b>
-                    <small>SVG или PNG, до 2 МБ</small>
+                    <b>{uploadBusy ? d.uploadBusy : d.dzReplace}</b>
+                    <small>{d.dzHint}</small>
                     {uploadError && (
                       <small
                         style={{ color: "var(--rust)", display: "block", marginTop: 6 }}
@@ -204,7 +206,7 @@ export default function NewCategoryModal({
                         setImage("");
                       }}
                     >
-                      Убрать изображение
+                      {d.dzRemove}
                     </button>
                   </div>
                 </>
@@ -224,10 +226,10 @@ export default function NewCategoryModal({
                   </div>
                   <b>
                     {uploadBusy
-                      ? "Загружаем…"
-                      : "Перетащите изображение сюда или нажмите"}
+                      ? d.uploadBusy
+                      : d.dzUpload}
                   </b>
-                  <small>SVG или PNG, до 2 МБ</small>
+                  <small>{d.dzHint}</small>
                   {uploadError && (
                     <small
                       style={{ color: "var(--rust)", display: "block", marginTop: 6 }}
@@ -251,17 +253,17 @@ export default function NewCategoryModal({
           </div>
           <div className="field--row">
             <div className="field">
-              <label>Стоимость работы</label>
+              <label>{d.labelWorkPrice}</label>
               <input
                 type="number"
                 step="0.01"
-                placeholder="500"
+                placeholder={d.placeholderPrice}
                 value={workPrice}
                 onChange={(e) => setWorkPrice(e.target.value)}
               />
             </div>
             <div className="field">
-              <label>Валюта</label>
+              <label>{d.labelCurrency}</label>
               <select
                 value={workPriceCurrency}
                 onChange={(e) => setWorkPriceCurrency(e.target.value)}
@@ -276,10 +278,10 @@ export default function NewCategoryModal({
           </div>
           <div className="field--row">
             <div className="field">
-              <label>База срока, дн</label>
+              <label>{d.labelBaseDays}</label>
               <input
                 type="number"
-                placeholder="3"
+                placeholder={d.placeholderDays}
                 value={baseWorkDays}
                 onChange={(e) => setBaseWorkDays(e.target.value)}
               />
@@ -294,14 +296,14 @@ export default function NewCategoryModal({
 
           <div className="m-actions">
             <button className="btn btn--primary" onClick={() => void create()} disabled={busy}>
-              Создать
+              {d.create}
             </button>
             <button
               className="btn btn--secondary"
               onClick={() => setOpen(false)}
               disabled={busy}
             >
-              Отмена
+              {d.cancel}
             </button>
           </div>
         </div>

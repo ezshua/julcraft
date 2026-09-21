@@ -10,9 +10,9 @@ import type { OrderStatus } from "@/drizzle/schema";
 const LABELS_BY_LOCALE: Record<Locale, Dictionary> = { ru, en, uk };
 
 export function getOrderStatusLabels(
-  locale: Locale
+  locale: Locale,
 ): Record<OrderStatus, string> {
-  return LABELS_BY_LOCALE[locale].statusLabels;
+  return LABELS_BY_LOCALE[locale].admin.statusLabels;
 }
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> =

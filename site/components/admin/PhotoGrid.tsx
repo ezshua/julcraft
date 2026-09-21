@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import type { Dictionary } from "@/lib/dictionaries/ru";
 
 type Props = {
   images: string[];
@@ -12,6 +13,8 @@ type Props = {
   accept: string;
   /** Подсказка под сеткой */
   hint: string;
+  /** Срез словаря (products или components) для подписей ячеек */
+  dict: Dictionary["admin"]["products"];
 };
 
 const MAX = 6;
@@ -21,7 +24,8 @@ const MAX = 6;
 // с кнопкой удаления, пустая — пунктирный слот «+», в который можно
 // кликнуть или перетащить файл. Первая ячейка помечена «обложка».
 // Заполненные ячейки можно перетаскивать друг на друга для смены порядка.
-export default function PhotoGrid({ images, onChange, kind, maxMB, accept, hint }: Props) {
+export default function PhotoGrid({ images, onChange, kind, maxMB, accept, hint, dict }: Props) {
+  const d = dict;
   const inputRef = useRef<HTMLInputElement>(null);
   const targetIndex = useRef<number>(images.length);
   const [overCell, setOverCell] = useState<number | null>(null);
@@ -32,7 +36,7 @@ export default function PhotoGrid({ images, onChange, kind, maxMB, accept, hint 
   const uploadAt = async (file: File | undefined, index: number) => {
     if (!file || busy) return;
     if (file.size > maxMB * 1024 * 1024) {
-      setError(`Файл больше ${maxMB} МБ`);
+      setError(d.photoTooBig.replace("{mb}", String(maxMB)));
       return;
     }
     setBusy(true);
@@ -44,19 +48,19 @@ export default function PhotoGrid({ images, onChange, kind, maxMB, accept, hint 
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const text = await res.text();
       if (!res.ok) {
-        setError(text || "Не получилось загрузить файл");
+        setError(text || d.photoError);
         return;
       }
       const data = JSON.parse(text) as { path: string };
       const next = [...images];
       next.splice(Math.min(index, next.length), 0, data.path);
       if (next.length > MAX) {
-        setError(`Максимум ${MAX} фото`);
+        setError(d.photoMax.replace("{n}", String(MAX)));
         return;
       }
       onChange(next);
     } catch {
-      setError("Не получилось загрузить файл");
+      setError(d.photoError);
     } finally {
       setBusy(false);
     }
@@ -142,7 +146,7 @@ export default function PhotoGrid({ images, onChange, kind, maxMB, accept, hint 
             >
               {filled ? (
                 <>
-                  {i === 0 && <span className="cover-tag">обложка</span>}
+                  {i === 0 && <span className="cover-tag">{d.photoCover}</span>}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={img} alt="" />
                   <button
@@ -156,7 +160,7 @@ export default function PhotoGrid({ images, onChange, kind, maxMB, accept, hint 
                       fontSize: ".7rem",
                       borderWidth: 2,
                     }}
-                    title="Удалить фото"
+                    title={d.photoDelete}
                     onClick={(e) => {
                       e.stopPropagation();
                       onChange(images.filter((_, j) => j !== i));
@@ -180,9 +184,9 @@ export default function PhotoGrid({ images, onChange, kind, maxMB, accept, hint 
         onChange={onPick}
       />
       <div className="grid-hint" style={{ textAlign: "center" }}>
-        {hint} · загружено {images.length} из {MAX}
+        {hint} · {d.gridUploaded.replace("{n}", String(images.length)).replace("{max}", String(MAX))}
       </div>
-      {busy && <div className="grid-hint">Загружаем…</div>}
+      {busy && <div className="grid-hint">{d.gridUploading}</div>}
       {error && <div className="grid-error">{error}</div>}
     </div>
   );

@@ -37,6 +37,9 @@
   var link = document.querySelector('link[rel="stylesheet"]');
   if (!link) return;
 
+  // Стартовый скин: из localStorage (приоритет) или data-default-skin (сервер,
+  // i18n-3 D-i18n-6: DEFAULT_SKIN из .env). Fallback — по href.
+  var defaultSkin = link.getAttribute('data-default-skin') === HANDMADE ? HANDMADE : MEMPHIS;
   var href = link.getAttribute('href') || '';
   var isMemphis = href.indexOf(MEMPHIS) !== -1;
 
@@ -58,6 +61,10 @@
   } else if (saved === MEMPHIS && !isMemphis) {
     link.setAttribute('href', memphisPath);
     isMemphis = true;
+  } else if (!saved && isMemphis !== (defaultSkin === MEMPHIS)) {
+    // localStorage пуст — привести href к дефолту из .env
+    link.setAttribute('href', defaultSkin === MEMPHIS ? memphisPath : handmadePath);
+    isMemphis = defaultSkin === MEMPHIS;
   }
 
   function savedCurrency() {

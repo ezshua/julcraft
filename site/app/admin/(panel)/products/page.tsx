@@ -5,23 +5,25 @@ import { categories, products } from "@/drizzle/schema";
 import { firstLocale } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
+import { getDictionary, getLocale } from "@/lib/i18n";
 import { formatPrice, asPriced } from "@/lib/format";
 import ProductModal from "@/components/admin/ProductModal";
 import DeleteButton from "@/components/admin/DeleteButton";
 import CatFilter from "@/components/admin/CatFilter";
 
-export const metadata: Metadata = {
-  title: "Товары — JulCraft Админ",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const dict = getDictionary(await getLocale());
+  return { title: dict.admin.products.title };
+}
 
 const PAGE_SIZE = 12;
 
 const FILTERS = [
-  { value: "all", label: "Все" },
-  { value: "new", label: "Новинки" },
-  { value: "feat", label: "Избранное" },
-  { value: "stock", label: "В наличии" },
-  { value: "order", label: "Под заказ" },
+  { value: "all", key: "filterAll" },
+  { value: "new", key: "filterNew" },
+  { value: "feat", key: "filterFeat" },
+  { value: "stock", key: "filterStock" },
+  { value: "order", key: "filterOrder" },
 ] as const;
 
 type FilterValue = (typeof FILTERS)[number]["value"];
@@ -40,6 +42,7 @@ export default async function AdminProductsPage(props: {
 }) {
   const sp = await props.searchParams;
 
+  const d = getDictionary(await getLocale()).admin.products;
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
   const currencyCode = currency.code;
@@ -101,22 +104,26 @@ export default async function AdminProductsPage(props: {
   const availTag = (p: (typeof allProducts)[number]) => {
     switch (p.availability) {
       case "reserve":
-        return <span className="tag tag--reserve">резерв</span>;
+        return <span className="tag tag--reserve">{d.availReserve}</span>;
       case "made_to_order":
-        return <span className="tag tag--order">под заказ · {p.orderDays ?? 0} дн</span>;
+        return (
+          <span className="tag tag--order">
+            {d.availOrder.replace("{days}", String(p.orderDays ?? 0))}{" "}
+          </span>
+        );
       case "out_of_stock":
-        return <span className="tag tag--none">нет на складе</span>;
+        return <span className="tag tag--none">{d.availNone}</span>;
       default:
-        return <span className="tag tag--stock">в наличии</span>;
+        return <span className="tag tag--stock">{d.availStock}</span>;
     }
   };
 
   return (
     <>
       <div className="page-title">
-        <h1>Товары</h1>
+        <h1>{d.heading}</h1>
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
-          <span className="doodle">всё в одном экземпляре</span>
+          <span className="doodle">{d.doodle}</span>
           <ProductModal
             categories={allCats.map((c) => ({ id: c.id, name: catName(c) }))}
             finance={finance}
@@ -146,7 +153,7 @@ export default async function AdminProductsPage(props: {
                   f: x.value !== "all" ? x.value : undefined,
                 })}
               >
-                {x.label} ({countFor(x.value, catId)})
+                {d[x.key]} ({countFor(x.value, catId)})
               </a>
             ))}
           </div>
@@ -154,6 +161,7 @@ export default async function AdminProductsPage(props: {
             categories={allCats.map((c) => ({ id: c.id, name: catName(c) }))}
             value={catId}
             baseParams={baseParams}
+            dict={{ labelCategoryAll: d.labelCategoryAll, labelCategory: d.labelCategory }}
           />
         </div>
       </div>
@@ -163,14 +171,14 @@ export default async function AdminProductsPage(props: {
           <table className="tbl">
             <thead>
               <tr>
-                <th>Фото</th>
-                <th>Название</th>
-                <th>Категория</th>
-                <th>Цена</th>
-                <th>Новинка</th>
-                <th>Избранное</th>
-                <th>Наличие</th>
-                <th>Действия</th>
+                <th>{d.colPhoto}</th>
+                <th>{d.colName}</th>
+                <th>{d.colCategory}</th>
+                <th>{d.colPrice}</th>
+                <th>{d.colNew}</th>
+                <th>{d.colFeat}</th>
+                <th>{d.colAvail}</th>
+                <th>{d.colActions}</th>
               </tr>
             </thead>
             <tbody>
@@ -186,13 +194,23 @@ export default async function AdminProductsPage(props: {
                   </td>
                   <td className="cell-name">
                     <b>{prodName(p)}</b>
-                    <small>ID (URL): {p.slug}</small>
+                    <small>{d.slugHint}: {p.slug}</small>
                   </td>
                   <td>{catById.get(p.categoryId)?.name ?? "—"}</td>
                   <td className="cell-price">{formatPrice(asPriced(p.price, p.priceCurrency), currency, finance)}</td>
-                  <td>{p.isNew ? <span className="tag tag--new">новинка</span> : "—"}</td>
                   <td>
-                    {p.isFeatured ? <span className="tag tag--reserve">да</span> : "—"}
+                    {p.isNew ? (
+                      <span className="tag tag--new">{d.newTag}</span>
+                    ) : (
+                      d.featNo
+                    )}
+                  </td>
+                  <td>
+                    {p.isFeatured ? (
+                      <span className="tag tag--reserve">{d.featYes}</span>
+                    ) : (
+                      d.featNo
+                    )}
                   </td>
                   <td>{availTag(p)}</td>
                   <td>
@@ -205,7 +223,8 @@ export default async function AdminProductsPage(props: {
                       />
                       <DeleteButton
                         url={`/api/admin/products/${p.id}`}
-                        confirmText={`Удалить товар «${prodName(p)}»?`}
+                        confirmText={d.confirmDelete.replace("{name}", prodName(p))}
+                        dict={{ deleteTitle: d.deleteTitle, deleteFailed: d.deleteFailed }}
                       />
                     </div>
                   </td>
@@ -214,7 +233,7 @@ export default async function AdminProductsPage(props: {
               {pageItems.length === 0 && (
                 <tr>
                   <td colSpan={8} style={{ textAlign: "center", color: "var(--muted)" }}>
-                    Ничего не найдено
+                    {d.nothingFound}
                   </td>
                 </tr>
               )}

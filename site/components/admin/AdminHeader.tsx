@@ -4,18 +4,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { logoutAction } from "@/app/admin/(panel)/actions";
+import { useAdminDict } from "./admin-dict-context";
 
 const ADMIN_LINKS = [
-  { href: "/admin", label: "Дашборд" },
-  { href: "/admin/orders", label: "Заявки" },
-  { href: "/admin/products", label: "Товары" },
-  { href: "/admin/components", label: "Склад" },
-  { href: "/admin/categories", label: "Категории" },
-  { href: "/admin/settings", label: "Настройки" },
-];
+  { href: "/admin", key: "navDashboard" },
+  { href: "/admin/orders", key: "navOrders" },
+  { href: "/admin/products", key: "navProducts" },
+  { href: "/admin/components", key: "navComponents" },
+  { href: "/admin/categories", key: "navCategories" },
+  { href: "/admin/settings", key: "navSettings" },
+] as const;
 
 // Шапка панели мастера — копия topbar + mobile-menu из mockup/admin/*.html.
 export default function AdminHeader() {
+  const d = useAdminDict().header;
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -26,7 +28,7 @@ export default function AdminHeader() {
     <>
       <header className="topbar">
         <Link className="logo" href="/admin">
-          JulCraft<small>панель мастера</small>
+          JulCraft<small>{d.panelTitle}</small>
         </Link>
         <nav>
           {ADMIN_LINKS.map((link) => (
@@ -35,20 +37,20 @@ export default function AdminHeader() {
               href={link.href}
               className={isActive(link.href) ? "is-active" : undefined}
             >
-              {link.label}
+              {d[link.key]}
             </Link>
           ))}
         </nav>
         <div className="actions">
           <form action={logoutAction}>
-            <button className="icon-btn icon-btn--rust" title="Выйти">
+            <button className="icon-btn icon-btn--rust" title={d.logoutTitle}>
               ⏻
             </button>
           </form>
           <button
             className="burger"
             onClick={() => setMenuOpen(true)}
-            aria-label="Меню"
+            aria-label={d.menuAria}
           >
             ☰
           </button>
@@ -57,11 +59,11 @@ export default function AdminHeader() {
 
       <div className={menuOpen ? "mobile-menu open" : "mobile-menu"} id="mm">
         <div className="mm-head">
-          <b>Панель мастера</b>
+          <b>{d.panelTitle}</b>
           <button
             className="icon-btn"
             onClick={() => setMenuOpen(false)}
-            aria-label="Закрыть"
+            aria-label={d.closeAria}
           >
             ✕
           </button>
@@ -73,7 +75,7 @@ export default function AdminHeader() {
             href={link.href}
             onClick={() => setMenuOpen(false)}
           >
-            {link.label}
+            {d[link.key]}
           </Link>
         ))}
         <div className="mm-foot">
@@ -89,7 +91,7 @@ export default function AdminHeader() {
                 fontWeight: 700,
               }}
             >
-              Выйти →
+              {d.logoutMobile}
             </button>
           </form>
         </div>

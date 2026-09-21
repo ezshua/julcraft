@@ -7,13 +7,19 @@ import { getSettings } from "@/lib/get-settings";
 import { getActiveComponentTypes, getComponentTypes } from "@/lib/component-types";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, asPriced } from "@/lib/format";
+import { getDictionary, getLocale, t, type DictionaryKey } from "@/lib/i18n";
 import ComponentModal from "@/components/admin/ComponentModal";
 import DeleteButton from "@/components/admin/DeleteButton";
 import StockFilter from "@/components/admin/StockFilter";
+import { AdminDictProvider } from "@/components/admin/admin-dict-context";
 
-export const metadata: Metadata = {
-  title: "Склад комплектующих — JulCraft Админ",
-};
+export async function generateMetadata() {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  return {
+    title: t(dict, "admin.components.title" as DictionaryKey),
+  };
+}
 
 const PAGE_SIZE = 12;
 
@@ -47,13 +53,14 @@ export default async function AdminComponentsPage(props: {
 
   // Активные типы из БД: фильтры тулбара и опции модалок (план componentsExt).
   // Все типы (включая неактивные) — для подписей/палитры существующих строк.
+  const d = getDictionary(await getLocale()).admin.components;
   const activeTypes = getActiveComponentTypes();
   const allTypes = getComponentTypes();
   const typeFilters = [
-    { value: "", label: "Все" },
+    { value: "", label: d.filterAll },
     ...activeTypes.map((ty) => ({ value: ty.code, label: typeName(ty) })),
   ];
-  const t = typeFilters.some((x) => x.value === sp.t) ? sp.t! : "";
+  const typeFilter = typeFilters.some((x) => x.value === sp.t) ? sp.t! : "";
   const st = ["any", "in", "zero"].includes(sp.st ?? "") ? sp.st! : "any";
   const page = Math.max(1, Number.parseInt(sp.page ?? "1", 10) || 1);
 
@@ -62,7 +69,7 @@ export default async function AdminComponentsPage(props: {
   const typeName = (ty: (typeof allTypes)[number]) => firstLocale(ty.name);
 
   const match = (c: (typeof allComponents)[number]) => {
-    if (t && c.componentType !== t) return false;
+    if (typeFilter && c.componentType !== typeFilter) return false;
     switch (st) {
       case "in":
         return c.stockQty > 0;
@@ -91,16 +98,16 @@ export default async function AdminComponentsPage(props: {
   const currentPage = Math.min(page, pages);
   const pageItems = found.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const baseParams = { t: t || undefined, st: st !== "any" ? st : undefined };
+  const baseParams = { t: typeFilter || undefined, st: st !== "any" ? st : undefined };
   const pageUrl = (p: number) =>
     buildUrl({ ...baseParams, page: p > 1 ? String(p) : undefined });
 
   return (
-    <>
+    <AdminDictProvider dict={getDictionary(await getLocale()).admin}>
       <div className="page-title">
-        <h1>Склад комплектующих</h1>
+        <h1>{d.heading}</h1>
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
-          <span className="doodle">PNG на белом фоне!</span>
+          <span className="doodle">{d.doodle}</span>
           <ComponentModal
             finance={finance}
             currencyCode={currencyCode}
@@ -127,7 +134,7 @@ export default async function AdminComponentsPage(props: {
             {typeFilters.map((x) => (
               <a
                 key={x.value || "all"}
-                className={t === x.value ? "filter is-active" : "filter"}
+                className={typeFilter === x.value ? "filter is-active" : "filter"}
                 href={buildUrl({
                   ...baseParams,
                   t: x.value || undefined,
@@ -146,15 +153,15 @@ export default async function AdminComponentsPage(props: {
           <table className="tbl">
             <thead>
               <tr>
-                <th>Фото</th>
-                <th>Название</th>
-                <th>Тип</th>
-                <th>Цена закупки</th>
-                <th>Обработка</th>
-                <th>Остаток</th>
-                <th>Под заказ</th>
-                <th>Срок, дн</th>
-                <th>Действия</th>
+                <th>{d.colPhoto}</th>
+                <th>{d.colName}</th>
+                <th>{d.colType}</th>
+                <th>{d.colBuyPrice}</th>
+                <th>{d.colProcessing}</th>
+                <th>{d.colStock}</th>
+                <th>{d.colOrderable}</th>
+                <th>{d.colDelivery}</th>
+                <th>{d.colActions}</th>
               </tr>
             </thead>
             <tbody>
@@ -178,7 +185,7 @@ export default async function AdminComponentsPage(props: {
                             TAG_CYCLE.length
                         ]
                       }`}
-                      title={allTypes.find((ty) => ty.code === c.componentType)?.isActive === false ? "тип деактивирован" : undefined}
+                      title={allTypes.find((ty) => ty.code === c.componentType)?.isActive === false ? d.typeDeactivated : undefined}
                     >
                       {typeName(allTypes.find((ty) => ty.code === c.componentType)!) ?? c.componentType}
                     </span>
@@ -190,9 +197,9 @@ export default async function AdminComponentsPage(props: {
                   </td>
                   <td>
                     {c.isOrderable ? (
-                      <span className="tag tag--order">да</span>
+                      <span className="tag tag--order">{d.orderableYes}</span>
                     ) : (
-                      <span className="tag tag--none">нет</span>
+                      <span className="tag tag--none">{d.orderableNo}</span>
                     )}
                   </td>
                   <td>{c.deliveryDays ?? "—"}</td>
@@ -209,7 +216,8 @@ export default async function AdminComponentsPage(props: {
                       />
                       <DeleteButton
                         url={`/api/admin/components/${c.id}`}
-                        confirmText={`Удалить комплектующее «${compName(c)}»?`}
+                        confirmText={d.confirmDelete.replace("{name}", compName(c))}
+                        dict={{ deleteTitle: d.deleteTitle, deleteFailed: d.deleteFailed }}
                       />
                     </div>
                   </td>
@@ -218,7 +226,7 @@ export default async function AdminComponentsPage(props: {
               {pageItems.length === 0 && (
                 <tr>
                   <td colSpan={9} style={{ textAlign: "center", color: "var(--muted)" }}>
-                    Ничего не найдено
+                    {d.nothingFound}
                   </td>
                 </tr>
               )}
@@ -256,6 +264,6 @@ export default async function AdminComponentsPage(props: {
           )}
         </div>
       )}
-    </>
+    </AdminDictProvider>
   );
 }

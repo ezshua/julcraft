@@ -4,7 +4,7 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice, asPriced, formatSnapshot } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
-import { ORDER_STATUS_LABELS } from "@/lib/order-status-labels";
+import { useAdminDict } from "./admin-dict-context";
 import type { FinanceSettings } from "@/lib/currency";
 import type { OrderStatus, OrderType } from "@/drizzle/schema";
 
@@ -59,6 +59,8 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
 ) {
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
+  const d = useAdminDict();
+  const statusLabels = d.statusLabels as unknown as Record<OrderStatus, string>;
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"view" | "edit">(editMode);
   const [status, setStatus] = useState<OrderStatus>(order.status);
@@ -120,7 +122,7 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
       <button
         className="icon-btn"
         style={{ width: 32, height: 32 }}
-        title="Открыть"
+        title={d.orders.actionView}
         onClick={() => {
           setMode("view");
           setOpen(true);
@@ -131,7 +133,7 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
       <button
         className="icon-btn"
         style={{ width: 32, height: 32 }}
-        title="Редактировать"
+        title={d.orders.actionEdit}
         onClick={() => {
           setMode("edit");
           setOpen(true);
@@ -142,9 +144,13 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
       <button
         className="icon-btn icon-btn--rust"
         style={{ width: 32, height: 32 }}
-        title="Удалить"
+        title={d.orders.actionDelete}
         onClick={() => {
-          if (window.confirm(`Удалить заявку #${order.id}?`)) {
+          if (
+            window.confirm(
+              d.orders.deleteConfirm.replace("{id}", String(order.id)),
+            )
+          ) {
             void (async () => {
               const res = await fetch(`/api/admin/orders/${order.id}`, {
                 method: "DELETE",
@@ -160,11 +166,16 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
       <div className={open ? "modal-overlay open" : "modal-overlay"} id="modal-order">
         <div className="modal modal--wide">
           <div className="m-head">
-            <h3>Заявка #{order.id} — {order.customerName}</h3>
+            <h3>
+              {d.orders.detailTitlePrefix}
+              {order.id}
+              {d.orders.detailTitleSeparator}
+              {order.customerName}
+            </h3>
             <button
               className="icon-btn"
               onClick={() => setOpen(false)}
-              aria-label="Закрыть"
+              aria-label={d.orders.lightboxClose}
             >
               ✕
             </button>
@@ -178,13 +189,13 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={order.collagePath}
-                      alt="Коллаж заявки"
+                      alt={d.orders.lightboxAlt}
                       style={{ background: "var(--white)", borderRadius: 12 }}
                     />
                   </div>
                 ) : (
                   <div className="dropzone" style={{ marginBottom: "14px" }}>
-                    <b>Коллаж (PNG)</b>
+                    <b>{d.orders.collagePlaceholder}</b>
                     <div className="dz-example" style={{ gap: "10px" }}>
                       <svg
                         viewBox="0 0 24 24"
@@ -220,22 +231,22 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
                         <circle cx="9" cy="9" r="1.5" fill="#22242a" />
                         <circle cx="15" cy="9" r="1.5" fill="#22242a" />
                       </svg>
-                      <span>коллаж собран сервером · sharp</span>
+                      <span>{d.orders.collageNote}</span>
                     </div>
                   </div>
                 )}
               </div>
               <div className="grow-1">
                 <div className="field">
-                  <label>Клиент</label>
+                  <label>{d.orders.labelClient}</label>
                   <input type="text" value={order.customerName} disabled />
                 </div>
                 <div className="field">
-                  <label>Контакт</label>
+                  <label>{d.orders.labelContact}</label>
                   <input type="text" value={order.contact} disabled />
                 </div>
                 <div className="field">
-                  <label>Комментарий</label>
+                  <label>{d.orders.labelComment}</label>
                   <textarea value={order.message} disabled />
                 </div>
               </div>
@@ -243,7 +254,7 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
 
             {order.type === "custom" && snap && snap.items.length > 0 ? (
               <div className="receipt" style={{ maxWidth: "100%", margin: "0 0 16px", padding: "26px 24px" }}>
-                {/* Q-6: снимок configJson — исторический факт, суммы как сохранены (₴) */}
+                {/* Q-6: configJson snapshot — historical fact, amounts as stored (UAH) */}
                 {snap.items.map((item, i) => (
                   <div key={i}>
                     <div className="row">
@@ -251,42 +262,42 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
                       <span className="r">{formatSnapshot(item.price * item.qty)}</span>
                     </div>
                     <div className="row">
-                      <span>&nbsp;&nbsp;обработка ×{item.qty}</span>
+                      <span>{d.orders.itemProcessing.replace("{qty}", String(item.qty))}</span>
                       <span className="r">{formatSnapshot(item.processingPrice * item.qty)}</span>
                     </div>
                   </div>
                 ))}
                 {snap.workPrice != null && snap.categoryName != null && (
                   <div className="row">
-                    <span>Стоимость работы ({snap.categoryName})</span>
+                    <span>{d.orders.labelWorkCost.replace("{name}", snap.categoryName)}</span>
                     <span className="r">{formatSnapshot(snap.workPrice)}</span>
                   </div>
                 )}
                 <div className="row" style={{ fontWeight: 500 }}>
                   <span>
-                    <b>Итого</b>
+                    <b>{d.orders.labelTotal}</b>
                   </span>
                   <span className="r">
                     <b>{formatPrice(asPriced(order.calcPrice, order.calcPriceCurrency), currency, finance)}</b>
                   </span>
                 </div>
                 <div className="row">
-                  <span>Срок</span>
-                  <span className="r">{order.calcDays} дн</span>
+                  <span>{d.orders.labelTerm}</span>
+                  <span className="r">{order.calcDays} {d.orders.daysShort}</span>
                 </div>
               </div>
             ) : order.type === "product" ? (
               <p style={{ fontSize: ".9rem", margin: "0 0 16px" }}>
-                состав: {order.productName ?? "—"}
+                {d.orders.compositionPrefix}{order.productName ?? d.orders.emptyDash}
               </p>
             ) : order.type === "contact" ? null : (
               <p style={{ fontSize: ".9rem", margin: "0 0 16px" }}>
-                сообщение: {order.message || "—"}
+                {d.orders.messagePrefix}{order.message || d.orders.emptyDash}
               </p>
             )}
 
             <div className="form-actions">
-              <span className={`tag tag--${status}`}>{ORDER_STATUS_LABELS[status]}</span>
+              <span className={`tag tag--${status}`}>{statusLabels[status]}</span>
               {mode === "edit" && status === "new" && (
                 <button
                   className="btn btn--primary btn--small"
@@ -294,7 +305,7 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
                   onClick={() => void changeStatus("in_progress")}
                   disabled={busy}
                 >
-                  Взять в работу
+                  {d.orders.btnTake}
                 </button>
               )}
               {mode === "edit" && status === "in_progress" && (
@@ -304,7 +315,7 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
                   onClick={() => void changeStatus("done")}
                   disabled={busy}
                 >
-                  Готово ✓
+                  {d.orders.btnDone}
                 </button>
               )}
               {mode === "edit" && status === "cancelled" && (
@@ -314,7 +325,7 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
                   onClick={() => void changeStatus("new")}
                   disabled={busy}
                 >
-                  Переобработать
+                  {d.orders.btnRedo}
                 </button>
               )}
               {mode === "edit" && (newCount || status === "in_progress") && (
@@ -323,7 +334,7 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
                   onClick={() => void changeStatus("cancelled")}
                   disabled={busy}
                 >
-                  Отменить
+                  {d.orders.btnCancel}
                 </button>
               )}
             </div>

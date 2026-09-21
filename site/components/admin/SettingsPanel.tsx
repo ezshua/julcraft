@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useAdminDict } from "./admin-dict-context";
 import { useRouter } from "next/navigation";
+import type { Dictionary } from "@/lib/dictionaries/ru";
 import type { SiteSettings } from "@/lib/settings";
 import { firstLocale, toLS } from "@/lib/localize";
 import LocalizedField, { type LocalizedValue } from "./LocalizedField";
@@ -18,21 +20,23 @@ import TelegramTestButton from "./TelegramTestButton";
 type Row = { label: LocalizedValue; value: LocalizedValue };
 type Principle = { title: LocalizedValue; text: LocalizedValue };
 
-const HOUR_DAYS = ["Понедельник", "Вторник — Пятница", "Суббота", "Воскресенье"];
-
-function closedFrom(value: string): boolean {
-  return value.trim() === "" || /выходн/i.test(value);
+function closedFrom(value: string, hint: string): boolean {
+  return value.trim() === "" || new RegExp(hint, "i").test(value);
 }
 
 // Табы «Контакты / Тексты / Telegram / Финансы» + четыре формы.
 export default function SettingsPanel({
   settings,
   currencyCode,
+  dict,
 }: {
   settings: SiteSettings;
   currencyCode: string;
+  dict: { settings: Dictionary["admin"]["settings"] };
 }) {
+  const d = dict.settings;
   const router = useRouter();
+  const HOUR_DAYS = d.hourDays;
   const [tab, setTab] = useState(0);
   const { currency, finance } = useCurrency(settings.finance, currencyCode);
 
@@ -43,7 +47,7 @@ export default function SettingsPanel({
   const [tgram, setTgram] = useState(settings.contacts.telegram);
   const [instagram, setInstagram] = useState(settings.contacts.instagram);
   const [hours, setHours] = useState<LocalizedValue[]>(
-    HOUR_DAYS.map((_, i) => toLS(settings.contacts.hours[i]?.value ?? "")),
+    HOUR_DAYS.map((_: string, i: number) => toLS(settings.contacts.hours[i]?.value ?? "")),
   );
 
   // Тексты
@@ -117,8 +121,8 @@ export default function SettingsPanel({
     }
     const warn =
       count > 0
-        ? `Валюта ${target.code} используется в ${count} ценах. При удалении они будут пересчитаны в доллары (USD). Это может занять некоторое время. Удалить валюту?`
-        : `Удалить валюту ${target.code}? Цены в ней (если есть) будут пересчитаны в доллары (USD).`;
+        ? d.removeCurrencyWarnUsed.replace("{code}", target.code).replace("{count}", String(count))
+        : d.removeCurrencyWarn.replace("{code}", target.code);
     if (!window.confirm(warn)) return;
     setCurrencies((prev) => prev.filter((_, j) => j !== i));
   };
@@ -160,15 +164,15 @@ export default function SettingsPanel({
       });
       const text = await res.text();
       if (!res.ok) {
-        setMsg(text || "Не получилось сохранить");
+        setMsg(text || d.saveFailed);
         setBusy(false);
         return;
       }
       router.refresh();
-      setMsg("Сохранено");
+      setMsg(d.saved);
       setBusy(false);
     } catch {
-      setMsg("Не получилось сохранить");
+      setMsg(d.saveFailed);
       setBusy(false);
     }
   };
@@ -183,10 +187,10 @@ export default function SettingsPanel({
       {
         key: "contacts.hours",
         value: JSON.stringify(
-          HOUR_DAYS.map((day, i) => ({
+          HOUR_DAYS.map((day: string, i: number) => ({
             day: { ru: day },
             value: hours[i] ?? { ru: "", en: "", uk: "" },
-            closed: closedFrom(hours[i]?.ru ?? ""),
+            closed: closedFrom(hours[i]?.ru ?? "", d.closedFromHint),
           })),
         ),
       },
@@ -234,16 +238,16 @@ export default function SettingsPanel({
         method: "GET",
       });
       if (!res.ok) {
-        setMsg("Не получилось прочитать значения из .env");
+        setMsg(d.envError);
         setEnvBusy(false);
         return;
       }
       const data = (await res.json()) as { botToken: string; chatId: string };
       setBotToken(data.botToken);
       setChatId(data.chatId);
-      setMsg("Поля заполнены из .env — сохраните, чтобы применить");
+      setMsg(d.envBusy);
     } catch {
-      setMsg("Не получилось прочитать значения из .env");
+      setMsg(d.envError);
     }
     setEnvBusy(false);
   };
@@ -253,22 +257,22 @@ export default function SettingsPanel({
     set: (r: Row[]) => void,
     i: number,
     patch: Partial<Row>,
-  ) => set(list.map((r, j) => (j === i ? { ...r, ...patch } : r)));
+  ): void => set(list.map((r: Row, j: number) => (j === i ? { ...r, ...patch } : r)));
 
   return (
     <>
       <div className="tabs">
         <span className={tab === 0 ? "tab is-active" : "tab"} onClick={() => setTab(0)}>
-          Контакты
+          {d.tabContacts}
         </span>
         <span className={tab === 1 ? "tab is-active" : "tab"} onClick={() => setTab(1)}>
-          Тексты
+          {d.tabTexts}
         </span>
         <span className={tab === 2 ? "tab is-active" : "tab"} onClick={() => setTab(2)}>
-          Telegram
+          {d.tabTelegram}
         </span>
         <span className={tab === 3 ? "tab is-active" : "tab"} onClick={() => setTab(3)}>
-          Финансы
+          {d.tabFinance}
         </span>
       </div>
 
@@ -276,15 +280,15 @@ export default function SettingsPanel({
       <div className="tab-pane" style={{ display: tab === 0 ? "" : "none" }}>
         <div className="board board--paper" style={{ padding: "22px 24px" }}>
           <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
-            Контакты (Settings.contacts.*)
+            {d.boardContacts}
           </h3>
           <div className="field--row">
             <div className="field">
-              <label>Телефон</label>
+              <label>{d.labelPhone}</label>
               <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
             <div className="field">
-              <label>Email</label>
+              <label>{d.labelEmail}</label>
               <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
           </div>
@@ -292,16 +296,16 @@ export default function SettingsPanel({
             <LocalizedField
               value={address}
               onChange={setAddress}
-              label="Адрес мастерской"
+              label={d.labelAddress}
             />
           </div>
           <div className="field--row">
             <div className="field">
-              <label>Telegram</label>
+              <label>{d.labelTelegram}</label>
               <input type="text" value={tgram} onChange={(e) => setTgram(e.target.value)} />
             </div>
             <div className="field">
-              <label>Instagram</label>
+              <label>{d.labelInstagram}</label>
               <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} />
             </div>
           </div>
@@ -310,14 +314,14 @@ export default function SettingsPanel({
               <LocalizedField
                 value={hours[0] ?? { ru: "", en: "", uk: "" }}
                 onChange={(v) => setHours(hours.map((h, i) => (i === 0 ? v : h)))}
-                label={`Часы: ${HOUR_DAYS[0]}`}
+                label={d.labelHours.replace("{day}", d.hourDays[0])}
               />
             </div>
             <div className="field">
               <LocalizedField
                 value={hours[1] ?? { ru: "", en: "", uk: "" }}
                 onChange={(v) => setHours(hours.map((h, i) => (i === 1 ? v : h)))}
-                label={`Часы: ${HOUR_DAYS[1]}`}
+                label={d.labelHours.replace("{day}", d.hourDays[1])}
               />
             </div>
           </div>
@@ -326,20 +330,20 @@ export default function SettingsPanel({
               <LocalizedField
                 value={hours[2] ?? { ru: "", en: "", uk: "" }}
                 onChange={(v) => setHours(hours.map((h, i) => (i === 2 ? v : h)))}
-                label={`Часы: ${HOUR_DAYS[2]}`}
+                label={d.labelHours.replace("{day}", d.hourDays[2])}
               />
             </div>
             <div className="field">
               <LocalizedField
                 value={hours[3] ?? { ru: "", en: "", uk: "" }}
                 onChange={(v) => setHours(hours.map((h, i) => (i === 3 ? v : h)))}
-                label={`Часы: ${HOUR_DAYS[3]}`}
+                label={d.labelHours.replace("{day}", d.hourDays[3])}
               />
             </div>
           </div>
           <div className="form-actions">
             <button className="btn btn--primary" onClick={() => void saveContacts()} disabled={busy}>
-              Сохранить контакты
+              {d.saveContacts}
             </button>
             {msg && <span style={{ fontSize: ".8rem", color: "var(--muted)" }}>{msg}</span>}
           </div>
@@ -350,11 +354,11 @@ export default function SettingsPanel({
       <div className="tab-pane" style={{ display: tab === 1 ? "" : "none" }}>
         <div className="board board--paper" style={{ padding: "22px 24px" }}>
           <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
-            Тексты (Settings.about.*)
+            {d.boardTexts}
           </h3>
 
           <div className="field">
-            <label>О мастерской — короткий текст (главная, чек-тизер)</label>
+            <label>{d.labelShortText}</label>
             {shortRows.map((r, i) => (
               <div className="field--row" key={i} style={{ marginBottom: "8px" }}>
                 <div className="field" style={{ margin: 0 }}>
@@ -362,7 +366,7 @@ export default function SettingsPanel({
                     compact
                     value={r.label}
                     onChange={(v) => patchRow(shortRows, setShortRows, i, { label: v })}
-                    label="Метка"
+                    label={d.labelMeta}
                   />
                 </div>
                 <div className="field" style={{ margin: 0 }}>
@@ -370,13 +374,13 @@ export default function SettingsPanel({
                     compact
                     value={r.value}
                     onChange={(v) => patchRow(shortRows, setShortRows, i, { value: v })}
-                    label="Значение"
+                    label={d.labelValue}
                   />
                 </div>
                 <button
                   className="icon-btn"
                   style={{ width: 20, height: 20, alignSelf: "center" }}
-                  title="Удалить строку"
+                  title={d.labelDeleteRow}
                   onClick={() => setShortRows(shortRows.filter((_, j) => j !== i))}
                 >
                   ✕
@@ -388,20 +392,20 @@ export default function SettingsPanel({
                 className="btn btn--secondary btn--small"
                 onClick={() => setShortRows([...shortRows, { label: { ru: "", en: "", uk: "" }, value: { ru: "", en: "", uk: "" } }])}
               >
-                + Добавить строку
+                {d.labelAddRow}
               </button>
             </div>
             <div className="field" style={{ marginTop: "10px", marginBottom: 0 }}>
               <LocalizedField
                 value={shortThanks}
                 onChange={setShortThanks}
-                label="Подпись (thanks)"
+                label={d.labelShortThanks}
               />
             </div>
           </div>
 
           <div className="field">
-            <label>История (страница «О мастерской»)</label>
+            <label>{d.labelHistory}</label>
             {historyRows.map((r, i) => (
               <div className="field--row" key={i} style={{ marginBottom: "8px" }}>
                 <div className="field" style={{ margin: 0 }}>
@@ -409,7 +413,7 @@ export default function SettingsPanel({
                     compact
                     value={r.label}
                     onChange={(v) => patchRow(historyRows, setHistoryRows, i, { label: v })}
-                    label="Метка"
+                    label={d.labelMeta}
                   />
                 </div>
                 <div className="field" style={{ margin: 0 }}>
@@ -417,13 +421,13 @@ export default function SettingsPanel({
                     compact
                     value={r.value}
                     onChange={(v) => patchRow(historyRows, setHistoryRows, i, { value: v })}
-                    label="Значение"
+                    label={d.labelValue}
                   />
                 </div>
                 <button
                   className="icon-btn"
                   style={{ width: 20, height: 20, alignSelf: "center" }}
-                  title="Удалить строку"
+                  title={d.labelDeleteRow}
                   onClick={() => setHistoryRows(historyRows.filter((_, j) => j !== i))}
                 >
                   ✕
@@ -435,20 +439,20 @@ export default function SettingsPanel({
                 className="btn btn--secondary btn--small"
                 onClick={() => setHistoryRows([...historyRows, { label: { ru: "", en: "", uk: "" }, value: { ru: "", en: "", uk: "" } }])}
               >
-                + Добавить строку
+                {d.labelAddRow}
               </button>
             </div>
             <div className="field" style={{ marginTop: "10px", marginBottom: 0 }}>
               <LocalizedField
                 value={historyThanks}
                 onChange={setHistoryThanks}
-                label="Подпись (thanks)"
+                label={d.labelShortThanks}
               />
             </div>
           </div>
 
           <div className="field">
-            <label>Принципы (4 карточки)</label>
+            <label>{d.labelPrinciples}</label>
             {principles.map((p, i) => (
               <div className="field--row" key={i} style={{ marginBottom: "8px" }}>
                 <div className="field" style={{ margin: 0 }}>
@@ -458,7 +462,7 @@ export default function SettingsPanel({
                     onChange={(v) =>
                       setPrinciples(principles.map((x, j) => (j === i ? { ...x, title: v } : x)))
                     }
-                    label="Заголовок"
+                    label={d.labelPrincipleTitle}
                   />
                 </div>
                 <div className="field" style={{ margin: 0 }}>
@@ -468,13 +472,13 @@ export default function SettingsPanel({
                     onChange={(v) =>
                       setPrinciples(principles.map((x, j) => (j === i ? { ...x, text: v } : x)))
                     }
-                    label="Текст"
+                    label={d.labelPrincipleText}
                   />
                 </div>
                 <button
                   className="icon-btn"
                   style={{ width: 20, height: 20, alignSelf: "center" }}
-                  title="Удалить карточку"
+                  title={d.labelDeleteCard}
                   onClick={() => setPrinciples(principles.filter((_, j) => j !== i))}
                 >
                   ✕
@@ -486,14 +490,14 @@ export default function SettingsPanel({
                 className="btn btn--secondary btn--small"
                 onClick={() => setPrinciples([...principles, { title: { ru: "", en: "", uk: "" }, text: { ru: "", en: "", uk: "" } }])}
               >
-                + Добавить карточку
+                {d.labelAddCard}
               </button>
             </div>
           </div>
 
           <div className="form-actions">
             <button className="btn btn--primary" onClick={() => void saveTexts()} disabled={busy}>
-              Сохранить тексты
+              {d.saveTexts}
             </button>
             {msg && <span style={{ fontSize: ".8rem", color: "var(--muted)" }}>{msg}</span>}
           </div>
@@ -504,10 +508,10 @@ export default function SettingsPanel({
       <div className="tab-pane" style={{ display: tab === 2 ? "" : "none" }}>
         <div className="board board--paper" style={{ padding: "22px 24px" }}>
           <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
-            Telegram-уведомления (Settings.telegram.*)
+            {d.boardTelegram}
           </h3>
           <div className="field">
-            <label>Bot token</label>
+            <label>{d.labelBotToken}</label>
             <input
               type="password"
               value={botToken}
@@ -515,32 +519,31 @@ export default function SettingsPanel({
             />
           </div>
           <div className="field">
-            <label>Chat ID мастера</label>
+            <label>{d.labelChatId}</label>
             <input type="text" value={chatId} onChange={(e) => setChatId(e.target.value)} />
           </div>
           <div className="notice notice--olive" style={{ marginBottom: "18px" }}>
-            Сервер шлёт мастеру заявку с коллажем и деталями. Email — запасной канал.
+            {d.noticeTelegram}
             {botToken.trim().includes(":") && (
               <>
                 {" "}
-                Чтобы получать уведомления, первым напишите боту (идентификатор бота:{" "}
-                <b>{botToken.trim().slice(0, botToken.trim().indexOf(":"))}</b>) — отправьте <code>/start</code>.
+                {d.noticeEnv.replace("{botId}", botToken.trim().slice(0, botToken.trim().indexOf(":")))}
               </>
             )}
           </div>
           <div className="form-actions">
             <button className="btn btn--primary" onClick={() => void saveTelegram()} disabled={busy}>
-              Сохранить
+              {d.saveTelegram}
             </button>
             <button
               className="btn btn--secondary"
               onClick={() => void loadTelegramFromEnv()}
               disabled={envBusy}
-              title="Подгрузить botToken/chatId из .env в поля формы"
+              title={d.labelRefreshFromEnv}
             >
-              Обновить из настроек
+              {d.refreshFromEnv}
             </button>
-            <TelegramTestButton botToken={botToken} chatId={chatId} />
+            <TelegramTestButton botToken={botToken} chatId={chatId} dict={dict} />
             {msg && <span style={{ fontSize: ".8rem", color: "var(--muted)" }}>{msg}</span>}
           </div>
         </div>
@@ -550,16 +553,14 @@ export default function SettingsPanel({
       <div className="tab-pane" style={{ display: tab === 3 ? "" : "none" }}>
         <div className="board board--paper" style={{ padding: "22px 24px" }}>
           <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
-            Финансы (Settings.finance.*)
+            {d.boardFinance}
           </h3>
           <div className="notice notice--olive" style={{ marginBottom: "18px" }}>
-            Каждая цена хранится в валюте, в которой она задана (и символ валюты).
-            При удалении валюты все цены в ней пересчитываются в доллары (USD) — это может занять время.
-            USD обязателен: удалить его нельзя, курс всегда 1.
+            {d.noticeFinance}
           </div>
 
           <div className="field">
-            <label>Валюта отображения по умолчанию</label>
+            <label>{d.labelDefaultCurrency}</label>
             <select
               value={defaultCurrency}
               onChange={(e) => setDefaultCurrency(e.target.value)}
@@ -574,7 +575,7 @@ export default function SettingsPanel({
 
           <div className="field--row">
             <div className="field">
-              <label>Фильтр каталога: «до» (в {currency.symbol})</label>
+              <label>{d.labelFilterLow.replace("{symbol}", currency.symbol)}</label>
               <input
                 type="number"
                 step="0.01"
@@ -583,7 +584,7 @@ export default function SettingsPanel({
               />
             </div>
             <div className="field">
-              <label>Фильтр каталога: «от» (в {currency.symbol})</label>
+              <label>{d.labelFilterHigh.replace("{symbol}", currency.symbol)}</label>
               <input
                 type="number"
                 step="0.01"
@@ -592,9 +593,7 @@ export default function SettingsPanel({
               />
             </div>
           </div>
-          <small className="muted">
-            Границы фильтра цены на странице категории (по умолчанию: до 1 000 ₴ / от 2 500 ₴).
-          </small>
+          <small className="muted">{d.noticeFilterHint}</small>
 
           <div
             style={{
@@ -605,10 +604,10 @@ export default function SettingsPanel({
             }}
           >
             <h3 className="sec-h2" style={{ fontSize: "1.1rem", margin: 0 }}>
-              Список валют
+              {d.currenciesHeading}
             </h3>
             <button className="btn btn--secondary btn--small" onClick={addCurrency}>
-              + Добавить валюту
+              {d.labelAddCurrency}
             </button>
           </div>
           {currencies.map((c, i) => (
@@ -618,7 +617,7 @@ export default function SettingsPanel({
               style={{ marginBottom: "8px", alignItems: "flex-end" }}
             >
               <div className="field" style={{ margin: 0 }}>
-                <label>Код</label>
+                <label>{d.labelCurrencyCode}</label>
                 <input
                   type="text"
                   value={c.code}
@@ -628,7 +627,7 @@ export default function SettingsPanel({
                 />
               </div>
               <div className="field" style={{ margin: 0 }}>
-                <label>Название</label>
+                <label>{d.labelCurrencyName}</label>
                 <input
                   type="text"
                   value={c.name}
@@ -636,7 +635,7 @@ export default function SettingsPanel({
                 />
               </div>
               <div className="field" style={{ margin: 0 }}>
-                <label>Символ</label>
+                <label>{d.labelCurrencySymbol}</label>
                 <input
                   type="text"
                   value={c.symbol}
@@ -645,7 +644,7 @@ export default function SettingsPanel({
                 />
               </div>
               <div className="field" style={{ margin: 0 }}>
-                <label>За 1 $</label>
+                <label>{d.labelCurrencyRate}</label>
                 <input
                   type="number"
                   step="any"
@@ -657,7 +656,7 @@ export default function SettingsPanel({
               <button
                 className="icon-btn"
                 style={{ width: 24, height: 24, alignSelf: "center" }}
-                title={c.code === "USD" ? "USD удалить нельзя" : "Удалить валюту"}
+                title={c.code === "USD" ? d.labelCurrencyDisabled : d.labelDeleteCurrency}
                 disabled={c.code === "USD"}
                 onClick={() => removeCurrency(i)}
               >
@@ -668,7 +667,7 @@ export default function SettingsPanel({
 
           <div className="form-actions" style={{ marginTop: "48px" }}>
             <button className="btn btn--primary" onClick={saveFinance} disabled={busy}>
-              Сохранить финансы
+              {d.saveFinance}
             </button>
             {msg && <span style={{ fontSize: ".8rem", color: "var(--muted)" }}>{msg}</span>}
           </div>

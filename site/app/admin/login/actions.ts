@@ -3,6 +3,8 @@
 import { signIn } from "@/lib/auth";
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
+import { getDictionary, getLocale, t } from "@/lib/i18n";
+import type { DictionaryKey } from "@/lib/i18n";
 
 export type LoginState = { error: string } | undefined;
 
@@ -18,7 +20,8 @@ export async function loginAction(
     await signIn("credentials", { login, password, redirect: false });
   } catch (error) {
     if (error instanceof AuthError) {
-      return { error: "Неверный логин или пароль — попробуйте ещё раз" };
+      const dict = getDictionary(await getLocale());
+      return { error: t(dict, "admin.login.errorInvalidCreds" as DictionaryKey) };
     }
     throw error;
   }

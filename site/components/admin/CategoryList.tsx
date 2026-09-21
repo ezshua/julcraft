@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAdminDict } from "./admin-dict-context";
 import { useRouter } from "next/navigation";
 import { formatPrice, asPriced, plural } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
@@ -26,6 +27,7 @@ type Props = {
 
 // Левая панель: категории с drag&drop (Решение 5б). Клик по строке — открыть в редакторе.
 export default function CategoryList({ categories, finance, currencyCode, activeId }: Props) {
+  const d = useAdminDict().categories;
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -62,8 +64,8 @@ export default function CategoryList({ categories, finance, currencyCode, active
   return (
     <div className="board board--paper">
       <h3 className="sec-h2">
-        Категории
-        <span className="chip chip--mustard">drag&drop</span>
+        {d.heading}
+        <span className="chip chip--mustard">{d.listChip}</span>
       </h3>
       <div className="slot-editor">
         {items.map((c, i) => (
@@ -93,8 +95,8 @@ export default function CategoryList({ categories, finance, currencyCode, active
               <span className="slot-title">⣿ {c.name}</span>
               <small>
                 {c.hasSlotTemplate
-                   ? `${plural(c.productCount, ["изделие", "изделия", "изделий"])} ${c.productCount} · работа ${formatPrice(asPriced(c.workPrice, c.workPriceCurrency), currency, finance)} · ${c.baseWorkDays} дн`
-                   : "без шаблона слотов"}
+                   ? `${plural(c.productCount, [d.productItem, d.productItems, d.productItemsMany])} ${c.productCount} · ${d.workPriceLabel} ${formatPrice(asPriced(c.workPrice, c.workPriceCurrency), currency, finance)} · ${c.baseWorkDays} ${d.daysShort}`
+                   : d.noSlots}
               </small>
               <div
                 style={{ position: "absolute", top: 8, right: 8 }}
@@ -102,8 +104,9 @@ export default function CategoryList({ categories, finance, currencyCode, active
               >
                 <DeleteButton
                   url={`/api/admin/categories/${c.id}`}
-                  confirmText={`Удалить категорию «${c.name}»?`}
+                  confirmText={d.deleteCategory.replace("{name}", c.name)}
                   icon="✕"
+                  dict={{ deleteTitle: d.deleteCategoryTitle, deleteFailed: d.deleteCategoryFailed }}
                 />
               </div>
             </div>

@@ -4,28 +4,30 @@ import { categories, orders, products } from "@/drizzle/schema";
 import { firstLocale } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
+import { getDictionary, getLocale } from "@/lib/i18n";
 import type { OrderRow } from "@/components/admin/OrderModal";
 import OrderRowView from "@/components/admin/OrderRow";
 
-export const metadata: Metadata = {
-  title: "Заявки — JulCraft Админ",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const dict = getDictionary(await getLocale());
+  return { title: dict.admin.orders.title };
+}
 
 const PAGE_SIZE = 10;
 
 const STATUS_FILTERS = [
-  { value: "all", label: "Все" },
-  { value: "new", label: "Новые" },
-  { value: "in_progress", label: "В работе" },
-  { value: "done", label: "Готово" },
-  { value: "cancelled", label: "Отменено" },
+  { value: "all", key: "filterAll" },
+  { value: "new", key: "filterNew" },
+  { value: "in_progress", key: "filterInProgress" },
+  { value: "done", key: "filterDone" },
+  { value: "cancelled", key: "filterCancelled" },
 ] as const;
 
 const TYPE_FILTERS = [
-  { value: "all", label: "Все типы" },
-  { value: "product", label: "Товар" },
-  { value: "custom", label: "Конфигуратор" },
-  { value: "contact", label: "Контакт" },
+  { value: "all", key: "filterTypeAll" },
+  { value: "product", key: "filterTypeProduct" },
+  { value: "custom", key: "filterTypeCustom" },
+  { value: "contact", key: "filterTypeContact" },
 ] as const;
 
 function buildUrl(params: Record<string, string | undefined>): string {
@@ -42,6 +44,7 @@ export default async function AdminOrdersPage(props: {
 }) {
   const sp = await props.searchParams;
 
+  const d = getDictionary(await getLocale()).admin.orders;
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
   const currencyCode = currency.code;
@@ -82,10 +85,10 @@ export default async function AdminOrdersPage(props: {
     const product = o.productId != null ? productById.get(o.productId) : undefined;
     const smallText =
       o.type === "product"
-        ? prodName(product as (typeof allProducts)[number]) ?? "—"
+        ? prodName(product as (typeof allProducts)[number]) ?? d.emptyDash
         : o.type === "contact"
-          ? "сообщение от контакта"
-          : "коллаж из конфигуратора";
+          ? d.contactMessage
+          : d.collageFromConfig;
     return {
       id: o.id,
       type: o.type,
@@ -111,19 +114,13 @@ export default async function AdminOrdersPage(props: {
 
   const newCount = allOrders.filter((o) => o.status === "new").length;
 
-  const smallText = (o: (typeof allOrders)[number]): string => {
-    if (o.type === "product") return prodName(productById.get(o.productId ?? 0)!) ?? "—";
-    if (o.type === "contact") return "записка";
-    return "конфигуратор";
-  };
-
   return (
     <>
       <div className="page-title">
-        <h1>Заявки</h1>
+        <h1>{d.heading}</h1>
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
           <span className="doodle">
-            {newCount} новых · ждут звонка
+            {newCount} {d.newCountSuffix}
           </span>
         </div>
       </div>
@@ -146,7 +143,7 @@ export default async function AdminOrdersPage(props: {
                 className={st === x.value ? "filter is-active" : "filter"}
                 href={buildUrl({ ...baseParams, st: x.value !== "all" ? x.value : undefined })}
               >
-                {x.label} ({countFor(x.value, ty)})
+                {d[x.key]} ({countFor(x.value, ty)})
               </a>
             ))}
           </div>
@@ -157,7 +154,7 @@ export default async function AdminOrdersPage(props: {
                 className={ty === x.value ? "filter is-active" : "filter"}
                 href={buildUrl({ ...baseParams, ty: x.value !== "all" ? x.value : undefined })}
               >
-                {x.label} ({countFor(st, x.value)})
+                {d[x.key]} ({countFor(st, x.value)})
               </a>
             ))}
           </div>
@@ -169,16 +166,16 @@ export default async function AdminOrdersPage(props: {
           <table className="tbl">
             <thead>
               <tr>
-                <th>№</th>
-                <th>Тип</th>
-                <th>Клиент</th>
-                <th>Контакт</th>
-                <th>Сумма</th>
-                <th>Срок</th>
-                <th>Коллаж</th>
-                <th>Статус</th>
-                <th>Дата</th>
-                <th>Действия</th>
+                <th>{d.colNum}</th>
+                <th>{d.colType}</th>
+                <th>{d.colClient}</th>
+                <th>{d.colContact}</th>
+                <th>{d.colAmount}</th>
+                <th>{d.colTerm}</th>
+                <th>{d.colCollage}</th>
+                <th>{d.colStatus}</th>
+                <th>{d.colDate}</th>
+                <th>{d.colActions}</th>
               </tr>
             </thead>
             <tbody>
@@ -194,7 +191,7 @@ export default async function AdminOrdersPage(props: {
               {rows.length === 0 && (
                 <tr>
                   <td colSpan={10} style={{ textAlign: "center", color: "var(--muted)" }}>
-                    Заявок нет
+                    {d.noOrders}
                   </td>
                 </tr>
               )}

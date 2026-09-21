@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { getDictionary, getLocale, t, type DictionaryKey } from "@/lib/i18n";
 import { categories, orders, products } from "@/drizzle/schema";
 import { requireAdmin } from "@/lib/admin";
 
@@ -6,8 +7,9 @@ const PAGE_SIZE = 10;
 
 // Список заявок с фильтрами/пагинацией и join товара/категории для подписей.
 export async function GET(request: Request) {
+  const dict = getDictionary(await getLocale());
   if (!(await requireAdmin())) {
-    return Response.json({ error: "Не авторизован" }, { status: 401 });
+    return Response.json({ error: t(dict, "admin.errors.unauthorized" as DictionaryKey) }, { status: 401 });
   }
 
   const url = new URL(request.url);

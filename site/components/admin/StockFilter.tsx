@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useAdminDict } from "./admin-dict-context";
 
 type Props = {
   value: string;
@@ -9,12 +10,13 @@ type Props = {
 
 // Select «Остаток: любые» — переход по ?st= (остальные фильтры сохраняются).
 export default function StockFilter({ value, baseParams }: Props) {
+  const d = useAdminDict().components;
   const router = useRouter();
 
   return (
     <div className="field" style={{ margin: 0, minWidth: 220 }}>
       <select
-        aria-label="Остаток"
+        aria-label={d.labelStock}
         value={value}
         onChange={(e) => {
           const url = new URLSearchParams();
@@ -25,9 +27,9 @@ export default function StockFilter({ value, baseParams }: Props) {
           router.push(`/admin/components${url.toString() ? `?${url.toString()}` : ""}`);
         }}
       >
-        <option value="any">Остаток: любые</option>
-        <option value="in">Остаток: в наличии</option>
-        <option value="zero">Остаток: 0 шт (под заказ)</option>
+        <option value="any">{d.filterAny}</option>
+        <option value="in">{d.filterIn}</option>
+        <option value="zero">{d.filterZero}</option>
       </select>
     </div>
   );

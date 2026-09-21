@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useAdminDict } from "./admin-dict-context";
 import { useRouter } from "next/navigation";
 import type { ComponentTypeOption } from "./ComponentModal";
 import { plural } from "@/lib/format";
@@ -53,6 +54,7 @@ export default function CategoryEditor({
   currencyCode,
   typeOptions,
 }: Props) {
+  const d = useAdminDict().categories;
   const router = useRouter();
   const keyCounter = useRef(1000);
   const [name, setName] = useState(toLS(category.name));
@@ -67,7 +69,7 @@ export default function CategoryEditor({
   const uploadPhoto = async (file: File | undefined) => {
     if (!file || uploadBusy) return;
     if (file.size > 2 * 1024 * 1024) {
-      setUploadError("Файл больше 2 МБ");
+      setUploadError(d.errorTooBig);
       return;
     }
     setUploadBusy(true);
@@ -79,13 +81,13 @@ export default function CategoryEditor({
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const text = await res.text();
       if (!res.ok) {
-        setUploadError(text || "Не получилось загрузить файл");
+        setUploadError(text || d.errorUpload);
         return;
       }
       const data = JSON.parse(text) as { path: string };
       setImage(data.path);
     } catch {
-      setUploadError("Не получилось загрузить файл");
+      setUploadError(d.errorUpload);
     } finally {
       setUploadBusy(false);
     }
@@ -146,7 +148,7 @@ export default function CategoryEditor({
       {
         key: ++keyCounter.current,
         id: null,
-        name: { ru: "Новый слот", en: "", uk: "" },
+        name: { ru: d.newSlotName, en: "", uk: "" },
         componentType: "stone",
         minQty: 1,
         maxQty: 1,
@@ -183,7 +185,7 @@ export default function CategoryEditor({
       });
       const text = await res.text();
       if (!res.ok) {
-        setError(text || "Не получилось сохранить категорию");
+        setError(text || d.errorSave);
         setBusy(false);
         return;
       }
@@ -191,7 +193,7 @@ export default function CategoryEditor({
       initialRef.current = currentSig;
       setBusy(false);
     } catch {
-      setError("Не получилось сохранить категорию");
+      setError(d.errorSave);
       setBusy(false);
     }
   };
@@ -199,15 +201,15 @@ export default function CategoryEditor({
   return (
     <div className="board board--paper" style={{ padding: "18px 20px" }}>
       <h3 className="sec-h2" style={{ fontSize: "1.1rem", marginBottom: "14px" }}>
-        Редактор категории «{name.ru}»
+        {d.editorTitle.replace("{name}", name.ru)}
       </h3>
 
       <div className="field">
         <LocalizedField
           value={name}
           onChange={setName}
-          label="Название"
-          placeholder="Браслеты"
+          label={d.labelName}
+          placeholder={d.placeholderName}
         />
       </div>
       <div className="field">
@@ -218,13 +220,13 @@ export default function CategoryEditor({
         <LocalizedField
           value={description}
           onChange={setDescription}
-          label="Описание"
+          label={d.labelDescription}
           multiline
-          placeholder="Что показывать в шапке категории"
+          placeholder={d.placeholderDescription}
         />
       </div>
       <div className="field">
-        <label>Изображение категории</label>
+        <label>{d.labelImage}</label>
         <div
           className={
             image ? "dropzone has-photo" : dzDrag ? "dropzone is-drag" : "dropzone"
@@ -245,11 +247,11 @@ export default function CategoryEditor({
           {image ? (
             <>
               <div className="dz-preview">
-                <img src={image} alt="Изображение категории" />
+                <img src={image} alt={d.photoAlt} />
               </div>
               <div className="dz-meta">
-                <b>{uploadBusy ? "Загружаем…" : "Заменить изображение"}</b>
-                <small>SVG или PNG, до 2 МБ</small>
+                <b>{uploadBusy ? d.uploadBusy : d.dzReplace}</b>
+                <small>{d.dzHint}</small>
                 {uploadError && (
                   <small
                     style={{ color: "var(--rust)", display: "block", marginTop: 6 }}
@@ -265,7 +267,7 @@ export default function CategoryEditor({
                     setImage("");
                   }}
                 >
-                  Убрать изображение
+                  {d.dzRemove}
                 </button>
               </div>
             </>
@@ -285,10 +287,10 @@ export default function CategoryEditor({
               </div>
               <b>
                 {uploadBusy
-                  ? "Загружаем…"
-                  : "Перетащите изображение сюда или нажмите"}
+                  ? d.uploadBusy
+                  : d.dzUpload}
               </b>
-              <small>SVG или PNG, до 2 МБ</small>
+              <small>{d.dzHint}</small>
               {uploadError && (
                 <small
                   style={{ color: "var(--rust)", display: "block", marginTop: 6 }}
@@ -312,7 +314,7 @@ export default function CategoryEditor({
       </div>
       <div className="field--row">
         <div className="field">
-          <label>Стоимость работы</label>
+          <label>{d.labelWorkPrice}</label>
           <input
             type="number"
             step="0.01"
@@ -321,7 +323,7 @@ export default function CategoryEditor({
           />
         </div>
         <div className="field">
-          <label>Валюта работы</label>
+          <label>{d.labelCurrency}</label>
           <select
             value={workPriceCurrency}
             onChange={(e) => setWorkPriceCurrency(e.target.value)}
@@ -334,7 +336,7 @@ export default function CategoryEditor({
           </select>
         </div>
         <div className="field">
-          <label>База срока, дн</label>
+          <label>{d.labelBaseDays}</label>
           <input
             type="number"
             value={baseWorkDays}
@@ -349,7 +351,7 @@ export default function CategoryEditor({
             checked={isActive}
             onChange={(e) => setIsActive(e.target.checked)}
           />{" "}
-          Активна
+          {d.labelActive}
         </label>
         <label className="checkbox">
           <input
@@ -357,7 +359,7 @@ export default function CategoryEditor({
             checked={hasSlotTemplate}
             onChange={(e) => setHasSlotTemplate(e.target.checked)}
           />{" "}
-          Есть шаблон слотов (для конфигуратора)
+          {d.labelSlotTemplate}
         </label>
       </div>
 
@@ -365,14 +367,13 @@ export default function CategoryEditor({
         className="sec-h2"
         style={{ fontSize: "1rem", margin: "22px 0 6px" }}
       >
-        Шаблон слотов{" "}
+        {d.slotsHeading}{" "}
         <span className="chip chip--mustard" style={{ fontSize: ".62rem" }}>
-          drag&drop
+          {d.slotsChip}
         </span>
       </div>
       <small className="muted">
-        Слоты — «корзины» конфигуратора. Тип определяет, какие комплектующие можно
-        положить в слот.
+        {d.slotsHint}
       </small>
 
       <div className="slot-editor">
@@ -381,8 +382,7 @@ export default function CategoryEditor({
             <div className="slot-head">
               ⣿ {s.name.ru}
               <small>
-                тип: {s.componentType} · {s.minQty}–{s.maxQty}{" "}
-                {plural(s.maxQty, ["позиция", "позиции", "позиций"])} · порядок {i + 1}
+                {d.slotQty.replace("{min}", String(s.minQty)).replace("{max}", String(s.maxQty)).replace("{unit}", plural(s.maxQty, [d.unitItem, d.unitItems, d.unitItemsMany])).replace("{i}", String(i + 1))}
               </small>
             </div>
             <div className="slot-body">
@@ -391,11 +391,11 @@ export default function CategoryEditor({
                   <LocalizedField
                     value={s.name}
                     onChange={(next) => patchSlotName(s.key, next)}
-                    label="Название"
+                    label={d.labelName}
                   />
                 </div>
                 <div className="field">
-                  <label>Тип комплектующих</label>
+                  <label>{d.slotTypeLabel}</label>
                   <select
                     value={
                       typeOptions.some((o) => o.value === s.componentType)
@@ -408,7 +408,7 @@ export default function CategoryEditor({
                   >
                     {!typeOptions.some((o) => o.value === s.componentType) && (
                       <option value="">
-                        {s.componentType || "—"} (текущий тип)
+                        {d.currentType.replace("{code}", s.componentType || "—")}
                       </option>
                     )}
                     {typeOptions.map((o) => (
@@ -419,7 +419,7 @@ export default function CategoryEditor({
                   </select>
                 </div>
                 <div className="field">
-                  <label>Min</label>
+                  <label>{d.slotMinLabel}</label>
                   <input
                     type="number"
                     value={s.minQty}
@@ -429,7 +429,7 @@ export default function CategoryEditor({
                   />
                 </div>
                 <div className="field">
-                  <label>Max</label>
+                  <label>{d.slotMaxLabel}</label>
                   <input
                     type="number"
                     value={s.maxQty}
@@ -458,7 +458,7 @@ export default function CategoryEditor({
                   className="btn btn--secondary btn--small"
                   onClick={() => removeSlot(s.key)}
                 >
-                  Удалить слот
+                  {d.deleteSlot}
                 </button>
               </div>
             </div>
@@ -474,10 +474,10 @@ export default function CategoryEditor({
 
       <div className="form-actions" style={{ marginTop: "18px" }}>
           <button className={`btn btn--primary${isDirty ? " is-dirty" : ""}`} onClick={() => void save()} disabled={busy || !isDirty}>
-          Сохранить категорию
+          {d.saveCategory}
         </button>
         <button className="btn btn--secondary" onClick={addSlot} disabled={busy}>
-          + Добавить слот
+          {d.addSlot}
         </button>
       </div>
     </div>

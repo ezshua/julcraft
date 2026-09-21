@@ -4,14 +4,16 @@ import { useRef, useState } from "react";
 
 type Props = {
   kind: "products" | "components" | "categories";
-  /** Лимит из макета: товары — 5 МБ, комплектующие — 2 МБ */
+  /** Limit from the mockup: products — 5 MB, components — 2 MB */
   maxMB: number;
-  /** MIME-типы: товары — jpeg/png/webp, комплектующие — png */
+  /** MIME types: products — jpeg/png/webp, components — png */
   accept: string;
-  /** Текст подписи в dropzone (из макета, задаёт родитель) */
+  /** Dropzone label text (from the mockup, set by the parent) */
   title: string;
   hint: string;
   onUploaded: (path: string) => void;
+  /** Dictionary slice for dropzone errors (products / components) */
+  dict: { photoTooBig: string; photoError: string; photoUploading: string };
   children?: React.ReactNode;
 };
 
@@ -24,8 +26,10 @@ export default function ImageUploader({
   title,
   hint,
   onUploaded,
+  dict,
   children,
 }: Props) {
+  const d = dict;
   const inputRef = useRef<HTMLInputElement>(null);
   const [drag, setDrag] = useState(false);
   const [error, setError] = useState("");
@@ -34,7 +38,7 @@ export default function ImageUploader({
   const upload = async (file: File | undefined) => {
     if (!file || busy) return;
     if (file.size > maxMB * 1024 * 1024) {
-      setError(`Файл больше ${maxMB} МБ`);
+      setError(d.photoTooBig.replace("{mb}", String(maxMB)));
       return;
     }
     setBusy(true);
@@ -46,13 +50,13 @@ export default function ImageUploader({
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const text = await res.text();
       if (!res.ok) {
-        setError(text || "Не получилось загрузить файл");
+        setError(text || d.photoError);
         return;
       }
       const data = JSON.parse(text) as { path: string };
       onUploaded(data.path);
     } catch {
-      setError("Не получилось загрузить файл");
+      setError(d.photoError);
     } finally {
       setBusy(false);
     }
@@ -86,7 +90,7 @@ export default function ImageUploader({
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
         </svg>
       </div>
-      <b>{busy ? "Загружаем…" : title}</b>
+      <b>{busy ? d.photoUploading : title}</b>
       <small>{hint}</small>
       {error && (
         <small style={{ color: "var(--rust)", display: "block", marginTop: "6px" }}>

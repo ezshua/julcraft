@@ -6,6 +6,7 @@ import PhotoGrid from "./PhotoGrid";
 import { slugify } from "@/lib/format";
 import { toLS } from "@/lib/localize";
 import LocalizedField, { type LocalizedValue } from "./LocalizedField";
+import { useAdminDict } from "./admin-dict-context";
 import {
   amountToMinor,
   minorToAmount,
@@ -14,10 +15,10 @@ import {
 import type { Product, ProductAvailability } from "@/drizzle/schema";
 
 const AVAILABILITY_OPTIONS = [
-  { value: "in_stock", label: "в наличии" },
-  { value: "reserve", label: "резерв" },
-  { value: "made_to_order", label: "под заказ" },
-  { value: "out_of_stock", label: "нет на складе" },
+  { value: "in_stock", key: "availStock" },
+  { value: "reserve", key: "availReserve" },
+  { value: "made_to_order", key: "availOrder" },
+  { value: "out_of_stock", key: "availNone" },
 ] as const;
 
 
@@ -84,7 +85,7 @@ function buildSnapshot(p: Product | undefined, currencyCode: string): FormState 
     name: toLS(p.name),
     slug: p.slug,
     categoryId: String(p.categoryId),
-    price: "", // заполняется после монтирования, см. useEffect
+    price: "", // filled after mount, see useEffect
     priceCurrency: p.priceCurrency,
     description: toLS(p.description),
     isNew: p.isNew,
@@ -127,6 +128,7 @@ function isDirty(a: FormState, b: FormState): boolean {
 //   * «Отмена» / крестик / клик по фону → если есть правки, спрашиваем подтверждение.
 export default function ProductModal({ categories, product, finance, currencyCode }: Props) {
   const router = useRouter();
+  const d = useAdminDict().products;
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState(0);
 
@@ -175,9 +177,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
   const closeWithConfirm = () => {
     if (busy) return;
     if (dirty) {
-      const ok = window.confirm(
-        "В форме есть несохранённые изменения. Закрыть без сохранения?",
-      );
+      const ok = window.confirm(d.confirmClose);
       if (!ok) return;
     }
     setOpen(false);
@@ -254,7 +254,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
       );
       const text = await res.text();
       if (!res.ok) {
-        setError(text || "Не получилось сохранить товар");
+        setError(text || d.errorSave);
         setBusy(false);
         return;
       }
@@ -265,7 +265,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
       setBusy(false);
       router.refresh();
     } catch {
-      setError("Не получилось сохранить товар");
+      setError(d.errorSave);
       setBusy(false);
     }
   };
@@ -276,7 +276,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
         <button
           className="icon-btn"
           style={{ width: 32, height: 32 }}
-          title="Редактировать"
+          title={d.modalEdit}
           onClick={() => {
             setError("");
             setTab(0);
@@ -287,7 +287,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
         </button>
       ) : (
         <button className="btn btn--primary btn--small" onClick={openCreate}>
-          + Добавить товар
+          {d.newButton}
         </button>
       )}
 
@@ -298,11 +298,11 @@ export default function ProductModal({ categories, product, finance, currencyCod
       >
         <div className="modal modal--wide">
           <div className="m-head">
-            <h3>{product ? "Редактировать товар" : "Новый товар на витрину"}</h3>
+            <h3>{product ? d.modalEdit : d.modalCreate}</h3>
             <button
               className="icon-btn"
               onClick={closeWithConfirm}
-              aria-label="Закрыть"
+              aria-label={d.modalCloseAria}
               disabled={busy}
             >
               ✕
@@ -310,13 +310,17 @@ export default function ProductModal({ categories, product, finance, currencyCod
           </div>
 
           <div className="tabs">
-            {["Основное", "Фото", "SEO"].map((label, i) => (
+            {[
+              { key: "tabMain", label: d.tabMain },
+              { key: "tabPhotos", label: d.tabPhotos },
+              { key: "tabSeo", label: d.tabSeo },
+            ].map((t, i) => (
               <span
-                key={label}
+                key={t.key}
                 className={tab === i ? "tab is-active" : "tab"}
                 onClick={() => setTab(i)}
               >
-                {label}
+                {t.label}
               </span>
             ))}
           </div>
@@ -326,27 +330,27 @@ export default function ProductModal({ categories, product, finance, currencyCod
               <LocalizedField
                 value={form.name}
                 onChange={(v) => setField("name", v)}
-                label="Название"
-                placeholder="Брошь «...»"
+                label={d.labelName}
+                placeholder={d.placeholderName}
               />
             </div>
             <div className="field--row">
               <div className="field">
-                <label>ID (URL)</label>
+                <label>{d.labelSlug}</label>
                 <input
                   type="text"
-                  placeholder="brosh-nazvanie"
+                  placeholder={d.placeholderSlug}
                   value={form.slug}
                   onChange={(e) => setField("slug", e.target.value)}
                 />
               </div>
               <div className="field">
-                <label>Категория</label>
+                <label>{d.labelCategory}</label>
                 <select
                   value={form.categoryId}
                   onChange={(e) => setField("categoryId", e.target.value)}
                 >
-                  <option value="">— выберите —</option>
+                  <option value="">{d.emptySelect}</option>
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
@@ -357,17 +361,17 @@ export default function ProductModal({ categories, product, finance, currencyCod
             </div>
             <div className="field--row">
               <div className="field">
-                <label>Цена</label>
+                <label>{d.labelPrice}</label>
                 <input
                   type="number"
                   step="0.01"
-                  placeholder="1 950"
+                  placeholder={d.placeholderPrice}
                   value={form.price}
                   onChange={(e) => setField("price", e.target.value)}
                 />
               </div>
               <div className="field">
-                <label>Валюта цены</label>
+                <label>{d.labelCurrency}</label>
                 <select
                   value={form.priceCurrency}
                   onChange={(e) => setField("priceCurrency", e.target.value)}
@@ -384,9 +388,9 @@ export default function ProductModal({ categories, product, finance, currencyCod
               <LocalizedField
                 value={form.description}
                 onChange={(v) => setField("description", v)}
-                label="Описание"
+                label={d.labelDescription}
                 multiline
-                placeholder="Что за вещь, из чего, какая история"
+                placeholder={d.placeholderDescription}
               />
             </div>
             <div className="field" style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
@@ -396,7 +400,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
                   checked={form.isNew}
                   onChange={(e) => setField("isNew", e.target.checked)}
                 />{" "}
-                Новинка
+                {d.labelNew}
               </label>
               <label className="checkbox">
                 <input
@@ -404,12 +408,12 @@ export default function ProductModal({ categories, product, finance, currencyCod
                   checked={form.isFeatured}
                   onChange={(e) => setField("isFeatured", e.target.checked)}
                 />{" "}
-                Избранное (на главную)
+                {d.labelFeat}
               </label>
             </div>
-            {/* D-13: select «Наличие» вместо чекбокса «В наличии» из макета */}
+            {/* D-13: select availability instead of a checkbox from the mockup */}
             <div className="field">
-              <label>Наличие</label>
+              <label>{d.labelAvail}</label>
               <select
                 value={form.availability}
                 onChange={(e) =>
@@ -418,14 +422,14 @@ export default function ProductModal({ categories, product, finance, currencyCod
               >
                 {AVAILABILITY_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
-                    {o.label}
+                    {d[o.key]}
                   </option>
                 ))}
               </select>
             </div>
             {form.availability === "reserve" && (
               <div className="field">
-                <label>Резерв до</label>
+                <label>{d.labelReserveUntil}</label>
                 <input
                   type="date"
                   value={form.reserveUntil}
@@ -435,7 +439,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
             )}
             {form.availability === "made_to_order" && (
               <div className="field">
-                <label>Дней под заказ</label>
+                <label>{d.labelOrderDays}</label>
                 <input
                   type="number"
                   placeholder="7"
@@ -453,7 +457,8 @@ export default function ProductModal({ categories, product, finance, currencyCod
               kind="products"
               maxMB={5}
               accept="image/jpeg,image/png,image/webp"
-              hint="JPG/PNG/WebP до 5 МБ · первое фото — обложка"
+              hint={d.photoHint}
+              dict={d}
             />
           </div>
           <div className="tab-pane" style={{ display: tab === 2 ? "" : "none" }}>
@@ -462,7 +467,7 @@ export default function ProductModal({ categories, product, finance, currencyCod
                 value={form.metaTitle}
                 onChange={(v) => setField("metaTitle", v)}
                 label="Meta title"
-                placeholder="Брошь «Ромашковая» — JulCraft"
+                placeholder={d.placeholderMetaTitle}
               />
             </div>
             <div className="field">
@@ -471,14 +476,14 @@ export default function ProductModal({ categories, product, finance, currencyCod
                 onChange={(v) => setField("metaDescription", v)}
                 label="Meta description"
                 multiline
-                placeholder="Эмаль по меди, ручная роспись, в одном экземпляре."
+                placeholder={d.placeholderMetaDescription}
               />
             </div>
             <div className="field">
-              <label>OG-изображение</label>
+              <label>{d.labelOgImage}</label>
               <input
                 type="text"
-                placeholder="/uploads/products/..."
+                placeholder={d.placeholderOgImage}
                 value={form.ogImage}
                 onChange={(e) => setField("ogImage", e.target.value)}
               />
@@ -498,22 +503,22 @@ export default function ProductModal({ categories, product, finance, currencyCod
               disabled={busy || !dirty}
               title={
                 dirty
-                  ? "Сохранить изменения"
-                  : "Нет изменений — сохранять нечего"
+                  ? d.saveChanges
+                  : d.noChanges
               }
             >
               {product
                 ? dirty
-                  ? "Сохранить изменения"
-                  : "Сохранить"
-                : "Сохранить товар"}
+                  ? d.saveChanges
+                  : d.save
+                : d.saveProduct}
             </button>
             <button
               className="btn btn--secondary"
               onClick={closeWithConfirm}
               disabled={busy}
             >
-              Отмена
+              {d.cancel}
             </button>
           </div>
         </div>

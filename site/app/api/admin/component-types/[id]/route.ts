@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { getDictionary, getLocale, t, type DictionaryKey } from "@/lib/i18n";
 import { db } from "@/lib/db";
 import {
   componentTypes,
@@ -23,26 +24,27 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const dict = getDictionary(await getLocale());
   if (!(await requireAdmin())) {
-    return Response.json({ error: "Не авторизован" }, { status: 401 });
+    return Response.json({ error: t(dict, "admin.errors.unauthorized" as DictionaryKey) }, { status: 401 });
   }
 
   const { id } = await params;
   const typeId = parseId(id);
   if (!typeId) {
-    return Response.json({ error: "Некорректный id" }, { status: 400 });
+    return Response.json({ error: t(dict, "admin.errors.badId" as DictionaryKey) }, { status: 400 });
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Некорректный JSON" }, { status: 400 });
+    return Response.json({ error: t(dict, "admin.errors.badJson" as DictionaryKey) }, { status: 400 });
   }
 
-  const parsed = componentTypeUpdateSchema.safeParse(body);
+  const parsed = componentTypeUpdateSchema(dict.admin.errors).safeParse(body);
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message ?? "Некорректные данные";
+    const message = parsed.error.issues[0]?.message ?? t(dict, "admin.errors.badData" as DictionaryKey);
     return Response.json({ error: message }, { status: 400 });
   }
   const data = parsed.data as ComponentTypeUpdateInput;
@@ -53,7 +55,7 @@ export async function PUT(
     .where(eq(componentTypes.id, typeId))
     .get();
   if (!current) {
-    return Response.json({ error: "Тип не найден" }, { status: 404 });
+    return Response.json({ error: t(dict, "admin.errors.componentTypeNotFound" as DictionaryKey) }, { status: 404 });
   }
 
   // Деактивация разрешена даже для используемого типа: существующие записи
@@ -66,7 +68,7 @@ export async function PUT(
     data.sortOrder === undefined &&
     data.isActive === undefined
   ) {
-    return Response.json({ error: "Нет полей для обновления" }, { status: 400 });
+    return Response.json({ error: t(dict, "admin.errors.noFieldsToUpdate" as DictionaryKey) }, { status: 400 });
   }
 
   db.update(componentTypes)
@@ -88,14 +90,15 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const dict = getDictionary(await getLocale());
   if (!(await requireAdmin())) {
-    return Response.json({ error: "Не авторизован" }, { status: 401 });
+    return Response.json({ error: t(dict, "admin.errors.unauthorized" as DictionaryKey) }, { status: 401 });
   }
 
   const { id } = await params;
   const typeId = parseId(id);
   if (!typeId) {
-    return Response.json({ error: "Некорректный id" }, { status: 400 });
+    return Response.json({ error: t(dict, "admin.errors.badId" as DictionaryKey) }, { status: 400 });
   }
 
   const current = db
@@ -104,12 +107,12 @@ export async function DELETE(
     .where(eq(componentTypes.id, typeId))
     .get();
   if (!current) {
-    return Response.json({ error: "Тип не найден" }, { status: 404 });
+    return Response.json({ error: t(dict, "admin.errors.componentTypeNotFound" as DictionaryKey) }, { status: 404 });
   }
 
   if (BASE_COMPONENT_TYPE_CODES.has(current.code)) {
     return Response.json(
-      { error: "Базовый тип нельзя удалить — можно только деактивировать" },
+      { error: t(dict, "admin.errors.cannotDeleteBaseType" as DictionaryKey) },
       { status: 409 },
     );
   }
@@ -129,7 +132,7 @@ export async function DELETE(
     return Response.json(
       {
         error:
-          "Тип используется в комплектующих или шаблонах слотов — сначала переназначьте их",
+          t(dict, "admin.errors.typeInUse" as DictionaryKey),
       },
       { status: 409 },
     );
