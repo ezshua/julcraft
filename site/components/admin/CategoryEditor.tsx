@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useAdminDict } from "./admin-dict-context";
 import { useRouter } from "next/navigation";
 import type { ComponentTypeOption } from "./ComponentModal";
@@ -108,21 +108,39 @@ export default function CategoryEditor({
 
   // Dirty-tracking: кнопка активна только при несохранённых изменениях.
   // Снимок игнорирует служебный `key` слотов, сравниваются только данные.
-  const initialRef = useRef<string | null>(null);
-  const currentSig = JSON.stringify({
-    name,
-    slug,
-    description,
-    image,
-    workPrice,
-    workPriceCurrency,
-    baseWorkDays,
-    isActive,
-    hasSlotTemplate,
-    slots: slots.map(({ key, ...rest }) => rest),
-  });
-  if (initialRef.current === null) initialRef.current = currentSig;
-  const isDirty = currentSig !== initialRef.current;
+  // page рендерит компонент с key={category.id}, React пересоздаёт дерево
+  // при смене категории — ленивая инициализация снимка из пропсов подходит.
+  const currentSig = useMemo(
+    () =>
+      JSON.stringify({
+        name,
+        slug,
+        description,
+        image,
+        workPrice,
+        workPriceCurrency,
+        baseWorkDays,
+        isActive,
+        hasSlotTemplate,
+        slots: slots.map(({ key, ...rest }) => rest),
+      }),
+    [
+      name,
+      slug,
+      description,
+      image,
+      workPrice,
+      workPriceCurrency,
+      baseWorkDays,
+      isActive,
+      hasSlotTemplate,
+      slots,
+    ],
+  );
+  // page рендерит компонент с key={category.id}, React пересоздаёт дерево
+  // при смене категории — ленивая инициализация снимка из пропсов подходит.
+  const [initialSig, setInitialSig] = useState<string>(currentSig);
+  const isDirty = currentSig !== initialSig;
 
   const patchSlot = (key: number, patch: Partial<SlotState>) =>
     setSlots((prev) => prev.map((s) => (s.key === key ? { ...s, ...patch } : s)));
@@ -190,7 +208,7 @@ export default function CategoryEditor({
         return;
       }
       router.refresh();
-      initialRef.current = currentSig;
+      setInitialSig(currentSig);
       setBusy(false);
     } catch {
       setError(d.errorSave);

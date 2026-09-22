@@ -51,11 +51,14 @@ export default function CollageLightbox({ src }: { src: string }) {
   const [ty, setTy] = useState(0);
 
   const dragRef = useRef<{ x: number; y: number; tx: number; ty: number } | null>(null);
-  const movedRef = useRef(false);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
   const naturalRef = useRef<Size>({ w: 0, h: 0 });
   const stageSizeRef = useRef<Size>({ w: 0, h: 0 });
+  // dragRef.current читается в рендере (для transition), поэтому дублируем
+  // его в state — ref сам по себе не триггерит перерендер.
+  const [dragging, setDragging] = useState(false);
+  const [moved, setMoved] = useState(false);
 
   const reset = () => {
     setScale(1);
@@ -65,7 +68,6 @@ export default function CollageLightbox({ src }: { src: string }) {
 
   useEffect(() => {
     if (!open) return;
-    reset();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
       else if (e.key === "+" || e.key === "=") {
@@ -125,15 +127,16 @@ export default function CollageLightbox({ src }: { src: string }) {
 
   const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    movedRef.current = false;
+    setMoved(false);
     if (scale <= 1) return;
+    setDragging(true);
     dragRef.current = { x: e.clientX, y: e.clientY, tx, ty };
   };
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const d = dragRef.current;
     if (!d) return;
     if (Math.abs(e.clientX - d.x) > 4 || Math.abs(e.clientY - d.y) > 4) {
-      movedRef.current = true;
+      setMoved(true);
     }
     const newTx = d.tx + (e.clientX - d.x);
     const newTy = d.ty + (e.clientY - d.y);
@@ -143,16 +146,14 @@ export default function CollageLightbox({ src }: { src: string }) {
   };
   const onMouseUp = () => {
     dragRef.current = null;
+    setDragging(false);
   };
 
   // Двойной клик по картинке: fit-to-screen ↔ 1:1.
   const onDoubleClick = (e: React.MouseEvent<HTMLImageElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (movedRef.current) {
-      movedRef.current = false;
-      return;
-    }
+    if (moved) return;
     const img = naturalRef.current;
     const stage = stageSizeRef.current;
     const fit = fitScale(img, stage);
@@ -167,16 +168,21 @@ export default function CollageLightbox({ src }: { src: string }) {
 
   const d = useAdminDict().orders;
 
+  const openLightbox = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    // Сброс масштаба/панели в обработчике (а не в effect): state уже
+    // дефолтный при первом открытии, при повторном — сбрасываем вручную.
+    reset();
+    setOpen(true);
+  };
+
   return (
     <>
       <button
         className="icon-btn"
         style={{ width: 32, height: 32 }}
         title={d.lightboxView}
-        onClick={(e) => {
-          e.stopPropagation();
-          setOpen(true);
-        }}
+        onClick={openLightbox}
       >
         🖼
       </button>
@@ -197,8 +203,8 @@ export default function CollageLightbox({ src }: { src: string }) {
             onMouseLeave={onMouseUp}
             onClick={(e) => {
               e.stopPropagation();
-              if (movedRef.current) {
-                movedRef.current = false;
+              if (moved) {
+                setMoved(false);
                 return;
               }
               if (e.target === stageRef.current) setOpen(false);
@@ -228,7 +234,7 @@ export default function CollageLightbox({ src }: { src: string }) {
                 maxWidth: "92vw",
                 maxHeight: "88vh",
                 transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
-                transition: dragRef.current ? "none" : "transform 0.12s ease",
+                transition: dragging ? "none" : "transform 0.12s ease",
                 userSelect: "none",
                 border: "3px solid var(--brown)",
                 borderRadius: 12,
@@ -237,8 +243,8 @@ export default function CollageLightbox({ src }: { src: string }) {
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                if (movedRef.current) {
-                  movedRef.current = false;
+                if (moved) {
+                  setMoved(false);
                   return;
                 }
                 if (scale < 8) setScale((s) => Math.min(8, +(s + 0.5).toFixed(2)));

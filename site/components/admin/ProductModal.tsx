@@ -134,42 +134,32 @@ export default function ProductModal({ categories, product, finance, currencyCod
 
   const [form, setForm] = useState<FormState>(() => buildSnapshot(product, currencyCode));
   const [snapshot, setSnapshot] = useState<FormState>(() => buildSnapshot(product, currencyCode));
-  // Флаг «снимок уже подтянут под продукт + текущую валюту». Нужен, чтобы
-  // первый рендер с уже-открытой формой не сбрасывал то, что начал
-  // заполнять пользователь, и одновременно чтобы при повторном открытии
-  // существующего товара (или при смене валюты) поля переинициализировались.
-  const [hydrated, setHydrated] = useState(false);
 
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const initialOpenRef = useRef(false);
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   // Снимок формы на момент открытия (или смены валюты/продукта).
-  // Запускаем, когда модалка только что стала открыта — переинициализируем
-  // ВСЕ поля, а не только цену. Раньше при повторном открытии товара
-  // подтягивалась только цена; остальные поля оставались от прошлого
-  // открытия (баг «первое редактирование работает, второе — нет»).
+  // Инициализируем форму при переходе из закрытого в открытое состояние.
+  // Раньше при повторном открытии товара подтягивалась только цена; остальные
+  // поля оставались от прошлого открытия (баг «первое редактирование работает,
+  // второе — нет»). wasOpenRef отслеживает переход, без setState при !open.
+  const wasOpenRef = useRef(false);
   useEffect(() => {
-    if (!open) {
-      setHydrated(false);
-      initialOpenRef.current = false;
-      return;
+    if (open && !wasOpenRef.current) {
+      const base = buildSnapshot(product, currencyCode);
+      if (product) {
+        // Цена правится в явно выбранной валюте товара (priceCurrency) —
+        // конвертация в валюту «Вид» не нужна.
+        base.price = String(minorToAmount(product.price));
+      }
+      setForm(base);
+      setSnapshot(base);
     }
-    if (initialOpenRef.current) return;
-    const base = buildSnapshot(product, currencyCode);
-    if (product) {
-      // Цена правится в явно выбранной валюте товара (priceCurrency) —
-      // конвертация в валюту «Вид» не нужна.
-      base.price = String(minorToAmount(product.price));
-    }
-    setForm(base);
-    setSnapshot(base);
-    setHydrated(true);
-    initialOpenRef.current = true;
+    wasOpenRef.current = open;
   }, [open, product, finance, currencyCode]);
 
   const dirty = isDirty(form, snapshot);

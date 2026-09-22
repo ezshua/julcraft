@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useAdminDict } from "./admin-dict-context";
 import { useRouter } from "next/navigation";
 import { formatPrice, asPriced, plural } from "@/lib/format";
@@ -34,11 +34,14 @@ export default function CategoryList({ categories, finance, currencyCode, active
   const [items, setItems] = useState(categories);
 
   // Список приходит из сервера (server component). router.refresh() после
-  // создания/переупорядочивания категорий меняет пропс, но useState его не
-  // подхватывает — синхронизируем явно, чтобы новые категории появлялись сразу.
-  useEffect(() => {
+  // создания/переупорядокивания категорий меняет пропс — синхронизируем state
+  // в рендере (официальный React-паттерн "adjusting state on prop change"):
+  // setState во время рендера безопасен, React перерендерит без цикла.
+  const prevRef = useRef(categories);
+  if (prevRef.current !== categories) {
+    prevRef.current = categories;
     setItems(categories);
-  }, [categories]);
+  }
 
   const move = async (from: number, to: number) => {
     if (from === to) return;
