@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useAdminDict } from "./admin-dict-context";
+import { useAdminDict, useAdminLocale } from "./admin-dict-context";
 import { useRouter } from "next/navigation";
-import { firstLocale, toLS } from "@/lib/localize";
+import { toLS, L } from "@/lib/localize";
 import LocalizedField, { type LocalizedValue } from "./LocalizedField";
 
 export type ComponentTypeItem = {
@@ -28,6 +28,7 @@ type Props = {
 // сервера как DeleteButton, здесь — переключатели и формы).
 export default function ComponentTypesManager({ types }: Props) {
   const d = useAdminDict().components;
+  const locale = useAdminLocale() ?? "ru";
   const router = useRouter();
   const [code, setCode] = useState("");
   const [name, setName] = useState<LocalizedValue>({ ru: "", en: "", uk: "" });
@@ -95,7 +96,7 @@ export default function ComponentTypesManager({ types }: Props) {
   };
 
   const remove = async (t: ComponentTypeItem) => {
-    if (!confirm(d.confirmDelete.replace("{name}", firstLocale(t.name)))) return;
+    if (!confirm(d.confirmDelete.replace("{name}", L(t.name, locale)))) return;
     setError("");
     try {
       const res = await fetch(`/api/admin/component-types/${t.id}`, {
@@ -175,7 +176,7 @@ export default function ComponentTypesManager({ types }: Props) {
                     label={d.colName}
                   />
                 ) : (
-                  firstLocale(t.name)
+                  L(t.name, locale)
                 )}
               </td>
               <td style={{ width: 90 }}>

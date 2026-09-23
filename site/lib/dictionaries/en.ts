@@ -243,6 +243,10 @@ export const en = {
       noOrders: "No orders",
       colNum: "No.",
       colType: "Type",
+      // Type badge labels in the orders table (OrderRow.typeLabels).
+      typeProduct: "product",
+      typeCustom: "build",
+      typeContact: "note",
       colClient: "Client",
       colContact: "Contact",
       colAmount: "Amount",

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { categories, orders, products } from "@/drizzle/schema";
-import { firstLocale } from "@/lib/localize";
+import { L } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getDictionary, getLocale } from "@/lib/i18n";
@@ -44,7 +44,8 @@ export default async function AdminOrdersPage(props: {
 }) {
   const sp = await props.searchParams;
 
-  const d = getDictionary(await getLocale()).admin.orders;
+  const locale = await getLocale();
+  const d = getDictionary(locale).admin.orders;
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
   const currencyCode = currency.code;
@@ -59,9 +60,9 @@ export default async function AdminOrdersPage(props: {
 
   const productById = new Map(allProducts.map((p) => [p.id, p]));
   const categoryById = new Map(allCategories.map((c) => [c.id, c]));
-  const prodName = (p: (typeof allProducts)[number]) => firstLocale(p.name);
+  const prodName = (p: (typeof allProducts)[number]) => L(p.name, locale);
   const catName = (c: (typeof allCategories)[number] | undefined) =>
-    c ? firstLocale(c.name) : null;
+    c ? L(c.name, locale) : null;
 
   const match = (o: (typeof allOrders)[number]) => {
     if (st !== "all" && o.status !== st) return false;

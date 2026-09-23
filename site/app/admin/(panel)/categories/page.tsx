@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products, slotTemplates } from "@/drizzle/schema";
-import { firstLocale, toLS, L } from "@/lib/localize";
+import { toLS, L } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getComponentTypes } from "@/lib/component-types";
@@ -53,7 +53,8 @@ export default async function AdminCategoriesPage(props: {
 
   const listItems = allCategories.map((c) => ({
     id: c.id,
-    name: firstLocale(c.name),
+    // Сырая строка из БД — CategoryList раскрывает под локаль админки (L()).
+    name: c.name,
     productCount: productCount(c.id),
     workPrice: c.workPrice,
     workPriceCurrency: c.workPriceCurrency,

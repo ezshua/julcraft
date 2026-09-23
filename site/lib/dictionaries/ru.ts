@@ -242,6 +242,10 @@ export const ru = {
       noOrders: "Заявок нет",
       colNum: "№",
       colType: "Тип",
+      // Подписи бейджа типа заявки в таблице (OrderRow.typeLabels).
+      typeProduct: "товар",
+      typeCustom: "сборка",
+      typeContact: "записка",
       colClient: "Клиент",
       colContact: "Контакт",
       colAmount: "Сумма",

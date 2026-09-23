@@ -243,6 +243,10 @@ export const uk = {
       noOrders: "Заявок немає",
       colNum: "№",
       colType: "Тип",
+      // Підписки бейджа типу заявки в таблиці (OrderRow.typeLabels).
+      typeProduct: "товар",
+      typeCustom: "збірка",
+      typeContact: "записка",
       colClient: "Клієнт",
       colContact: "Контакт",
       colAmount: "Сума",

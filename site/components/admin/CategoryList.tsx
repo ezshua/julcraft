@@ -1,15 +1,17 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useAdminDict } from "./admin-dict-context";
+import { useAdminDict, useAdminLocale } from "./admin-dict-context";
 import { useRouter } from "next/navigation";
 import { formatPrice, asPriced, plural } from "@/lib/format";
 import { useCurrency } from "@/lib/use-currency";
+import { L } from "@/lib/localize";
 import type { FinanceSettings } from "@/lib/currency";
 import DeleteButton from "./DeleteButton";
 
 export type CategoryListItem = {
   id: number;
+  // Сырая строка из БД (локализованный JSON), раскрывается под локаль админки.
   name: string;
   productCount: number;
   workPrice: number;
@@ -28,6 +30,7 @@ type Props = {
 // Левая панель: категории с drag&drop (Решение 5б). Клик по строке — открыть в редакторе.
 export default function CategoryList({ categories, finance, currencyCode, activeId }: Props) {
   const d = useAdminDict().categories;
+  const locale = useAdminLocale() ?? "ru";
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -95,7 +98,7 @@ export default function CategoryList({ categories, finance, currencyCode, active
               style={{ cursor: "pointer", position: "relative" }}
               onClick={() => router.push(`/admin/categories?id=${c.id}`)}
             >
-              <span className="slot-title">⣿ {c.name}</span>
+              <span className="slot-title">⣿ {L(c.name, locale)}</span>
               <small>
                 {c.hasSlotTemplate
                    ? `${plural(c.productCount, [d.productItem, d.productItems, d.productItemsMany])} ${c.productCount} · ${d.workPriceLabel} ${formatPrice(asPriced(c.workPrice, c.workPriceCurrency), currency, finance)} · ${c.baseWorkDays} ${d.daysShort}`
@@ -107,7 +110,7 @@ export default function CategoryList({ categories, finance, currencyCode, active
               >
                 <DeleteButton
                   url={`/api/admin/categories/${c.id}`}
-                  confirmText={d.deleteCategory.replace("{name}", c.name)}
+                  confirmText={d.deleteCategory.replace("{name}", L(c.name, locale))}
                   icon="✕"
                   dict={{ deleteTitle: d.deleteCategoryTitle, deleteFailed: d.deleteCategoryFailed }}
                 />
