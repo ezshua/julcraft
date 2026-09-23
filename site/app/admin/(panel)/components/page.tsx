@@ -102,8 +102,9 @@ export default async function AdminComponentsPage(props: {
   const pageUrl = (p: number) =>
     buildUrl({ ...baseParams, page: p > 1 ? String(p) : undefined });
 
+  const locale = await getLocale();
   return (
-    <AdminDictProvider dict={getDictionary(await getLocale()).admin}>
+    <AdminDictProvider dict={getDictionary(locale).admin} locale={locale}>
       <div className="page-title">
         <h1>{d.heading}</h1>
         <div style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>

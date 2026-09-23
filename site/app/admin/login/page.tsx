@@ -13,7 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 // Копия mockup/admin/login.html 1:1: body.login-page → div.login-page (класс — plain-селектор).
 export default async function LoginPage() {
-  const dict = getDictionary(await getLocale());
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const d = dict.admin.login;
 
   return (
@@ -22,7 +23,7 @@ export default async function LoginPage() {
         <div className="logo-big">JulCraft</div>
         <p className="sub">{d.subtitle}</p>
 
-        <AdminDictProvider dict={dict.admin}>
+        <AdminDictProvider dict={dict.admin} locale={locale}>
           <LoginForm />
         </AdminDictProvider>
 

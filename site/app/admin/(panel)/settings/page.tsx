@@ -11,12 +11,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminSettingsPage() {
-  const dict = getDictionary(await getLocale());
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const settings = getSettings();
   const currency = await getDisplayCurrency();
 
   return (
-    <AdminDictProvider dict={dict.admin}>
+    <AdminDictProvider dict={dict.admin} locale={locale}>
       <>
         <div className="page-title">
           <h1>{dict.admin.settings.heading}</h1>

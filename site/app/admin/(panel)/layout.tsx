@@ -25,7 +25,7 @@ export default async function AdminPanelLayout({
   const dict = getDictionary(locale);
 
   return (
-    <AdminDictProvider dict={dict.admin}>
+    <AdminDictProvider dict={dict.admin} locale={locale}>
       <AdminHeader />
       <main className="admin-wrap">{children}</main>
     </AdminDictProvider>

@@ -132,7 +132,7 @@ export default async function AdminCategoriesPage(props: {
   );
 
   return (
-    <AdminDictProvider dict={dict.admin}>
+    <AdminDictProvider dict={dict.admin} locale={locale}>
     <>
       <div className="page-title">
         <h1>{dict.admin.categories.heading}</h1>

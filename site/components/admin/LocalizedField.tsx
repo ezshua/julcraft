@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAdminLocale } from "./admin-dict-context";
 
 export type LocalizedValue = { ru: string; en: string; uk: string };
 
@@ -16,8 +17,17 @@ type Props = {
 
 const TABS = ["RU", "EN", "UK"] as const;
 
+// Начальная вкладка по локали админки (RU=0, EN=1, UK=2).
+function tabForLocale(locale: string | null): number {
+  if (locale === "en") return 1;
+  if (locale === "uk") return 2;
+  return 0;
+}
+
 // Текстовое поле с тремя вкладками RU/EN/UK (i18n-2 · Шаг 7).
 // RU — основной инпут (обязателен), EN/UK — дополнительные. UI админки остаётся на русском.
+// Начальная вкладка синхронизируется с языком админки: если мастер переключил
+// админку на EN/UK, поля ввода открываютcя на соответствующей вкладке.
 export default function LocalizedField({
   value,
   onChange,
@@ -26,7 +36,8 @@ export default function LocalizedField({
   placeholder,
   compact,
 }: Props) {
-  const [tab, setTab] = useState(0);
+  const adminLocale = useAdminLocale();
+  const [tab, setTab] = useState(tabForLocale(adminLocale));
   const current = TABS[tab];
   const Input = multiline ? "textarea" : "input";
   const field = (
