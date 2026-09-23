@@ -143,7 +143,10 @@ export function componentTypeUpdateSchema(errors: Record<string, string>) {
   return componentTypeCreateSchema(errors)
     .omit({ code: true })
     .extend({
-      name: z.string().trim().min(1, errors.hintTypeName).optional(),
+      // name — локализованный объект {ru,en,uk}, как и при создании.
+      // Клиент (ComponentTypesManager.saveEdit) шлёт именно его; простая строка
+      // здесь ломала PUT с "expected string, received object".
+      name: localizedNameSchema(errors).optional(),
       sortOrder: z.number().int().min(0).optional(),
       isActive: z.boolean().optional(),
     });

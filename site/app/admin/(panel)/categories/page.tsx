@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, products, slotTemplates } from "@/drizzle/schema";
-import { firstLocale, toLS } from "@/lib/localize";
+import { firstLocale, toLS, L } from "@/lib/localize";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getComponentTypes } from "@/lib/component-types";
@@ -26,6 +26,7 @@ export default async function AdminCategoriesPage(props: {
 
   const sp = await props.searchParams;
 
+  const locale = await getLocale();
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
   const currencyCode = currency.code;
@@ -40,10 +41,12 @@ export default async function AdminCategoriesPage(props: {
 
   // Типы комплектующих (план componentsExt): активные — для выпадающих списков,
   // все — для менеджера на вкладке «Типы комплектующих».
+  // ty.name хранится как локализованный JSON; раскрываем под текущую локаль,
+  // иначе в селекте слотов отображался сырых {"ru":"...","en":"..."}.
   const allTypes = getComponentTypes();
   const activeTypeOptions = allTypes
     .filter((ty) => ty.isActive)
-    .map((ty) => ({ value: ty.code, label: ty.name }));
+    .map((ty) => ({ value: ty.code, label: L(ty.name, locale) }));
 
   const productCount = (categoryId: number) =>
     allProducts.filter((p) => p.categoryId === categoryId).length;

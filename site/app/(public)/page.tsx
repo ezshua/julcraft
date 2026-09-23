@@ -58,10 +58,13 @@ export default async function HomePage() {
   for (const p of allProducts) {
     perCategory.set(p.categoryId, (perCategory.get(p.categoryId) ?? 0) + 1);
   }
-  // Короткая подпись категории — первое предложение description (до первой точки, решение №4)
+  // Короткая подпись категории — первое предложение description (до первой точки, решение №4).
+  // description хранится как локализованный JSON; раскрываем через L() под
+  // текущую локаль — иначе на плитке отображался сырых {"ru":"...","en":"..."}.
   const shortDesc = (cat: (typeof cats)[number]) => {
-    const dot = cat.description.indexOf(".");
-    return dot > 0 ? cat.description.slice(0, dot) : cat.description;
+    const text = L(cat.description, locale);
+    const dot = text.indexOf(".");
+    return dot > 0 ? text.slice(0, dot) : text;
   };
   const countLabel = (cat: (typeof cats)[number], n: number) => {
     if (cat.slug === "komplekty") return `${n} ${plural(n, home.unitKomplekty, locale)}`;

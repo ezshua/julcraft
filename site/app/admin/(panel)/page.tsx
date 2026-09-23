@@ -7,7 +7,7 @@ import { getDisplayCurrency } from "@/lib/currency-server";
 import { getSettings } from "@/lib/get-settings";
 import { formatPrice, asPriced, plural } from "@/lib/format";
 import { sumPriced } from "@/lib/currency";
-import { ORDER_STATUS_LABELS } from "@/lib/order-status-labels";
+import { getOrderStatusLabels } from "@/lib/order-status-labels";
 import { getDictionary, getLocale } from "@/lib/i18n";
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -53,6 +53,10 @@ export default async function DashboardPage() {
   const dict = getDictionary(await getLocale());
   const d = dict.admin.dashboard;
   const od = dict.admin.orders;
+  // Локализованные подписи статусов (как в /admin/orders), а не статическая
+  // константа ORDER_STATUS_LABELS — иначе при переключении языка админки
+  // статус оставался на русском.
+  const statusLabels = getOrderStatusLabels(await getLocale());
   const currency = await getDisplayCurrency();
   const { finance } = getSettings();
   const now = new Date();
@@ -197,7 +201,7 @@ export default async function DashboardPage() {
                        <td>{o.type === "custom" ? `${o.calcDays} ${d.daysShort}` : d.productUnknown}</td>
                        <td>
                          <span className={`tag tag--${o.status}`}>
-                           {ORDER_STATUS_LABELS[o.status]}
+                           {statusLabels[o.status]}
                          </span>
                        </td>
                        <td>{relDate(o.createdAt, { today: d.today, yesterday: d.yesterday, weekdays: d.weekdays })}</td>
@@ -235,7 +239,7 @@ export default async function DashboardPage() {
                     key={c.id}
                     className={`chip ${c.stockQty === 0 ? "chip--rust" : "chip--mustard"}`}
                   >
-                    {c.name} — {c.stockQty === 0 ? d.stockZero : d.stockQty.replace("{n}", String(c.stockQty))}
+                    {compName(c)} — {c.stockQty === 0 ? d.stockZero : d.stockQty.replace("{n}", String(c.stockQty))}
                   </span>
                 ))}
               {inStock && <span className="chip chip--olive">{d.stockNormal}</span>}

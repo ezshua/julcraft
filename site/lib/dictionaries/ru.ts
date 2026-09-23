@@ -32,7 +32,7 @@ export const ru = {
     priceFrom: "От {price}",
     sort: {
       ariaLabel: "Сортировка",
-      newest: "Сортировка: сначала новинки",
+      newest: "Сначала новинки",
       cheap: "Сначала дешевле",
       expensive: "Сначала дороже",
     },

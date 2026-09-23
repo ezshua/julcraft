@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { formatPrice, type Priced } from "@/lib/currency";
@@ -52,7 +52,8 @@ export default function OrderRequestModal({
 }) {
   const router = useRouter();
   const { currency } = useCurrency(finance, currencyCode);
-  const [mounted] = useState(() => typeof document !== "undefined");
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");

@@ -56,6 +56,7 @@ export default async function AdminComponentsPage(props: {
   const d = getDictionary(await getLocale()).admin.components;
   const activeTypes = getActiveComponentTypes();
   const allTypes = getComponentTypes();
+  const typeName = (ty: (typeof allTypes)[number]) => firstLocale(ty.name);
   const typeFilters = [
     { value: "", label: d.filterAll },
     ...activeTypes.map((ty) => ({ value: ty.code, label: typeName(ty) })),
@@ -66,7 +67,6 @@ export default async function AdminComponentsPage(props: {
 
   const allComponents = db.select().from(components).orderBy(asc(components.id)).all();
   const compName = (c: (typeof allComponents)[number]) => firstLocale(c.name);
-  const typeName = (ty: (typeof allTypes)[number]) => firstLocale(ty.name);
 
   const match = (c: (typeof allComponents)[number]) => {
     if (typeFilter && c.componentType !== typeFilter) return false;
