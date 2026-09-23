@@ -713,6 +713,11 @@ export const ru = {
       categoryNotFound: "Категория не найдена",
       componentNotFound: "Компонент не найден",
       collageTooBig: "Коллаж слишком большой",
+      // Шаблоны Telegram-уведомлений (п. 6c: тексты — локализуемы,
+      // но сам канал остаётся русским). L() раскрывает имена из БД под локаль.
+      orderProduct: "Заявка #{id}: \nтовар: {product}; \nКлиент: {client} ({contact}); \nЦена: {price}; \nСообщение: {message}",
+      orderCustom: "Заявка #{id}: \nконфигуратор: {category}; \nКлиент: {client} ({contact}); \nСостав: {composition}; \nЦена: {price}; \nСрок: {term}; \nСообщение: {message}",
+      orderContact: "[записка {id}] клиент: {client} ({contact}); сообщение: {message}",
     },
     upload: {
       unauthorized: "Не авторизован",

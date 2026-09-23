@@ -56,7 +56,13 @@ export async function POST(request: Request) {
   const id = Number(res.lastInsertRowid);
 
   // Уведомление мастеру в Telegram; без токенов — лог (поведение не меняется).
-  const notice = `[записка ${id}] клиент: ${name} (${contact}); сообщение: ${message}`;
+  // Текст шаблонизируется через t() под локаль клиента (п. 6c).
+  const notice = t(dict, "api.orders.orderContact", {
+    id: String(id),
+    client: name,
+    contact,
+    message,
+  });
   const sent = await sendTelegram(notice);
   if (!sent.ok) console.log(notice);
 

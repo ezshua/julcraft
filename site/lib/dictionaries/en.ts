@@ -712,6 +712,11 @@ export const en = {
       categoryNotFound: "Category not found",
       componentNotFound: "Component not found",
       collageTooBig: "The collage is too large",
+      // Telegram notification templates (step 6c: messages are localized,
+      // the channel itself stays in Russian). L() decodes names from DB.
+      orderProduct: "Order #{id}: \nproduct: {product}; \nClient: {client} ({contact}); \nPrice: {price}; \nMessage: {message}",
+      orderCustom: "Order #{id}: \nconfigurator: {category}; \nClient: {client} ({contact}); \nComposition: {composition}; \nPrice: {price}; \nTerm: {term}; \nMessage: {message}",
+      orderContact: "[note {id}] client: {client} ({contact}); message: {message}",
     },
     upload: {
       unauthorized: "Unauthorized",

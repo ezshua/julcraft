@@ -712,6 +712,11 @@ export const uk = {
       categoryNotFound: "Категорія не знайдена",
       componentNotFound: "Компонент не знайдено",
       collageTooBig: "Коллаж занадто великий",
+      // Шаблони Telegram-сповіщень (п. 6c: тексти локалізовані,
+      // сам канал — руський). L() розкриває імена з БД під поточну локаль.
+      orderProduct: "Заявка #{id}: \nтовар: {product}; \nКлієнт: {client} ({contact}); \nЦіна: {price}; \nПовідомлення: {message}",
+      orderCustom: "Заявка #{id}: \nконфігуратор: {category}; \nКлієнт: {client} ({contact}); \nСклад: {composition}; \nЦіна: {price}; \nТермін: {term}; \nПовідомлення: {message}",
+      orderContact: "[записка {id}] клієнт: {client} ({contact}); повідомлення: {message}",
     },
     upload: {
       unauthorized: "Неавторизований",

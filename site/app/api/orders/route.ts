@@ -17,6 +17,7 @@ import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { formatPrice, asPriced } from "@/lib/format";
 import { getLocale, getDictionary, t, type DictionaryKey } from "@/lib/i18n";
+import { L } from "@/lib/localize";
 import type { Dictionary } from "@/lib/dictionaries/ru";
 
 const orderSchema = z.object({
@@ -72,6 +73,7 @@ export async function POST(request: Request) {
 
 // Заявка на готовое изделие: серверный расчёт цены/срока, запись Order.
 async function handleProduct(body: unknown, dict: Dictionary): Promise<Response> {
+  const locale = await getLocale();
   const parsed = orderSchema.safeParse(body);
   if (!parsed.success) {
     const key =
@@ -114,10 +116,19 @@ async function handleProduct(body: unknown, dict: Dictionary): Promise<Response>
 
   // Уведомление мастеру в Telegram; без токенов — лог (поведение не меняется).
   // Сумма — в валюте отображения мастера (Q-5, plan-finances2.md).
+  // Текст шаблонизируется через t() под локаль клиента; имена из БД
+  // (product.name) раскрываются через L() — иначе в Telegram приходил
+  // сырых {"ru":"...","en":"..."}.
   const { finance } = getSettings();
   const currency = await getDisplayCurrency();
-  const notice = `Заявка #${id}: \nтовар: ${(product.name)}; \nКлиент: ${(customerName)} (${(contact)}); \n` +
-    `Цена: ${(formatPrice(asPriced(product.price, product.priceCurrency), currency, finance))}; \nСообщение: ${(message || "—")}`;
+  const notice = t(dict, "api.orders.orderProduct", {
+    id: String(id),
+    product: L(product.name, locale),
+    client: customerName,
+    contact,
+    price: formatPrice(asPriced(product.price, product.priceCurrency), currency, finance),
+    message: message || "—",
+  });
 
   // Обложку товара шлём картинкой, если файл доступен локально.
   let sent = { ok: false as boolean };
@@ -146,6 +157,7 @@ async function handleProduct(body: unknown, dict: Dictionary): Promise<Response>
 // Заявка на собранное в конфигураторе украшение (Этап 5):
 // пересчёт из БД по componentId+qty, snapshot в configJson, PNG-коллаж на диск.
 async function handleCustom(rawBody: unknown, dict: Dictionary): Promise<Response> {
+  const locale = await getLocale();
   const parsed = customSchema.safeParse(rawBody);
   if (!parsed.success) {
     const key =
@@ -250,10 +262,21 @@ async function handleCustom(rawBody: unknown, dict: Dictionary): Promise<Respons
 
   const id = Number(res.lastInsertRowid);
 
-  const notice =
-    `Заявка #${id}: \nконфигуратор: ${(category.name)}; \nКлиент: ${(customerName)} (${(contact)}); \n` +
-    `Состав: ${snapshot.items.map((i) => (i.qty > 1 ? `${(i.name)} ×${i.qty}` : (i.name))).join(" + ")}; \n` +
-    `Цена: ${(formatPrice(total, currency, finance))}; \nСрок: ${days} дн; \nСообщение: ${(message || "—")}`;
+  // Текст шаблонизируется через t() под локаль клиента; имена из БД
+  // (category.name, snapshot.items[].name) раскрываем через L().
+  const composition = snapshot.items
+    .map((i) => (i.qty > 1 ? `${L(i.name, locale)} ×${i.qty}` : L(i.name, locale)))
+    .join(" + ");
+  const notice = t(dict, "api.orders.orderCustom", {
+    id: String(id),
+    category: L(category.name, locale),
+    client: customerName,
+    contact,
+    composition,
+    price: formatPrice(total, currency, finance),
+    term: `${days} дн`,
+    message: message || "—",
+  });
 
   // Коллаж шлём картинкой, если он сохранён локально.
   let sent = { ok: false as boolean };
