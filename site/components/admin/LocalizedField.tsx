@@ -45,7 +45,7 @@ export default function LocalizedField({
       </div>
       <label>
         {label}
-        <span className="loc-tab-label">{current}</span>
+        {/* <span className="loc-tab-label">{current}</span> */}
         <Input
           type="text"
           placeholder={placeholder}
