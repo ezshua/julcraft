@@ -405,14 +405,7 @@ export default function CategoryEditor({
             </div>
             <div className="slot-body">
               <div className="field--row">
-                <div className="field">
-                  <LocalizedField
-                    value={s.name}
-                    onChange={(next) => patchSlotName(s.key, next)}
-                    label={d.labelName}
-                  />
-                </div>
-                <div className="field">
+                  <div className="field">
                   <label>{d.slotTypeLabel}</label>
                   <select
                     value={
@@ -454,6 +447,13 @@ export default function CategoryEditor({
                     onChange={(e) =>
                       patchSlot(s.key, { maxQty: Number(e.target.value) || 0 })
                     }
+                  />
+                </div>
+                <div className="field">
+                  <LocalizedField
+                    value={s.name}
+                    onChange={(next) => patchSlotName(s.key, next)}
+                    label={d.labelName}
                   />
                 </div>
               </div>

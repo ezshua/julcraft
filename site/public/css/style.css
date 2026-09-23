@@ -357,7 +357,7 @@ section.sect { padding:70px 4vw; max-width:1080px; margin:0 auto; }
 .field .err { color:var(--rust); font-size:.72rem; margin-top:4px; }
 .checkbox { display:flex; align-items:center; gap:10px; cursor:pointer; font-size:.82rem; }
 .checkbox input { width:20px; height:20px; accent-color:var(--mustard); cursor:pointer; }
-.field--row { display:flex; gap:12px; flex-wrap:wrap; }
+.field--row { display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
 .field--row .field { flex:1; min-width:150px; }
 
 /* i18n-2 · Шаг 7: перекладки RU/EN/UK внутри текстового поля админки */
