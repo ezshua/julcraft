@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Dictionary } from "@/lib/dictionaries/ru";
 
@@ -13,14 +13,48 @@ const NON_DIGITS_RE = /\D/g;
 
 // Форма обратной связи — копия чека из mockup/contacts.html.
 // Успех → редирект на /order-success/{id} (R-3, чек type=contact).
+// Иллюстрация к сообщению: публичная загрузка /api/upload?kind=contacts
+// (без авторизации, как у комплектующих, но с отдельным kind).
 export default function ContactForm({ dict }: { dict: ContactFormDict }) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [message, setMessage] = useState("");
   const [channel, setChannel] = useState("phone");
+  const [photo, setPhoto] = useState("");
+  const [dzDrag, setDzDrag] = useState(false);
+  const [uploadBusy, setUploadBusy] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const uploadPhoto = async (file: File | undefined) => {
+    if (!file || uploadBusy) return;
+    if (file.size > 2 * 1024 * 1024) {
+      setUploadError(dict.photoTooBig);
+      return;
+    }
+    setUploadBusy(true);
+    setUploadError("");
+    try {
+      const fd = new FormData();
+      fd.append("kind", "contacts");
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const text = await res.text();
+      if (!res.ok) {
+        setUploadError(text || dict.photoError);
+        return;
+      }
+      const data = JSON.parse(text) as { path: string };
+      setPhoto(data.path);
+    } catch {
+      setUploadError(dict.photoError);
+    } finally {
+      setUploadBusy(false);
+    }
+  };
 
   const contactErr = contact.trim() ? contactError(contact, channel, dict) : "";
 
@@ -49,7 +83,7 @@ export default function ContactForm({ dict }: { dict: ContactFormDict }) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, contact, message, channel }),
+        body: JSON.stringify({ name, contact, message, channel, photoPath: photo || "" }),
       });
       if (!res.ok) {
         const text = await res.text();
@@ -142,6 +176,86 @@ export default function ContactForm({ dict }: { dict: ContactFormDict }) {
             {ch.label}
           </label>
         ))}
+      </div>
+      <div className="field" style={{ marginTop: "14px" }}>
+        <label>{dict.labelPhoto}</label>
+        <div
+          className={
+            photo ? "dropzone has-photo" : dzDrag ? "dropzone is-drag" : "dropzone"
+          }
+          style={{ cursor: "pointer" }}
+          onClick={() => fileInputRef.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDzDrag(true);
+          }}
+          onDragLeave={() => setDzDrag(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDzDrag(false);
+            void uploadPhoto(e.dataTransfer.files?.[0]);
+          }}
+        >
+          {photo ? (
+            <>
+              <div className="dz-preview">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={photo} alt={dict.photoAlt} />
+              </div>
+              <div className="dz-meta">
+                <b>{uploadBusy ? dict.uploading : dict.dzReplace}</b>
+                <small>{dict.dzHint}</small>
+                {uploadError && (
+                  <small style={{ color: "var(--rust)", display: "block", marginTop: 6 }}>
+                    {uploadError}
+                  </small>
+                )}
+                <button
+                  className="btn btn--secondary btn--small"
+                  style={{ marginTop: 10 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPhoto("");
+                  }}
+                >
+                  {dict.dzRemove}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="dz-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                </svg>
+              </div>
+              <b>{uploadBusy ? dict.uploading : dict.dzUpload}</b>
+              <small>{dict.dzHint}</small>
+              {uploadError && (
+                <small style={{ color: "var(--rust)", display: "block", marginTop: 6 }}>
+                  {uploadError}
+                </small>
+              )}
+            </>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            style={{ display: "none" }}
+            onChange={(e) => {
+              void uploadPhoto(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
+        </div>
       </div>
       {error && (
         <p style={{ color: "var(--rust)", fontSize: ".8rem", margin: "0 0 10px" }}>

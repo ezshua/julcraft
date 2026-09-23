@@ -120,6 +120,8 @@ export const orders = sqliteTable("orders", {
   productId: integer("productId").references(() => products.id),
   configJson: text("configJson").notNull(),
   collagePath: text("collagePath"),
+  // Иллюстрация к сообщению из формы обратной связи (п. 6c: фото необязательно).
+  photoPath: text("photoPath"),
   calcPrice: integer("calcPrice").notNull(),
   calcPriceCurrency: text("calcPriceCurrency").notNull().default("USD"),
   calcDays: integer("calcDays").notNull(),

@@ -17,6 +17,11 @@ export type OrderRow = {
   productName: string | null;
   categoryName: string | null;
   collagePath: string | null;
+  // Обложка товара (первое фото) — для type=product, чтобы в модалке было
+  // превью того, что заказали. Пусто для contact/когда фото нет.
+  productPhoto?: string | null;
+  // Иллюстрация к сообщению из формы обратной связи (type=contact).
+  photoPath?: string | null;
   configJson: string;
   calcPrice: number;
   calcPriceCurrency: string;
@@ -184,7 +189,28 @@ const OrderModal = forwardRef<OrderModalHandle, Props>(function OrderModal(
           <div className="order-detail">
             <div className="field--row" style={{ gap: "24px" }}>
               <div className="grow-1">
-                {order.collagePath ? (
+                {/* Обложка товара (type=product) — превью того, что заказали.
+                    Коллаж (type=custom) — сверху. Иллюстрация из формы обратной
+                    связи (type=contact) — вместо заглушки. */}
+                {order.type === "product" && order.productPhoto ? (
+                  <div style={{ marginBottom: "14px" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={order.productPhoto}
+                      alt={order.productName ?? d.orders.lightboxAlt}
+                      style={{ background: "var(--white)", borderRadius: 12 }}
+                    />
+                  </div>
+                ) : order.type === "contact" && order.photoPath ? (
+                  <div style={{ marginBottom: "14px" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={order.photoPath}
+                      alt={d.orders.lightboxAlt}
+                      style={{ background: "var(--white)", borderRadius: 12 }}
+                    />
+                  </div>
+                ) : order.collagePath ? (
                   <div style={{ marginBottom: "14px" }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img

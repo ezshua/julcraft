@@ -16,6 +16,8 @@ const LIMITS: Record<string, { mime: string[]; max: number; ext: string }> = {
     max: 2 * 1024 * 1024,
     ext: "auto",
   },
+  // Форма обратной связи: иллюстрация к сообщению (как у комплектующих — PNG).
+  contacts: { mime: ["image/png", "image/jpeg", "image/webp"], max: 2 * 1024 * 1024, ext: "auto" },
 };
 
 const EXT_BY_MIME: Record<string, string> = {
@@ -29,10 +31,6 @@ const EXT_BY_MIME: Record<string, string> = {
 export async function POST(request: Request) {
   const dict = getDictionary(await getLocale());
 
-  if (!(await requireAdmin())) {
-    return Response.json({ error: t(dict, "api.upload.unauthorized") }, { status: 401 });
-  }
-
   let form: FormData;
   try {
     form = await request.formData();
@@ -41,6 +39,12 @@ export async function POST(request: Request) {
   }
 
   const kind = String(form.get("kind") ?? "");
+  // Админские загрузки (products/components/categories) требуют сессии.
+  // Форма обратной связи (contacts) — публичная, без авторизации.
+  if (kind !== "contacts" && !(await requireAdmin())) {
+    return Response.json({ error: t(dict, "api.upload.unauthorized") }, { status: 401 });
+  }
+
   const rule = LIMITS[kind];
   if (!rule) {
     return Response.json({ error: t(dict, "api.upload.invalidKind") }, { status: 400 });

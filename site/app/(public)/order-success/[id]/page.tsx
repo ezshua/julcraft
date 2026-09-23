@@ -160,6 +160,16 @@ export default async function OrderSuccessPage(props: {
               />
             </div>
           )}
+          {isNote && order.photoPath && (
+            <div style={{ textAlign: "center", margin: "16px 0" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={order.photoPath}
+                alt={d.photoAlt}
+                style={{ display: "block", margin: "0 auto", maxWidth: "280px", width: "100%", border: "2px solid var(--brown)", borderRadius: "8px" }}
+              />
+            </div>
+          )}
           <p className="thanks">{d.whatNextTitle}</p>
           {isNote ? (
             <p style={{ fontSize: ".84rem", textAlign: "center", color: "var(--brown)" }}>

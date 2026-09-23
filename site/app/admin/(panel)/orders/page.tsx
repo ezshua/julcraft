@@ -98,6 +98,10 @@ export default async function AdminOrdersPage(props: {
       message: o.message,
       productName: product ? prodName(product as (typeof allProducts)[number]) ?? null : null,
       categoryName: product ? catName(categoryById.get(product.categoryId) as (typeof allCategories)[number]) ?? null : null,
+      // Обложка товара — для превью в модалке деталей (type=product).
+      productPhoto: product ? product.images[0] ?? null : null,
+      // Иллюстрация из формы обратной связи (type=contact).
+      photoPath: o.type === "contact" ? o.photoPath ?? null : null,
       configJson: o.configJson,
       collagePath: o.collagePath,
       calcPrice: o.calcPrice,
