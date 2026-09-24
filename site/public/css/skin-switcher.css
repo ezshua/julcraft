@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #22242a;
+  background: #4a4e5b7c;
   color: #faf5ec;
   border: 3px solid #22242a;
   border-radius: 999px;
@@ -73,8 +73,8 @@
 }
 
 #skin-switcher button.is-on {
-  background: #e8b64c;
-  border-color: #e8b64c;
+  background: #e8c883;
+  border-color: #70c573;
   color: #22242a;
 }
 
