@@ -12,6 +12,8 @@ import { L } from "@/lib/localize";
 import Crumbs from "@/components/ui/Crumbs";
 import ProductCard from "@/components/product/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
+import BuildSimilarLink from "@/components/product/BuildSimilarLink";
+import { ProductSelectionProvider } from "@/components/product/ProductSelectionProvider";
 import OrderModal from "@/components/product/OrderModal";
 import { AvailProduct, availFullText } from "@/components/ui/Avail";
 
@@ -88,7 +90,7 @@ export default async function ProductPage(props: {
     .slice(0, 3);
 
   return (
-    <>
+    <ProductSelectionProvider initialImage={product.images[0] ?? ""}>
       <Crumbs
         items={[
           { label: catalogDict.crumbsHome, href: "/" },
@@ -99,7 +101,11 @@ export default async function ProductPage(props: {
       />
 
       <section className="sect">
-        <ProductGallery images={product.images} alt={L(product.name, locale)} dict={productDict} />
+        <ProductGallery
+          images={product.images}
+          alt={L(product.name, locale)}
+          dict={productDict}
+        />
 
         <div className="product-info mt-40" style={{ maxWidth: "640px" }}>
           <h1>{L(product.name, locale)}</h1>
@@ -139,9 +145,13 @@ export default async function ProductPage(props: {
               modalTitle={t(dict, "product.modalTitle", { name: L(product.name, locale) })}
               locale={locale}
             />
-            <a className="btn btn--secondary" href={`/configurator/${category?.slug ?? ""}`}>
-              {productDict.buildSimilar}
-            </a>
+            {category && (
+              <BuildSimilarLink
+                categorySlug={category.slug}
+                product={product}
+                label={productDict.buildSimilar}
+              />
+            )}
           </div>
         </div>
       </section>
@@ -159,6 +169,6 @@ export default async function ProductPage(props: {
       )}
 
       <div className="zigzag"></div>
-    </>
+    </ProductSelectionProvider>
   );
 }

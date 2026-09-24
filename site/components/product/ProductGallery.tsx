@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import type { Dictionary } from "@/lib/dictionaries/ru";
+import { useProductSelection } from "./ProductSelectionProvider";
 
 // Потолок количества фотографий — единый с админкой и zod-схемой (max(6)).
 const MAX_IMAGES = 6;
@@ -19,14 +20,18 @@ export default function ProductGallery({
   alt: string;
   dict: Dictionary["product"];
 }) {
-  // Берём только валидные строки, обрезаем по MAX_IMAGES — на случай,
-  // если в БД по какой-то причине оказалось больше (миграция, ручной импорт).
   const realImages = images.filter(Boolean).slice(0, MAX_IMAGES);
   const [active, setActive] = useState(0);
+  const { setImage } = useProductSelection();
 
   // Если в активный индекс «приехало» фото, которого больше нет (например,
   // после hot-reload с уменьшенным массивом) — откатываемся на 0.
   const safeActive = active < realImages.length ? active : 0;
+  const selectImage = (index: number) => {
+    setActive(index);
+    const image = realImages[index];
+    if (image) setImage(image);
+  };
 
   return (
     <div className="gallery">
@@ -47,13 +52,13 @@ export default function ProductGallery({
           <div
             className={i === safeActive ? "g-t is-active" : "g-t"}
             key={src + i}
-            onClick={() => setActive(i)}
+            onClick={() => selectImage(i)}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                setActive(i);
+                selectImage(i);
               }
             }}
           >

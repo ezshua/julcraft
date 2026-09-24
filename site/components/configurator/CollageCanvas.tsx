@@ -37,6 +37,7 @@ export default function CollageCanvas({
   componentsById,
   onRemove,
   onDataUrl,
+  initialBackground,
   dict,
   locale,
 }: {
@@ -44,6 +45,7 @@ export default function CollageCanvas({
   componentsById: Map<number, CanvasComp>;
   onRemove: (componentId: number) => void;
   onDataUrl?: (dataUrl: string | null) => void;
+  initialBackground?: string | null;
   dict: Dictionary["configurator"];
   locale: Locale;
 }) {
@@ -76,6 +78,19 @@ export default function CollageCanvas({
     };
     reader.readAsDataURL(file);
   };
+
+  useEffect(() => {
+    if (!initialBackground) return;
+    let alive = true;
+    const img = new window.Image();
+    img.onload = () => {
+      if (alive) setBgImage(img);
+    };
+    img.src = initialBackground;
+    return () => {
+      alive = false;
+    };
+  }, [initialBackground]);
 
   // Адаптивная ширина сцены
   useEffect(() => {

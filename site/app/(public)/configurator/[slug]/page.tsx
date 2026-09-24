@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { categories, components, slotTemplates } from "@/drizzle/schema";
+import { categories, components, products, slotTemplates } from "@/drizzle/schema";
+import { getValidProductImage } from "@/lib/product-image";
 import { getSettings } from "@/lib/get-settings";
 import { getDisplayCurrency } from "@/lib/currency-server";
 import { getDictionary, getLocale, t } from "@/lib/i18n";
@@ -37,10 +38,19 @@ export async function generateMetadata(props: {
 // Данные — из БД на момент запроса; клиент получает сериализуемые props и считает live.
 export default async function ConfiguratorCategoryPage(props: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ product?: string; image?: string }>;
 }) {
   const { slug } = await props.params;
+  const { product: productSlug, image } = await props.searchParams;
   const category = db.select().from(categories).where(eq(categories.slug, slug)).get();
   if (!category || !category.isActive || !category.hasSlotTemplate) notFound();
+
+  const product = productSlug
+    ? db.select().from(products).where(eq(products.slug, productSlug)).get()
+    : undefined;
+  const initialBackground = product
+    ? getValidProductImage(product, category.id, productSlug, image)
+    : null;
 
   const slots = db
     .select()
@@ -104,6 +114,7 @@ export default async function ConfiguratorCategoryPage(props: {
       currencyCode={currency.code}
       dict={dict.configurator}
       locale={locale}
+      initialBackground={initialBackground}
     />
   );
 }

@@ -17,6 +17,7 @@
     "check:user-settings": "tsx scripts/check-user-settings.ts",
     "check:user-settings:http": "npm run build && node scripts/check-user-settings-http.mjs",
     "check:skin-switcher": "node scripts/check-skin-switcher.mjs",
+    "check:product-image": "tsx scripts/check-product-image.ts",
     "snapshot:capture": "tsx scripts/snapshot-capture.ts",
     "snapshot:restore": "tsx scripts/snapshot-restore.ts",
     "snapshot:check": "tsx scripts/check-snapshot.ts",

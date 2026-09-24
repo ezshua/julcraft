@@ -43,6 +43,7 @@ export default function ConfiguratorClient({
   currencyCode,
   dict,
   locale,
+  initialBackground,
 }: {
   category: CalcCategory & { id: number; slug: string };
   slots: ConfiguratorSlot[];
@@ -53,6 +54,7 @@ export default function ConfiguratorClient({
   currencyCode: string;
   dict: Dictionary["configurator"];
   locale: Locale;
+  initialBackground: string | null;
 }) {
   const conf = dict;
   const { currency } = useCurrency(finance, currencyCode);
@@ -193,6 +195,7 @@ export default function ConfiguratorClient({
                 }))
               }
               onDataUrl={setCollageDataUrl}
+              initialBackground={initialBackground}
               dict={conf}
               locale={locale}
             />
