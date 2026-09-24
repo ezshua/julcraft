@@ -56,7 +56,8 @@
     var texts = LOCALE_LABELS[savedLocale()] || LOCALE_LABELS.ru;
     bar.setAttribute('aria-label', texts.aria);
     bar.innerHTML =
-      '<span class="ss-label">' + texts.label + '</span>' +
+      '<button type="button" class="ss-label" data-toggle-panel aria-expanded="true" aria-controls="ss-controls">' + texts.label + '</button>' +
+      '<div class="ss-controls" id="ss-controls" aria-hidden="false">' +
       '<button type="button" data-skin="handmade">06 · Тёплый</button>' +
       '<button type="button" data-skin="memphis">12 · Мемфис</button>' +
       '<span class="ss-sep"></span>' +
@@ -66,29 +67,9 @@
       '<button type="button" data-locale="ru">RU</button>' +
       '<button type="button" data-locale="en">EN</button>' +
       '<button type="button" data-locale="uk">UA</button>' +
-      '</span>';
+      '</span></div>';
     if (document.querySelector('.calc')) bar.classList.add('ss-above-calc');
     document.body.appendChild(bar);
-
-    var style = document.createElement('style');
-    style.textContent =
-      '#skin-switcher{position:fixed;right:14px;bottom:14px;z-index:2000;display:flex;' +
-      'align-items:center;gap:6px;background:#22242a;color:#faf5ec;border:3px solid #22242a;' +
-      'border-radius:999px;padding:7px 12px;box-shadow:8px 8px 0 rgba(34,36,42,.35);' +
-      'font-family:Nunito,Arial,sans-serif;font-size:11px;font-weight:800;letter-spacing:.06em;' +
-      'text-transform:uppercase;user-select:none;flex-wrap:wrap;max-width:calc(100vw - 24px);' +
-      'justify-content:flex-end;}' +
-      '#skin-switcher .ss-label{color:#d8dae0;margin-right:2px;}' +
-      '#skin-switcher .ss-sep{width:2px;height:18px;background:#faf5ec;opacity:.35;margin:0 2px;}' +
-      '#skin-switcher button{border:2px solid #faf5ec;background:transparent;color:#faf5ec;' +
-      'border-radius:999px;padding:5px 12px;font:inherit;cursor:pointer;transition:.15s;' +
-      'text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:.05em;}' +
-      '#skin-switcher button:hover{background:#faf5ec;color:#22242a;}' +
-      '#skin-switcher button.is-on{background:#e8b64c;border-color:#e8b64c;color:#22242a;}' +
-      '@media (max-width:820px){#skin-switcher{right:10px;bottom:10px;padding:6px 10px;}' +
-      '#skin-switcher button{padding:4px 9px;}' +
-      '#skin-switcher.ss-above-calc{bottom:96px;}}';
-    document.head.appendChild(style);
 
     function markCurrencyButtons() {
       var current = savedCurrency();
@@ -165,6 +146,14 @@
     bar.addEventListener('click', function (ev) {
       var button = ev.target && ev.target.closest ? ev.target.closest('button') : null;
       if (!button) return;
+      var toggle = button.getAttribute('data-toggle-panel');
+      if (toggle !== null) {
+        var expanded = button.getAttribute('aria-expanded') === 'true';
+        var controls = bar.querySelector('.ss-controls');
+        button.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        if (controls) controls.setAttribute('aria-hidden', expanded ? 'true' : 'false');
+        return;
+      }
       var loc = button.getAttribute('data-locale');
       if (loc) {
         if (savedLocale() === loc) return;

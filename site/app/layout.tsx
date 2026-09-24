@@ -28,6 +28,7 @@ export default async function RootLayout({
           href={skin === "handmade" ? "/css/style.css" : "/css/style-memphis.css"}
           data-default-skin={skin}
         />
+        <link rel="stylesheet" href="/css/skin-switcher.css" />
         {children}
         <Script src="/js/skin-switcher.js" strategy="afterInteractive" />
       </body>
