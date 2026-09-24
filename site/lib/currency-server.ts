@@ -1,7 +1,8 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { getSettings } from "./get-settings";
-import { CURRENCY_STORAGE_KEY, type Currency } from "./currency";
+import { type Currency } from "./currency";
+import { CURRENCY_COOKIE_KEY, normalizeDefaultCurrency } from "./user-settings";
 
 /**
  * Валюта отображения для серверного рендеринга (D-21, D-i18n-6):
@@ -11,32 +12,21 @@ import { CURRENCY_STORAGE_KEY, type Currency } from "./currency";
  */
 export async function getDisplayCurrency(): Promise<Currency> {
   const finance = getSettings().finance;
-  const codes = new Set(finance.currencies.map((c) => c.code));
-  let code = finance.defaultCurrency;
+  const codes = finance.currencies.map((currency) => currency.code);
+  let code = normalizeDefaultCurrency(
+    process.env.DEFAULT_CURRENCY,
+    codes,
+    finance.defaultCurrency,
+  );
   try {
-    const store = await cookies();
-    const saved = store.get(CURRENCY_STORAGE_KEY)?.value;
-    if (saved && codes.has(saved)) {
-      code = saved;
-    } else {
-      const env = process.env.DEFAULT_CURRENCY;
-      if (env !== undefined && env !== "") {
-        if (codes.has(env)) {
-          code = env;
-        } else {
-          // env задан, но отсутствует в Settings-списке валют — игнорируем env
-          console.warn(
-            `[currency] DEFAULT_CURRENCY=${env} отсутствует в списке валют Settings; используется дефолт Settings`,
-          );
-        }
-      }
-    }
+    const saved = (await cookies()).get(CURRENCY_COOKIE_KEY)?.value;
+    if (saved && codes.includes(saved)) code = saved;
   } catch {
     // вне HTTP-запроса (например, статическая генерация) — дефолт
   }
   return (
-    finance.currencies.find((c) => c.code === code) ??
-    finance.currencies.find((c) => c.code === finance.defaultCurrency) ??
+    finance.currencies.find((currency) => currency.code === code) ??
+    finance.currencies.find((currency) => currency.code === finance.defaultCurrency) ??
     finance.currencies[0]
   );
 }

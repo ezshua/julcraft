@@ -1,23 +1,11 @@
-/* ============================================================
-   JulCraft work1206D — переключатель вида
-   «06 · Тёплый» (style.css) <-> «12 · Мемфис» (style-memphis.css)
-   + валюта отображения (plan-finances.md D-20/D-21: «Скин» → «Вид»,
-   кнопки валют из /api/currency).
-   Выбор скина запоминается в localStorage; выбор валюты — в localStorage
-   + cookie (SSR рендерит цены в выбранной валюте); панель внизу справа.
-   Язык (i18n): cookie + localStorage, как валюта (plan-3.md D-i18n-5).
-   ============================================================ */
+/* JulCraft «Вид»: skin, валюта и язык хранятся только в cookies. */
 (function () {
   'use strict';
 
-  var LS_KEY = 'julcraft-skin';
-  var MEMPHIS = 'style-memphis.css';
-  var HANDMADE = 'style.css';
-
-  var CURRENCY_KEY = 'julcraft-currency';
+  var SKIN_COOKIE = 'julcraft-skin';
+  var MEMPHIS = 'memphis';
+  var HANDMADE = 'handmade';
   var CURRENCY_COOKIE = 'julcraft-currency';
-
-  var LOCALE_KEY = 'julcraft-locale';
   var LOCALE_COOKIE = 'julcraft-locale';
 
   var LOCALE_LABELS = {
@@ -26,61 +14,36 @@
     uk: { label: 'Вигляд', aria: 'Перемикач вигляду' }
   };
 
-  // Инлайн-фолбэк, если /api/currency недоступен (например, на статичном макете).
-  // RUB исключён (решение 2026-09): все цены — в гривнах (UAH).
   var FALLBACK_CURRENCIES = [
     { code: 'USD', symbol: '$' },
     { code: 'UAH', symbol: '₴' },
     { code: 'EUR', symbol: '€' }
   ];
 
-  var link = document.querySelector('link[rel="stylesheet"]');
-  if (!link) return;
-
-  // Стартовый скин: из localStorage (приоритет) или data-default-skin (сервер,
-  // i18n-3 D-i18n-6: DEFAULT_SKIN из .env). Fallback — по href.
-  var defaultSkin = link.getAttribute('data-default-skin') === HANDMADE ? HANDMADE : MEMPHIS;
-  var href = link.getAttribute('href') || '';
-  var isMemphis = href.indexOf(MEMPHIS) !== -1;
-
-  var memphisPath, handmadePath;
-  if (isMemphis) {
-    memphisPath = href;
-    handmadePath = href.replace(MEMPHIS, HANDMADE);
-  } else {
-    handmadePath = href;
-    memphisPath = href.replace(HANDMADE, MEMPHIS);
+  function readCookie(name) {
+    var prefix = name + '=';
+    var parts = document.cookie ? document.cookie.split(';') : [];
+    for (var i = 0; i < parts.length; i++) {
+      var part = parts[i].trim();
+      if (part.indexOf(prefix) === 0) {
+        try { return decodeURIComponent(part.slice(prefix.length)); } catch (e) { return ''; }
+      }
+    }
+    return null;
   }
 
-  var saved = null;
-  try { saved = localStorage.getItem(LS_KEY); } catch (e) {}
-
-  if (saved === HANDMADE && isMemphis) {
-    link.setAttribute('href', handmadePath);
-    isMemphis = false;
-  } else if (saved === MEMPHIS && !isMemphis) {
-    link.setAttribute('href', memphisPath);
-    isMemphis = true;
-  } else if (!saved && isMemphis !== (defaultSkin === MEMPHIS)) {
-    // localStorage пуст — привести href к дефолту из .env
-    link.setAttribute('href', defaultSkin === MEMPHIS ? memphisPath : handmadePath);
-    isMemphis = defaultSkin === MEMPHIS;
+  function writeCookie(name, value) {
+    document.cookie = name + '=' + encodeURIComponent(value) +
+      ';path=/;max-age=31536000;samesite=lax';
   }
 
   function savedCurrency() {
-    var val = null;
-    try { val = localStorage.getItem(CURRENCY_KEY); } catch (e) {}
-    if (!val) {
-      var m = document.cookie.match(new RegExp('(?:^|;\\s*)' + CURRENCY_COOKIE + '=([^;]*)'));
-      if (m) val = decodeURIComponent(m[1]);
-    }
-    return val;
+    return readCookie(CURRENCY_COOKIE);
   }
 
   function savedLocale() {
-    var m = document.cookie.match(new RegExp('(?:^|;\\s*)' + LOCALE_COOKIE + '=([^;]*)'));
-    var val = m ? decodeURIComponent(m[1]) : null;
-    if (val !== 'en' && val !== 'uk') val = 'ru';
+    var val = readCookie(LOCALE_COOKIE);
+    if (val !== 'en' && val !== 'uk') return 'ru';
     return val;
   }
 
@@ -102,7 +65,7 @@
       '<span class="ss-locales">' +
       '<button type="button" data-locale="ru">RU</button>' +
       '<button type="button" data-locale="en">EN</button>' +
-      '<button type="button" data-locale="uk">UK</button>' +
+      '<button type="button" data-locale="uk">UA</button>' +
       '</span>';
     if (document.querySelector('.calc')) bar.classList.add('ss-above-calc');
     document.body.appendChild(bar);
@@ -185,11 +148,14 @@
 
     function mark() {
       var buttons = bar.querySelectorAll('button[data-skin]');
+      var link = document.querySelector('link[rel="stylesheet"]');
+      var href = link ? link.getAttribute('href') || '' : '';
+      var isMemphis = href.indexOf('style-memphis.css') !== -1;
       for (var i = 0; i < buttons.length; i++) {
-        var b = buttons[i];
-        var isMemphisBtn = b.getAttribute('data-skin') === 'memphis';
-        if (isMemphisBtn === isMemphis) b.classList.add('is-on');
-        else b.classList.remove('is-on');
+        var button = buttons[i];
+        var isMemphisButton = button.getAttribute('data-skin') === 'memphis';
+        if (isMemphisButton === isMemphis) button.classList.add('is-on');
+        else button.classList.remove('is-on');
       }
       markCurrencyButtons();
       markLocaleButtons();
@@ -197,34 +163,34 @@
     mark();
 
     bar.addEventListener('click', function (ev) {
-      var b = ev.target && ev.target.closest ? ev.target.closest('button') : null;
-      if (!b) return;
-      var loc = b.getAttribute('data-locale');
+      var button = ev.target && ev.target.closest ? ev.target.closest('button') : null;
+      if (!button) return;
+      var loc = button.getAttribute('data-locale');
       if (loc) {
         if (savedLocale() === loc) return;
-        try { localStorage.setItem(LOCALE_KEY, loc); } catch (e) {}
-        document.cookie = LOCALE_COOKIE + '=' + encodeURIComponent(loc) +
-          ';path=/;max-age=31536000';
+        writeCookie(LOCALE_COOKIE, loc);
         markLocaleButtons();
         location.reload();
         return;
       }
-      var cur = b.getAttribute('data-currency');
+      var cur = button.getAttribute('data-currency');
       if (cur) {
-        var current = savedCurrency();
-        if (current === cur) return;
-        try { localStorage.setItem(CURRENCY_KEY, cur); } catch (e) {}
-        document.cookie = CURRENCY_COOKIE + '=' + encodeURIComponent(cur) +
-          ';path=/;max-age=31536000';
+        if (savedCurrency() === cur) return;
+        writeCookie(CURRENCY_COOKIE, cur);
         markCurrencyButtons();
         location.reload();
         return;
       }
-      var wantMemphis = b.getAttribute('data-skin') === 'memphis';
+      var wantMemphis = button.getAttribute('data-skin') === 'memphis';
+      var link = document.querySelector('link[rel="stylesheet"]');
+      if (!link) return;
+      var href = link.getAttribute('href') || '';
+      var isMemphis = href.indexOf('style-memphis.css') !== -1;
       if (wantMemphis === isMemphis) return;
-      link.setAttribute('href', wantMemphis ? memphisPath : handmadePath);
-      isMemphis = wantMemphis;
-      try { localStorage.setItem(LS_KEY, wantMemphis ? MEMPHIS : HANDMADE); } catch (e) {}
+      link.setAttribute('href', wantMemphis
+        ? href.replace('style.css', 'style-memphis.css')
+        : href.replace('style-memphis.css', 'style.css'));
+      writeCookie(SKIN_COOKIE, wantMemphis ? MEMPHIS : HANDMADE);
       mark();
     });
 

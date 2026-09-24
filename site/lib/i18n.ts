@@ -2,12 +2,16 @@ import { cookies } from "next/headers";
 import { ru, type Dictionary } from "./dictionaries/ru";
 import { en } from "./dictionaries/en";
 import { uk } from "./dictionaries/uk";
+import {
+  isLocale,
+  LOCALE_COOKIE_KEY,
+  normalizeDefaultLocale,
+  type UserLocale,
+} from "./user-settings";
 
-export type Locale = "ru" | "en" | "uk";
+export type Locale = UserLocale;
 
 export const LOCALES: readonly Locale[] = ["ru", "en", "uk"];
-
-export const LOCALE_STORAGE_KEY = "julcraft-locale";
 
 export type DictionaryKey = {
   [K in keyof Dictionary & string]: Dictionary[K] extends string
@@ -41,20 +45,14 @@ export type TranslationParams = Record<string, string | number>;
 
 const dictionaries: Record<Locale, Dictionary> = { ru, en, uk };
 
-function isLocale(value: string | undefined): value is Locale {
-  return value !== undefined && (LOCALES as readonly string[]).includes(value);
-}
-
 export async function getLocale(): Promise<Locale> {
   try {
-    const saved = (await cookies()).get(LOCALE_STORAGE_KEY)?.value;
+    const saved = (await cookies()).get(LOCALE_COOKIE_KEY)?.value;
     if (isLocale(saved)) return saved;
   } catch {
     // вне HTTP-запроса (например, статическая генерация) — дефолт
   }
-  const env = process.env.DEFAULT_LOCALE;
-  if (isLocale(env)) return env;
-  return "ru";
+  return normalizeDefaultLocale(process.env.DEFAULT_LOCALE);
 }
 
 export function getDictionary(locale: Locale): Dictionary {

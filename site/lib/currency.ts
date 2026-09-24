@@ -31,10 +31,7 @@ export function asPriced(minor: number, currencyCode: string): Priced {
   return { priceMinor: minor, priceCurrency: currencyCode };
 }
 
-/** Ключ cookie и localStorage выбранной валюты (D-21) */
-export const CURRENCY_STORAGE_KEY = "julcraft-currency";
-
-// Стартовые курсы 44 / 85 / 0.92 (D-22) — правятся в настройках (вкладка «Финансы»)
+/** Стартовые курсы 44 / 85 / 0.92 (D-22) — правятся в настройках (вкладка «Финансы») */
 export const defaultFinance: FinanceSettings = {
   currencies: [
     { code: "USD", name: "Доллар", symbol: "$", ratePerUsd: 1 },
