@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Блог — JulCraft Админ</title>
+<link rel="stylesheet" href="../assets/css/style-memphis.css">
+<script src="../assets/js/skin-switcher.js"></script>
+<style>
+/* Блог — админка. Новые блоки макета; копируются в оба скина сайта
+   (site/public/css/style.css и style-memphis.css) без изменений. */
+.blog-toolbar { display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+.blog-search { max-width:280px; margin:0; }
+.blog-tags-cell { display:flex; flex-wrap:wrap; gap:6px; }
+.blog-tags-cell .chip { font-size:.56rem; padding:3px 10px; box-shadow:2px 2px 0 var(--brown); }
+.blog-tags-cell .none { font-size:.7rem; color:var(--muted); font-weight:600; }
+.tbl .thumb--cover { width:64px; height:64px; border-radius:10px; overflow:hidden; border:2.5px solid var(--brown); background:var(--paper); display:flex; align-items:center; justify-content:center; }
+.tbl .thumb--cover svg { width:26px; height:26px; opacity:.35; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="logo" href="dashboard.html">JulCraft<small>панель мастера</small></a>
+  <nav>
+    <a href="dashboard.html">Дашборд</a>
+    <a href="orders.html">Заявки</a>
+    <a href="products.html">Товары</a>
+    <a href="components.html">Склад</a>
+    <a href="categories.html">Категории</a>
+    <a href="blog.html" class="is-active">Блог</a>
+    <a href="settings.html">Настройки</a>
+  </nav>
+  <div class="actions">
+    <button class="icon-btn icon-btn--rust" onclick="location.href='login.html'" title="Выйти">⏻</button>
+    <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mm">
+  <div class="mm-head">
+    <b>Панель мастера</b>
+    <button class="icon-btn" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  </div>
+  <a class="mm" href="dashboard.html">Дашборд</a>
+  <a class="mm" href="orders.html">Заявки</a>
+  <a class="mm" href="products.html">Товары</a>
+  <a class="mm" href="components.html">Склад</a>
+  <a class="mm" href="categories.html">Категории</a>
+  <a class="mm" href="blog.html">Блог</a>
+  <a class="mm" href="settings.html">Настройки</a>
+  <div class="mm-foot"><a href="login.html" style="color:var(--rust);">Выйти →</a></div>
+</div>
+
+<main class="admin-wrap">
+
+  <div class="page-title">
+    <h1>Блог</h1>
+    <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+      <span class="doodle">1 черновик ждёт публикации</span>
+      <a class="btn btn--primary" href="blog-editor.html">+ Новая запись</a>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <span class="tab is-active" onclick="switchTab(this,0)">Записи</span>
+    <span class="tab" onclick="switchTab(this,1)">Рубрики</span>
+  </div>
+
+  <!-- ===== вкладка «Записи» ===== -->
+  <div class="tab-pane">
+
+    <div class="board board--paper mb-20" style="padding:16px 20px;">
+      <div class="blog-toolbar">
+        <div class="filters">
+          <span class="filter is-active">Все (7)</span>
+          <span class="filter">Черновики (1)</span>
+          <span class="filter">Опубликованные (6)</span>
+        </div>
+        <div class="filters">
+          <span class="filter">все рубрики</span>
+          <span class="filter">Бакелит</span>
+          <span class="filter">Эмаль</span>
+          <span class="filter">Реставрация</span>
+          <span class="filter">Закулисье</span>
+        </div>
+        <div class="field blog-search">
+          <input type="text" placeholder="Поиск по названию или slug…">
+        </div>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Обложка</th><th>Запись</th><th>Рубрики</th><th>Дата</th><th>Статус</th><th>Действия</th></tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td><div class="thumb thumb--cover"><img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=200&q=80" alt="Бакелит"></div></td>
+            <td class="cell-name"><b>Как я выбираю камень</b><small>kak-ya-vybirayu-kamen</small></td>
+            <td><div class="blog-tags-cell"><span class="chip chip--mustard">бакелит</span><span class="chip chip--olive">закулисье</span></div></td>
+            <td class="num">18.09.2026</td>
+            <td><span class="tag tag--done">опубликовано</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть на сайте">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb thumb--cover"><img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=200&q=80" alt="Эмаль"></div></td>
+            <td class="cell-name"><b>Эмаль, которая капризничает</b><small>emal-kapriznichaet</small></td>
+            <td><div class="blog-tags-cell"><span class="chip chip--rust">эмаль</span></div></td>
+            <td class="num">11.09.2026</td>
+            <td><span class="tag tag--done">опубликовано</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть на сайте">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb thumb--cover"><img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=200&q=80" alt="Закулисье"></div></td>
+            <td class="cell-name"><b>Три способа спрятать застёжку</b><small>tri-sposoba-zastezhki</small></td>
+            <td><div class="blog-tags-cell"><span class="chip chip--olive">закулисье</span></div></td>
+            <td class="num">02.09.2026</td>
+            <td><span class="tag tag--done">опубликовано</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть на сайте">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb thumb--cover"><img src="https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?w=200&q=80" alt="Реставрация"></div></td>
+            <td class="cell-name"><b>Реставрация: брошь, пережившая войну</b><small>restavraciya-brosh</small></td>
+            <td><div class="blog-tags-cell"><span class="chip chip--mustard">реставрация</span><span class="chip ">бакелит</span></div></td>
+            <td class="num">24.08.2026</td>
+            <td><span class="tag tag--done">опубликовано</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть на сайте">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb thumb--cover"><img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=200&q=80" alt="Бакелит"></div></td>
+            <td class="cell-name"><b>Что я измеряю, когда делаю кольцо</b><small>chto-ya-izmeryayu</small></td>
+            <td><div class="blog-tags-cell"><span class="chip chip--mustard">бакелит</span></div></td>
+            <td class="num">16.08.2026</td>
+            <td><span class="tag tag--done">опубликовано</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть на сайте">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb thumb--cover"><img src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=200&q=80" alt="Закулисье"></div></td>
+            <td class="cell-name"><b>Чай на двоих и вечер с паяльником</b><small>chay-na-dvoih</small></td>
+            <td><div class="blog-tags-cell"><span class="chip chip--olive">закулисье</span></div></td>
+            <td class="num">05.08.2026</td>
+            <td><span class="tag tag--done">опубликовано</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Открыть на сайте">👁</button><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><div class="thumb thumb--cover"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="m21 15-5-5L5 21"/></svg></div></td>
+            <td class="cell-name"><b>Пост без картинки — тоже бывает</b><small>post-bez-kartinki</small></td>
+            <td><div class="blog-tags-cell"><span class="none">—</span></div></td>
+            <td class="num">29.07.2026</td>
+            <td><span class="tag tag--none">черновик</span></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="empty-state mt-40">
+      <div class="receipt" style="padding:40px 30px;">
+        <div class="es-big">☙</div>
+        <b>Записей пока нет</b>
+        <p>Нажмите «Новая запись», напишите текст и опубликуйте — черновики видны только здесь.</p>
+        <a class="btn btn--primary btn--small" href="blog-editor.html">+ Новая запись</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== вкладка «Рубрики» ===== -->
+  <div class="tab-pane" style="display:none;">
+
+    <div class="board">
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead>
+            <tr><th>Рубрика</th><th>Записей</th><th>В фильтре витрины</th><th>Действия</th></tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="cell-name"><b>Бакелит</b><small>bakelit</small></td>
+            <td class="num">3</td>
+            <td><label class="checkbox"><input type="checkbox" checked> показывать в фильтре</label></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="cell-name"><b>Эмаль</b><small>emal</small></td>
+            <td class="num">1</td>
+            <td><label class="checkbox"><input type="checkbox" checked> показывать в фильтре</label></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="cell-name"><b>Реставрация</b><small>restavraciya</small></td>
+            <td class="num">1</td>
+            <td><label class="checkbox"><input type="checkbox" checked> показывать в фильтре</label></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td class="cell-name"><b>Закулисье</b><small>zakulisye</small></td>
+            <td class="num">2</td>
+            <td><label class="checkbox"><input type="checkbox"> показывать в фильтре</label></td>
+            <td><div class="actions"><button class="icon-btn" style="width:32px;height:32px;" title="Редактировать">✎</button><button class="icon-btn icon-btn--rust" style="width:32px;height:32px;" title="Удалить">🗑</button></div></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="board board--paper mt-20">
+      <div class="form-card" style="box-shadow:none;">
+        <h3>Новая рубрика</h3>
+        <div class="field--row">
+          <div class="field">
+            <label>Название</label>
+            <input type="text" placeholder="Например, Стекло">
+          </div>
+          <div class="field">
+            <label>Slug</label>
+            <input type="text" placeholder="steklo">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn--primary">Создать рубрику</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+function switchTab(btn, idx){
+  var tabs = btn.parentElement.querySelectorAll('.tab');
+  var panes = btn.closest('.admin-wrap').querySelectorAll('.tab-pane');
+  for (var i=0;i<tabs.length;i++){ tabs[i].classList.toggle('is-active', i===idx); }
+  for (var j=0;j<panes.length;j++){ panes[j].style.display = (j===idx) ? '' : 'none'; }
+}
+</script>
+
+</body>
+</html>

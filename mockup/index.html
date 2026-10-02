@@ -71,7 +71,7 @@
 
   <!-- ===== Публичные ===== -->
   <div class="group">
-    <h2>Публичные страницы <span class="g-badge">9 шт</span></h2>
+    <h2>Публичные страницы <span class="g-badge">11 шт</span></h2>
     <div class="hub-grid">
 
       <a class="hub-card" href="home.html">
@@ -117,6 +117,20 @@
         <span class="btn btn--primary btn--small go">Открыть →</span>
       </a>
 
+      <a class="hub-card" href="blog.html">
+        <span class="route">/blog</span>
+        <span class="t">Блог — список записей</span>
+        <span class="d">Рубрики-фильтры, навигация по годам и месяцам, группировка карточек по датам, пагинация, пустое состояние и плейсхолдер без обложки.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="blog-post.html">
+        <span class="route">/blog/[slug]</span>
+        <span class="t">Блог — запись</span>
+        <span class="d">Заголовок, дата, рубрики, обложка и текст записи (markdown → HTML): заголовки, списки, цитаты, таблицы, код, картинки, ссылки. Соседние записи.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
       <a class="hub-card" href="about.html">
         <span class="route">/about</span>
         <span class="t">О мастерской</span>
@@ -143,7 +157,7 @@
 
   <!-- ===== Админка ===== -->
   <div class="group group--admin">
-    <h2>Админка <span class="g-badge">7 шт</span></h2>
+    <h2>Админка <span class="g-badge">9 шт</span></h2>
     <div class="hub-grid">
 
       <a class="hub-card" href="admin/login.html">
@@ -185,6 +199,20 @@
         <span class="route">/admin/orders</span>
         <span class="t">Заявки</span>
         <span class="d">Таблица заявок с бейджами статусов (new/in_progress/done/cancelled), модалка: коллаж, состав конфигурации, смена статуса.</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/blog.html">
+        <span class="route">/admin/blog</span>
+        <span class="t">Блог — записи и рубрики</span>
+        <span class="d">Вкладки «Записи» (таблица: обложка, slug, рубрики, дата, статус-бейдж, действия; фильтры и поиск) и «Рубрики» (список, активность, создание).</span>
+        <span class="btn btn--primary btn--small go">Открыть →</span>
+      </a>
+
+      <a class="hub-card" href="admin/blog-editor.html">
+        <span class="route">/admin/blog/[id]</span>
+        <span class="t">Блог — редактор записи</span>
+        <span class="d">Заголовок/Slug/кратко с вкладками RU/EN/UK, обложка, выбор рубрик, markdown-панель с живым предпросмотром в две колонки, SEO, сохранение и публикация.</span>
         <span class="btn btn--primary btn--small go">Открыть →</span>
       </a>
 

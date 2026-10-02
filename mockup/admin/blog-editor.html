@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Новая запись — JulCraft Админ</title>
+<link rel="stylesheet" href="../assets/css/style-memphis.css">
+<script src="../assets/js/skin-switcher.js"></script>
+<style>
+/* Блог — редактор. Новые блоки макета; копируются в оба скина сайта
+   (site/public/css/style.css и style-memphis.css) без изменений.
+   Классы .loc-tabs/.loc-tab и «горящая» кнопка .is-dirty уже живут в
+   site/public/css (i18n-2 и план 4) — здесь продублированы ради превью. */
+.blog-editor-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+.md-toolbar { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; padding-bottom:12px; border-bottom:3px dashed var(--dot); }
+.md-btn { border:2.5px solid var(--brown); border-radius:8px; background:var(--paper); color:var(--brown); padding:5px 11px; font-size:.72rem; font-weight:800; cursor:pointer; }
+.md-btn:hover { background:var(--mustard); transform:rotate(-1deg); }
+.md-pane { background:var(--paper); border:3px solid var(--brown); border-radius:var(--r-form); padding:14px 16px; }
+.md-pane textarea { width:100%; min-height:400px; border:none; background:none; font-family:var(--font-mono); font-size:.82rem; line-height:1.7; color:var(--brown); resize:vertical; outline:none; }
+.md-pane .prose { max-width:none; font-size:.84rem; }
+.md-pane .prose h2 { font-size:1.05rem; margin:22px 0 8px; }
+.md-pane .prose h3 { font-size:.95rem; margin:18px 0 6px; }
+.md-pane .prose p { font-size:.84rem; margin-bottom:12px; }
+.md-pane .prose ul, .md-pane .prose ol { font-size:.82rem; margin-bottom:14px; }
+.md-pane .prose img { box-shadow:none; }
+.md-pane .prose table { font-size:.78rem; }
+.md-foot { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:.68rem; color:var(--muted); font-weight:700; }
+.md-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:8px; }
+.md-head b { font-family:var(--font-display); font-size:.9rem; color:var(--brown); font-weight:700; }
+.md-head small { font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:800; }
+.blog-cover-prev { display:flex; gap:16px; align-items:flex-start; }
+.blog-cover-prev .bc-thumb { width:128px; height:96px; border-radius:10px; overflow:hidden; border:2.5px solid var(--brown); flex:none; background:var(--white); display:flex; align-items:center; justify-content:center; }
+.blog-cover-prev .bc-thumb img { width:100%; height:100%; object-fit:cover; }
+.blog-cover-prev .bc-thumb svg { width:30px; height:30px; opacity:.35; }
+.blog-cover-prev .bc-side { flex:1; min-width:0; }
+.tag-pick { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.tag-pick .chip { cursor:pointer; text-decoration:none; }
+.tag-pick .chip.is-on { outline:3px solid var(--brown); outline-offset:2px; }
+.blog-status-line { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+.loc-tabs { display:flex; gap:4px; margin-bottom:4px; }
+.loc-tab { border:1px solid var(--brown); background:var(--paper); color:var(--brown); border-radius:6px 6px 0 0; padding:2px 10px; font-size:.68rem; cursor:pointer; letter-spacing:.06em; text-transform:uppercase; }
+.loc-tab.is-active { background:var(--brown); color:var(--cream); }
+.btn--primary.is-dirty { box-shadow:6px 6px 0 var(--mustard), 0 0 0 4px var(--mustard); }
+@media (max-width:1080px){ .blog-editor-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="logo" href="dashboard.html">JulCraft<small>панель мастера</small></a>
+  <nav>
+    <a href="dashboard.html">Дашборд</a>
+    <a href="orders.html">Заявки</a>
+    <a href="products.html">Товары</a>
+    <a href="components.html">Склад</a>
+    <a href="categories.html">Категории</a>
+    <a href="blog.html" class="is-active">Блог</a>
+    <a href="settings.html">Настройки</a>
+  </nav>
+  <div class="actions">
+    <button class="icon-btn icon-btn--rust" onclick="location.href='login.html'" title="Выйти">⏻</button>
+    <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mm">
+  <div class="mm-head">
+    <b>Панель мастера</b>
+    <button class="icon-btn" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  </div>
+  <a class="mm" href="dashboard.html">Дашборд</a>
+  <a class="mm" href="blog.html">Блог</a>
+  <div class="mm-foot"><a href="login.html" style="color:var(--rust);">Выйти →</a></div>
+</div>
+
+<main class="admin-wrap">
+
+  <div class="page-title">
+    <h1>Новая запись</h1>
+    <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+      <span class="doodle">есть несохранённые правки</span>
+      <a class="btn" href="blog.html">← к записям</a>
+    </div>
+  </div>
+
+  <div class="blog-status-line">
+    <span class="tag tag--none">черновик</span>
+    <small class="muted" style="font-size:.72rem;">запись видна только в панели — на витрине появится после публикации</small>
+  </div>
+
+  <div class="board board--paper mb-20">
+    <div class="form-card" style="box-shadow:none;">
+      <h3>Основное</h3>
+      <div class="field--row">
+        <div class="field" style="flex:2;">
+          <div class="loc-tabs"><span class="loc-tab is-active">RU</span><span class="loc-tab">EN</span><span class="loc-tab">UK</span></div>
+          <label>Заголовок</label>
+          <input type="text" value="Как я выбираю камень" placeholder="О чём запись?">
+        </div>
+        <div class="field">
+          <label>Slug</label>
+          <input type="text" value="kak-ya-vybirayu-kamen" placeholder="kak-ya-vybirayu-kamen">
+          <span class="hint">латиница, цифры и дефисы — из заголовка подставляется автоматически</span>
+        </div>
+      </div>
+      <div class="field">
+        <div class="loc-tabs"><span class="loc-tab is-active">RU</span><span class="loc-tab">EN</span><span class="loc-tab">UK</span></div>
+        <label>Кратко</label>
+        <textarea placeholder="Одно-два предложения для карточки в списке">Про прожилки, воздух внутри и три вопроса, которые я задаю куску бакелита, прежде чем он попадёт на верстак.</textarea>
+      </div>
+      <h4>Обложка</h4>
+      <div class="blog-cover-prev">
+        <div class="bc-thumb">
+          <img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=400&q=80" alt="Обложка">
+        </div>
+        <div class="bc-side">
+          <div class="dropzone">
+            <div class="dz-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+            <b>Заменить обложку</b>
+            <small>перетащите файл или нажмите · jpeg, png, webp до 5 МБ</small>
+          </div>
+        </div>
+      </div>
+      <h4>Рубрики</h4>
+      <div class="tag-pick">
+        <span class="chip chip--mustard is-on">бакелит</span>
+        <span class="chip chip--olive is-on">закулисье</span>
+        <span class="chip chip--rust">эмаль</span>
+        <span class="chip">реставрация</span>
+      </div>
+      <div class="field--row">
+        <div class="field"><label>Новая рубрика</label><input type="text" placeholder="Например, Стекло"></div>
+        <div class="field" style="flex:none;"><label>&nbsp;</label><button class="btn">Создать и добавить</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="board board--paper mb-20">
+    <div class="form-card" style="box-shadow:none;">
+      <div class="loc-tabs" style="margin-bottom:14px;"><span class="loc-tab is-active">RU</span><span class="loc-tab">EN</span><span class="loc-tab">UK</span></div>
+      <div class="md-toolbar">
+        <button class="md-btn">Жирный</button>
+        <button class="md-btn">Курсив</button>
+        <button class="md-btn">Зачёркнутый</button>
+        <button class="md-btn">H2</button>
+        <button class="md-btn">H3</button>
+        <button class="md-btn">Цитата</button>
+        <button class="md-btn">Маркеры</button>
+        <button class="md-btn">Нумерация</button>
+        <button class="md-btn">Задача</button>
+        <button class="md-btn">Таблица</button>
+        <button class="md-btn">Ссылка</button>
+        <button class="md-btn">Картинка</button>
+        <button class="md-btn">Код</button>
+        <button class="md-btn">Разделитель</button>
+      </div>
+      <div class="blog-editor-grid">
+        <div>
+          <div class="md-head"><b>Текст</b><small>markdown</small></div>
+          <div class="md-pane"><textarea>К бакелиту невозможно относиться серьёзно: он всё время шутит.
+Поэтому выбор камня занимает столько же времени, сколько сама брошь.
+
+## Первый вопрос — про прожилки
+
+Я кладу камень на чёрный лист и подношу к окну. Если прожилки идут
+ровно, вещь будет читаться с любого расстояния.
+
+- воздух внутри: у бакелита он должен быть;
+- трещины от края — молчу;
+- толщина: тонкий камень даёт **такую** игру света.
+
+&gt; Хороший камень не подражает рисунку. Он им и есть.
+
+| Камень | С чем дружит |
+| --- | --- |
+| Мёд с прожилкой | латунь, янтарь |
+| Лаванда | серебро, жемчуг |
+
+Подробнее — в [записи о реставрации](blog-post.html).</textarea></div>
+        </div>
+        <div>
+          <div class="md-head"><b>Предпросмотр</b><small>как на сайте</small></div>
+          <div class="md-pane">
+            <div class="prose">
+              <p>К бакелиту невозможно относиться серьёзно: он всё время шутит. Поэтому выбор камня занимает столько же времени, сколько сама брошь.</p>
+              <h2>Первый вопрос — про прожилки</h2>
+              <p>Я кладу камень на чёрный лист и подношу к окну. Если прожилки идут ровно, вещь будет читаться с любого расстояния.</p>
+              <ul>
+                <li>воздух внутри: у бакелита он должен быть;</li>
+                <li>трещины от края — молчу;</li>
+                <li>толщина: тонкий камень даёт <strong>такую</strong> игру света.</li>
+              </ul>
+              <blockquote><p>Хороший камень не подражает рисунку. Он им и есть.</p></blockquote>
+              <table><thead><tr><th>Камень</th><th>С чем дружит</th></tr></thead><tbody><tr><td>Мёд с прожилкой</td><td>латунь, янтарь</td></tr><tr><td>Лаванда</td><td>серебро, жемчуг</td></tr></tbody></table>
+              <p>Подробнее — в <a href="blog-post.html">записи о реставрации</a>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="md-foot">
+        <span>символов: 612</span>
+        <span>слов: 96 · предпросмотр обновляется на лету</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="board board--paper mb-20">
+    <div class="form-card" style="box-shadow:none;">
+      <h3>SEO</h3>
+      <p class="hint mb-20">Если оставить пусто, подставится заголовок и кратко записи — по правилам витрины.</p>
+      <div class="field--row">
+        <div class="field">
+          <div class="loc-tabs"><span class="loc-tab is-active">RU</span><span class="loc-tab">EN</span><span class="loc-tab">UK</span></div>
+          <label>Meta-title</label>
+          <input type="text" placeholder="Как я выбираю камень — JulCraft">
+        </div>
+        <div class="field">
+          <div class="loc-tabs"><span class="loc-tab is-active">RU</span><span class="loc-tab">EN</span><span class="loc-tab">UK</span></div>
+          <label>Meta-description</label>
+          <input type="text" placeholder="160 символов о записи">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="board board--paper mb-20">
+    <div class="form-card" style="box-shadow:none;">
+      <div class="form-actions" style="margin-top:0;">
+        <button class="btn btn--primary is-dirty">Сохранить черновик</button>
+        <button class="btn btn--mustard">Опубликовать</button>
+        <a class="btn" href="blog.html">Отмена</a>
+        <span class="grow-1"></span>
+        <button class="btn">Удалить запись</button>
+      </div>
+      <p class="hint" style="margin-top:14px;">После публикации запись появится на витрине в группе по дате и в sitemap. «Снять с публикации» вернёт её в черновики.</p>
+    </div>
+  </div>
+
+  <div class="board board--paper">
+    <div class="form-card" style="box-shadow:none;">
+      <div class="blog-status-line" style="margin-bottom:12px;">
+        <span class="tag tag--done">опубликовано</span>
+        <small class="muted" style="font-size:.72rem;">демо второго состояния · 18 сентября 2026 · <a href="../blog-post.html">открыть на сайте</a></small>
+      </div>
+      <div class="form-actions" style="margin-top:0;">
+        <button class="btn btn--primary">Сохранить изменения</button>
+        <button class="btn btn--secondary">Снять с публикации</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+</body>
+</html>

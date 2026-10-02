@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Блог — JulCraft</title>
+<link rel="stylesheet" href="assets/css/style-memphis.css">
+<script src="assets/js/skin-switcher.js"></script>
+<style>
+/* Блог — новые блоки макета. Вёрстка копируется в оба скина сайта
+   (site/public/css/style.css и style-memphis.css) без изменений.
+   Токены — только алиасы 06D (--cream/--brown/--mustard/--rust/--olive/--dot),
+   они объявлены в обоих скинах, поэтому блок выглядит одинаково. */
+
+/* --- навигация по датам --- */
+.date-nav { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+.date-nav .dn-block { display:flex; flex-direction:column; }
+.dn-label { font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:800; margin-bottom:8px; }
+.dn-row { display:flex; gap:8px; flex-wrap:wrap; }
+.dn-item { display:inline-block; padding:5px 13px; border:2.5px solid var(--brown); border-radius:999px; font-size:.72rem; font-weight:700; color:var(--brown); background:var(--white); text-decoration:none; }
+.dn-item:hover { background:var(--mustard); transform:rotate(-2deg); }
+.dn-item.is-active { background:var(--brown); color:var(--cream); }
+
+/* --- группы по датам --- */
+.blog-group { margin-bottom:52px; }
+.blog-group:last-of-type { margin-bottom:0; }
+.blog-group-h { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:22px; padding-bottom:10px; border-bottom:3px dashed var(--dot); }
+.blog-group-h .bg-count { font-size:.72rem; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; font-weight:800; }
+
+/* --- карточка записи --- */
+.post-card .photo { height:220px; }
+.post-card .desc { min-height:56px; }
+.post-meta { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.post-date { font-size:.68rem; color:var(--olive); letter-spacing:.06em; text-transform:uppercase; font-weight:800; }
+.post-tags { display:flex; gap:6px; flex-wrap:wrap; }
+.post-tags .chip { font-size:.56rem; padding:3px 10px; box-shadow:2px 2px 0 var(--brown); }
+.post-card .photo--none { display:flex; align-items:center; justify-content:center; background:var(--paper); }
+.post-card .photo--none svg { width:46px; height:46px; opacity:.35; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="logo" href="home.html">JulCraft</a>
+  <nav>
+    <a href="home.html">Главная</a>
+    <a href="catalog.html">Каталог</a>
+    <a href="configurator.html">Конфигуратор</a>
+    <a href="blog.html" class="is-active">Блог</a>
+    <a href="about.html">О нас</a>
+    <a href="contacts.html">Контакты</a>
+  </nav>
+  <div class="actions">
+    <a class="icon-btn" href="tel:+79990007676" title="Позвонить">☎</a>
+    <button class="burger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Меню">☰</button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mm">
+  <div class="mm-head">
+    <b>JulCraft</b>
+    <button class="icon-btn" onclick="document.getElementById('mm').classList.remove('open')" aria-label="Закрыть">✕</button>
+  </div>
+  <a class="mm" href="home.html">Главная</a>
+  <a class="mm" href="catalog.html">Каталог</a>
+  <a class="mm" href="configurator.html">Конфигуратор</a>
+  <a class="mm" href="blog.html">Блог</a>
+  <a class="mm" href="about.html">О нас</a>
+  <a class="mm" href="contacts.html">Контакты</a>
+  <div class="mm-foot">ул. Радищева, 16 · ☎ +7 (999) 000-76-76</div>
+</div>
+
+<nav class="crumbs"><a href="home.html">Главная</a> <span class="sep">›</span> <span class="cur">Блог</span></nav>
+
+<div class="signboard signboard--small">
+  <p class="est">✹ заметки мастера ✹</p>
+  <h1>Блог</h1>
+  <p class="tag">как рождается вещь — от первого прожилка в бакелите до последней застёжки</p>
+</div>
+<div class="zigzag"></div>
+
+<section class="sect">
+
+  <!-- ===== Рубрики ===== -->
+  <div class="board board--paper mb-30">
+    <div class="b-head">
+      <h3>Рубрики</h3>
+      <span class="avail" style="color:var(--olive);">найдено: 6</span>
+    </div>
+    <div class="b-body">
+      <div class="filters">
+        <a class="filter is-active" href="#">Все записи</a>
+        <a class="filter" href="#">Бакелит</a>
+        <a class="filter" href="#">Эмаль</a>
+        <a class="filter" href="#">Реставрация</a>
+        <a class="filter" href="#">Закулисье</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Навигация по датам ===== -->
+  <div class="board board--paper mb-30">
+    <div class="b-head">
+      <h3>По датам</h3>
+    </div>
+    <div class="b-body">
+      <div class="date-nav">
+        <div class="dn-block">
+          <span class="dn-label">Год</span>
+          <div class="dn-row">
+            <a class="dn-item is-active" href="#">2026</a>
+            <a class="dn-item" href="#">2025</a>
+          </div>
+        </div>
+        <div class="dn-block">
+          <span class="dn-label">Месяц</span>
+          <div class="dn-row">
+            <a class="dn-item is-active" href="#">сентябрь</a>
+            <a class="dn-item" href="#">август</a>
+            <a class="dn-item" href="#">июль</a>
+            <a class="dn-item" href="#">июнь</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="blog-group">
+    <div class="blog-group-h">
+      <h2 class="sec-h2" style="margin-bottom:0;">сентябрь 2026</h2>
+      <span class="bg-count">3 записи</span>
+    </div>
+    <div class="shelf">
+
+    <a class="item post-card" href="blog-post.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=800&q=80" alt="Как я выбираю камень" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Как я выбираю камень</h3>
+        <p class="desc">Почему один кусок бакелита становится брошью, а другой — уходит в брак. Про прожилки, воздух внутри и проверку на свет.</p>
+        <div class="post-meta">
+          <span class="post-date">18 сентября 2026</span>
+          <span class="post-tags"><span class="chip chip--mustard">бакелит</span></span>
+        </div>
+      </div>
+    </a>
+
+    <a class="item post-card" href="blog-post.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80" alt="Эмаль, которая капризничает" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Эмаль, которая капризничает</h3>
+        <p class="desc">Двенадцать обжигов, два скола и один вечер, когда я решила не паниковать. Маленькая хроника неудач и одного удачного браслета.</p>
+        <div class="post-meta">
+          <span class="post-date">11 сентября 2026</span>
+          <span class="post-tags"><span class="chip chip--rust">эмаль</span></span>
+        </div>
+      </div>
+    </a>
+
+    <a class="item post-card" href="blog-post.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80" alt="Три способа спрятать застёжку" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Три способа спрятать застёжку</h3>
+        <p class="desc">Когда замок виден — он становится частью узора. Разбираю, какие способы прячут, а какие наоборот делают вещь тише и дороже.</p>
+        <div class="post-meta">
+          <span class="post-date">2 сентября 2026</span>
+          <span class="post-tags"><span class="chip chip--olive">закулисье</span></span>
+        </div>
+      </div>
+    </a>
+
+    </div>
+  </div>
+  <div class="blog-group">
+    <div class="blog-group-h">
+      <h2 class="sec-h2" style="margin-bottom:0;">август 2026</h2>
+      <span class="bg-count">3 записи</span>
+    </div>
+    <div class="shelf">
+
+    <a class="item post-card" href="blog-post.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?w=800&q=80" alt="Реставрация: брошь, которая пережила войну" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Реставрация: брошь, которая пережила войну</h3>
+        <p class="desc">Пришла без камней, с зубами вместо лапок. Собрала заново — и собрала так, что шов виден, если знать, куда смотреть.</p>
+        <div class="post-meta">
+          <span class="post-date">24 августа 2026</span>
+          <span class="post-tags"><span class="chip chip--mustard">реставрация</span><span class="chip ">бакелит</span></span>
+        </div>
+      </div>
+    </a>
+
+    <a class="item post-card" href="blog-post.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&q=80" alt="Что я измеряю, когда делаю кольцо" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Что я измеряю, когда делаю кольцо</h3>
+        <p class="desc">Восемь цифр на листочке и ни одной лишней. Как размеры удерживают форму и почему я больше не работаю «на глаз».</p>
+        <div class="post-meta">
+          <span class="post-date">16 августа 2026</span>
+          <span class="post-tags"><span class="chip chip--mustard">бакелит</span></span>
+        </div>
+      </div>
+    </a>
+
+    <a class="item post-card" href="blog-post.html">
+      <div class="photo"><img src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=800&q=80" alt="Чай на двоих и один вечер с паяльником" loading="lazy" decoding="async"></div>
+      <div class="info">
+        <h3>Чай на двоих и один вечер с паяльником</h3>
+        <p class="desc">Дневник мастерской за сентябрь: гости, чайник, перекус на краю стола и три браслета, которые так и не довела.</p>
+        <div class="post-meta">
+          <span class="post-date">5 августа 2026</span>
+          <span class="post-tags"><span class="chip chip--olive">закулисье</span></span>
+        </div>
+      </div>
+    </a>
+
+    </div>
+  </div>
+  <!-- пагинация -->
+  <div class="pagination">
+    <span class="page-btn is-disabled">←</span>
+    <span class="page-btn is-active">1</span>
+    <a class="page-btn" href="#">2</a>
+    <a class="page-btn" href="#">→</a>
+  </div>
+</section>
+
+<!-- ===== Демо пустого состояния блога ===== -->
+<section class="sect" style="padding-top:0;">
+  <h2 class="sec-h2">Пока здесь пусто</h2>
+  <p class="sec-sub">// пустое состояние — если записей ещё нет или фильтр ничего не нашёл</p>
+  <div class="empty-state">
+    <div class="receipt" style="padding:40px 30px;">
+      <div class="es-big">☙</div>
+      <b>Записей пока нет</b>
+      <p>Мастер ещё не опубликовал ни одной записи — загляните позже, а пока есть каталог и конфигуратор.</p>
+      <a class="btn btn--primary btn--small" href="catalog.html">Открыть каталог</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Демо карточки без обложки ===== -->
+<section class="sect" style="padding-top:0;">
+  <h2 class="sec-h2">Запись без обложки</h2>
+  <p class="sec-sub">// плейсхолдер, когда картинка не загружена</p>
+  <div class="shelf">
+    <a class="item post-card" href="blog-post.html">
+      <div class="photo photo--none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>
+      </div>
+      <div class="info">
+        <h3>Пост без картинки — тоже бывает</h3>
+        <p class="desc">Иногда слова не требуют обложки. Плейсхолдер не должен ломать сетку.</p>
+        <div class="post-meta">
+          <span class="post-date">29 июля 2026</span>
+          <span class="post-tags"><span class="chip chip--olive">закулисье</span></span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<div class="zigzag"></div>
+
+<footer class="footer">
+  <div class="f-grid">
+    <div>
+      <div class="f-brand">JulCraft<span>ул. Радищева, 16 · мастерская украшений · эст. 1976 (почти)</span></div>
+    </div>
+    <div>
+      <h4>Часы работы</h4>
+      <div class="day"><span>Понедельник</span><span class="closed">выходной</span></div>
+      <div class="day"><span>Вт — Пт</span><span>11:00 — 20:00</span></div>
+      <div class="day"><span>Суббота</span><span>12:00 — 19:00</span></div>
+      <div class="day"><span>Воскресенье</span><span>12:00 — 17:00</span></div>
+    </div>
+    <div class="f-links">
+      <h4>Связаться</h4>
+      <a href="tel:+79990007676">☎ +7 (999) 000-76-76</a>
+      <a href="mailto:hello@julcraft.ru">✉ hello@julcraft.ru</a>
+      <a href="contacts.html">⛭ ул. Радищева, 16, Самара</a>
+      <div class="f-socials">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="#22242a"/></svg></a>
+        <a href="#" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="#22242a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="f-copy">JulCraft · с 1976 года (почти) · © 2026</div>
+</footer>
+
+</body>
+</html>
