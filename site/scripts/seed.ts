@@ -3,6 +3,9 @@ import { resolve } from "node:path";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { db, sqlite } from "../lib/db";
 import {
+  blogPostTags,
+  blogPosts,
+  blogTags,
   categories,
   componentTypes,
   components,
@@ -544,6 +547,319 @@ const settingsSeed: Record<string, string> = {
   "finance.filterHighCurrency": "UAH",
 };
 
+
+// ============================================================
+// Блог мастера (направление 5) — тексты из mockup/blog.html и
+// mockup/blog-post.html. EN/UK — у двух записей, чтобы витрина
+// показывала фолбэк RU для остальных (план-5-blog.md §9).
+//
+// Обложки демо — существующие файлы из public/uploads/products/:
+// public/uploads/blog/ в git не входит (тот же приём, что у
+// категорий и комплектующих).
+// ============================================================
+
+type BlogTagSeed = {
+  slug: string;
+  name: LocalizedString;
+  sortOrder: number;
+};
+
+const blogTagSeed: BlogTagSeed[] = [
+  { slug: "bakelit", name: { ru: "Бакелит", en: "Bakelite", uk: "Бакеліт" }, sortOrder: 1 },
+  { slug: "emal", name: { ru: "Эмаль", en: "Enamel", uk: "Емаль" }, sortOrder: 2 },
+  { slug: "zakulisye", name: { ru: "Закулисье", en: "Backstage", uk: "Закулисся" }, sortOrder: 3 },
+];
+
+type BlogPostSeed = {
+  slug: string;
+  title: LocalizedString;
+  excerpt: LocalizedString;
+  content: LocalizedString;
+  /** null — запись без обложки (плейсхолдер на витрине). */
+  cover: string | null;
+  status: "draft" | "published";
+  /** Дата публикации ISO; у черновика null. */
+  publishedAt: string | null;
+  tagSlugs: string[];
+};
+
+const kamenCover = "/uploads/products/kulon-babushkina-vaza.jpg";
+const lunnyjCover = "/uploads/products/kulon-lunnyj-svet-iz-chulana.jpg";
+const radioCover = "/uploads/products/kulon-radio-volna.jpg";
+const monetaCover = "/uploads/products/kulon-moneta-76.jpg";
+
+const blogPostSeed: BlogPostSeed[] = [
+  {
+    slug: "kak-ya-vybirayu-kamen",
+    title: { ru: "Как я выбираю камень", en: "How I choose the stone", uk: "Як я обираю камінь" },
+    excerpt: {
+      ru: "Про прожилки, воздух внутри и три вопроса, которые я задаю куску бакелита, прежде чем он попадёт на верстак.",
+      en: "About the veins, the air inside, and the three questions I ask a piece of bakelite before it reaches the bench.",
+      uk: "Про жилки, повітря усередині та три питання, які я ставлю шматку бакеліту, перш ніж він потрапить на верстак.",
+    },
+    content: {
+      ru: [
+        "К бакелиту невозможно относиться серьёзно: он всё время шутит. То стянется в скуклу, то заливается карамелью, а иногда лежит ровно и молчит — и это тоже **самое интересное**. Поэтому выбор камня у меня занимает столько же времени, сколько сама брошь.",
+        "",
+        "## Первый вопрос — про прожилки",
+        "",
+        "Я кладу камень на чёрный лист и подношу к окну. Если прожилки идут ровно, вещь будет читаться с любого расстояния. Если они рвутся и ветвятся — камень уйдёт в крупные броши и браслеты, где рисунок не прочь поскушать.",
+        "",
+        "> Хороший камень не подражает рисунку. Он им *и есть* — просто с ровными краями.",
+        "",
+        "### Что смотрю дальше",
+        "",
+        "- воздух внутри: у бакелита он должен быть, у стекла его быть не должно;",
+        "- трещины от края — молчу, сквозная трещина — молчу;",
+        "- толщина: тонкий камень даёт *такую* игру света, что за это прощаю всё остальное.",
+        "",
+        "## Второй вопрос — про цвет в общем",
+        "",
+        "Отложите камень на неделю. Серьёзно. Часто он устаёт вместе с вами: кажется, что лаванда гармонирует с интерьером, а через семь дней оказывается — просто приел глаз.",
+        "",
+        "---",
+        "",
+        "Иногда камень нужен для пары, а не для одиночной вещи. Тогда смотрю на два куска рядом — и ищу не совпадение, а *разговор*. Вот пара, которая хорошо работает:",
+        "",
+        "| Камень | Что лучше показывает | С чем дружит |",
+        "| --- | --- | --- |",
+        "| Мёд с прожилкой | тёплый жёлтый | латунь, янтарь |",
+        "| Лаванда | холодный сиреневый | серебро, жемчуг |",
+        "| Дым | серый с зеленцой | олово, чёрный лак |",
+        "",
+        "## Третий вопрос — про честность",
+        "",
+        "Если камень хорош только при идеальном све и идеальном ракурсе, я не беру его. Вещь живёт в кармане, в сумке, на раковине в шесть утра. Она должна быть интересной *там*.",
+        "",
+        "- [x] Прожилки видны без подсветки",
+        "- [x] Нет сколов на кромке",
+        "- [ ] Цвет нравится через неделю",
+        "- [ ] Есть, чем зацепить взгляд — не только цветом",
+        "",
+        `![Проверка прожилок на свет](${kamenCover})`,
+        "",
+        "Проверка у окна занимает минуту и экономит недели. Если хотите, напишите в [контакты](/contacts) — расскажу, как прислать фото камня так, чтобы было видно прожилки. Подробнее о том, как устроена работа с камнем у нас в мастерской, — в [записи о реставрации](/blog/restavraciya-brosh).",
+      ].join("\n"),
+      en: [
+        "You cannot take bakelite seriously: it is joking all the time. Now it shrinks into a sulk, now it melts into caramel, and sometimes it lies perfectly still — and that is the most interesting of all. So choosing the stone takes me as long as making the brooch itself.",
+        "",
+        "## The first question — about the veins",
+        "",
+        "I lay the stone on a black sheet and hold it up to the window. If the veins run straight, the piece reads from any distance. If they break and branch, the stone is good for big brooches and bracelets, where the pattern doesn't mind playing up.",
+        "",
+        "> A good stone does not imitate the pattern. It *is* the pattern — only with tidy edges.",
+        "",
+        "### What I look at next",
+        "",
+        "- the air inside: bakelite must have it, glass must not;",
+        "- cracks from the edge — I stay quiet, a through crack — I stay quiet;",
+        "- thickness: a thin stone gives such a play of light that I forgive it everything else.",
+        "",
+        "## The second question — about colour in general",
+        "",
+        "Put the stone aside for a week. Seriously. Often it gets tired with you: lavender seems to go with the room, and seven days later you find out it simply got on your eye.",
+        "",
+        "---",
+        "",
+        "Sometimes a stone is needed for a pair rather than for a single thing. Then I look at two pieces side by side and look not for a match but for a *conversation*. Here is a pair that works:",
+        "",
+        "| Stone | What it shows best | What it gets on with |",
+        "| --- | --- | --- |",
+        "| Honey with veins | warm yellow | brass, amber |",
+        "| Lavender | cool lilac | silver, pearl |",
+        "| Smoke | grey with a green note | pewter, black lacquer |",
+        "",
+        "## The third question — about honesty",
+        "",
+        "If a stone is only good under perfect light and a perfect angle, I leave it. A thing lives in a pocket, in a bag, on a sink at six in the morning. It has to be interesting *there*.",
+        "",
+        "- [x] The veins show without a backlight",
+        "- [x] No chips on the edge",
+        "- [ ] I still like the colour after a week",
+        "- [ ] There is something to catch the eye besides the colour",
+        "",
+        `![Checking the veins against the light](${kamenCover})`,
+        "",
+        "The check by the window takes a minute and saves weeks. If you want to, write to [the contacts page](/contacts) — I will tell you how to send a photo of the stone so the veins are visible. More about how we work with stone in the workshop is in [the restoration post](/blog/restavraciya-brosh).",
+      ].join("\n"),
+      uk: [
+        "До бакеліту неможливо ставитися серйозно: він увесь час жартує. То стискається в образу, то розливається карамеллю, а іноді лежить рівно й мовчить — і це теж **найцікавіше**. Тому вибір каменю в мене займає стільки ж часу, скільки сама брошка.",
+        "",
+        "## Перше питання — про жилки",
+        "",
+        "Я кладу камінь на чорний аркуш і підношу до вікна. Якщо жилки йдуть рівно, річ читатиметься з будь-якої відстані. Якщо вони рвуться й розгалужуються — камінь піде у великі броші та браслети, де візерунок не проти похихилитися.",
+        "",
+        "> Добрий камінь не наслідує візерунок. Він ним *і є* — просто з рівними краями.",
+        "",
+        "### Що дивлюся далі",
+        "",
+        "- повітря всередині: у бакеліту воно має бути, у скла — ні;",
+        "- тріщини від краю — мовчу, наскрізна тріщина — мовчу;",
+        "- товщина: тонкий камінь дає *таку* гру світла, що за це я прощаю все інше.",
+        "",
+        "## Друге питання — про колір загалом",
+        "",
+        "Відкладіть камінь на тиждень. Серйозно. Часто він втомлюється разом із вами: здається, що лаванда пасує до інтер'єру, а за сім днів виявляється — просто приївся оку.",
+        "",
+        "---",
+        "",
+        "Іноді камінь потрібен для пари, а не для самотньої речі. Тоді я дивлюся на два шматки поруч і шукаю не збігу, а *розмову*. Ось пара, яка добре працює:",
+        "",
+        "| Камінь | Що показує найкраще | З чим дружить |",
+        "| --- | --- | --- |",
+        "| Мед із жилками | теплий жовтий | латунь, бурштин |",
+        "| Лаванда | холодний бузковий | срібло, перлина |",
+        "| Дим | сірий із зеленцю | олово, чорний лак |",
+        "",
+        "## Третє питання — про чесність",
+        "",
+        "Якщо камінь хороший лише за ідеального світла й ідеального ракурсу, я його не беру. Річ живе в кишені, в сумці, на раковині о шостій ранку. Вона має бути цікавою *там*.",
+        "",
+        "- [x] Жилки видно без підсвічування",
+        "- [x] Немає сколів на кромці",
+        "- [ ] Колір подобається за тиждень",
+        "- [ ] Є чим зачепити погляд — не лише кольором",
+        "",
+        `![Перевірка жилок на світло](${kamenCover})`,
+        "",
+        "Перевірка біля вікна займає хвилину й економить тижні. Якщо хочете, напишіть у [контакти](/contacts) — розкажу, як надіслати фото каменю так, щоб було видно жилки. Більше про те, як у нас у майстерні працюють із каменем, — у [записі про реставрацію](/blog/restavraciya-brosh).",
+      ].join("\n"),
+    },
+    cover: kamenCover,
+    status: "published",
+    publishedAt: "2026-09-18T12:00:00.000Z",
+    tagSlugs: ["bakelit"],
+  },
+  {
+    slug: "emal-kapriznichaet",
+    title: { ru: "Эмаль, которая капризничает", en: "The enamel that throws tantrums", uk: "Емаль, яка брикає" },
+    excerpt: {
+      ru: "Двенадцать обжигов, два скола и один вечер, когда я решила не паниковать. Маленькая хроника неудач и одного удачного браслета.",
+      en: "Twelve firings, two chips and one evening when I decided not to panic. A small chronicle of failures and one bracelet that worked.",
+      uk: "Ддванадцять випалів, два скола й один вечір, коли я вирішила не панікувати. Мала хроніка невдач і одного вдалого браселета.",
+    },
+    content: {
+      ru: [
+        "Эмаль не прощает спешки. Это я знаю из первого обжига, когда кисточка дрогнула и на запястье осталась полоска цвета запятой.",
+        "",
+        "## Двенадцать обжигов",
+        "",
+        "Первые три — это разговор с муфельной печью: ты видишь, как она дышит, и подстраиваешься. Дальше каждый обжиг становится чуть предсказуемее, и кажется, что дело сделано.",
+        "",
+        "> Сломанный браслет я не выбрасываю. Я разбираю его на куски — иногда из скола вырастает новая форма.",
+        "",
+        "Но двенадцатый обжиг всё решил. Цвет лёг так, будто его положили специально.",
+        "",
+        "1. Смешала три пигмента в одной банке — получился ровный тон.",
+        "2. Нанесла в два слоя, чтобы край не просвечивал.",
+        "3. Остыла медленно: сутки в выключенной печи.",
+        "",
+        "Что я поняла: удача — это не talent, а температура, режим и немного терпения.",
+      ].join("\n"),
+      en: [
+        "Enamel does not forgive hurry. I learned that from the first firing, when the brush trembled and a comma-shaped streak stayed on the bracelet.",
+        "",
+        "## Twelve firings",
+        "",
+        "The first three are a conversation with the kiln: you watch how it breathes and you adjust. After that every firing becomes a little more predictable, and you start to think the job is done.",
+        "",
+        "> I never throw a broken piece away. I take it apart — sometimes a chip grows into a new shape.",
+        "",
+        "But the twelfth firing settled it. The colour landed as if someone had placed it on purpose.",
+        "",
+        "1. Mixed three pigments in one jar — the tone came out even.",
+        "2. Applied it in two layers so the edge would not show through.",
+        "3. Let it cool slowly: a day in a switched-off kiln.",
+        "",
+        "What I took from it: luck is not talent, it is temperature, a schedule and a little patience.",
+      ].join("\n"),
+      uk: [
+        "Емаль не пробачає поспіху. Я це знаю з першого випалу, коли пензль тремтив і на браслеті лишилася смуга кольору коми.",
+        "",
+        "## Дванадцять випалів",
+        "",
+        "Перші три — це розмова з муфельною піччю: ти бачиш, як вона дихає, і підлаштовуєшся. Далі кожен випал стає дещо передбачуванішим, і здається, що роботу зроблено.",
+        "",
+        "> Зламане браслето я не викидаю. Я розбираю його на шматки — іноді зі скола виростає нова форма.",
+        "",
+        "Але дванадцятий випал усе вирішив. Колір ліг так, наче його хтось поклав навмисно.",
+        "",
+        "1. Змішала три пігменти в одній банці — вийшов рівний тон.",
+        "2. Нанесла в два шари, щоб край не просвічував.",
+        "3. Охолола повільно: добу у вимкненій печі.",
+        "",
+        "Що я зрозуміла: удача — це не талант, це температура, режим і трохи терпіння.",
+      ].join("\n"),
+    },
+    cover: radioCover,
+    status: "published",
+    publishedAt: "2026-09-11T12:00:00.000Z",
+    tagSlugs: ["emal"],
+  },
+  {
+    slug: "restavraciya-brosh",
+    title: { ru: "Реставрация: брошь, которая пережила войну" },
+    excerpt: {
+      ru: "Пришла без камней, с зубами вместо лапок. Собрала заново — и собрала так, что шов виден, если знать, куда смотреть.",
+    },
+    content: {
+      ru: [
+        "Брошь пришла почтой: коробочка, бумага, а внутри — форма с тремя пустыми гнёздами и когтями вместо лапок. Двадцатый век добрался до латуни неравномерно.",
+        "",
+        "## Что я сделала",
+        "",
+        "- вычистила окислы и закрепила основу жидкой патиной;",
+        "- погнутые коготки выправила и подточила до прежней длины;",
+        "- три камня подобрала не под форму, а под рисунок старой огранки.",
+        "",
+        "> Шов я не прятала. На старых вещах он и должен быть виден — это честнее любой подкраски.",
+        "",
+        "Теперь брошь снова держится на шпильке. Она не выглядит новой, и это правильно: сорок лет — это не дефект, а биография.",
+      ].join("\n"),
+    },
+    cover: monetaCover,
+    status: "published",
+    publishedAt: "2026-08-24T12:00:00.000Z",
+    tagSlugs: ["bakelit"],
+  },
+  {
+    slug: "chay-na-dvoih",
+    title: { ru: "Чай на двоих и вечер с паяльником", en: "Tea for two and an evening with a soldering iron" },
+    excerpt: {
+      ru: "Дневник мастерской за сентябрь: гости, чайник, перекус на краю стола и три браслета, которые так и не довела.",
+    },
+    content: {
+      ru: [
+        "Сентябрь выдался гостями: то подруга с ребёнком, то соседка с котом, то дядя с вопросом «а это тоже можно?». К вечеру стол уставлен, чайник остыл, паяльник ещё тёплый.",
+        "",
+        "## Что лежало на столе",
+        "",
+        "| Вещь | Состояние | Решение |",
+        "| --- | --- | --- |",
+        "| Браслет с подвеской | латунь потемнела | чистка и лак |",
+        "| Кулон «Лунный свет» | камень с трещиной | оставить как есть |",
+        "| Кольцо | размер попал в витку | уменьшить на полразмера |",
+        "",
+        "Провозилась до ночи, не довела ни один браслет — три штуки так и лежат в жестянке. Зато чай был горячий, а это в сентябре тоже результат.",
+      ].join("\n"),
+    },
+    cover: lunnyjCover,
+    status: "published",
+    publishedAt: "2026-08-05T12:00:00.000Z",
+    tagSlugs: ["zakulisye"],
+  },
+  {
+    slug: "post-bez-kartinki",
+    title: { ru: "Пост без картинки — тоже бывает" },
+    excerpt: { ru: "Иногда слова не требуют обложки. Плейсхолдер не должен ломать сетку." },
+    content: { ru: ["Черновик: короткая заметка о том, что не всякая запись обязана быть с фотографией."].join("\n") },
+    cover: null,
+    status: "draft",
+    publishedAt: null,
+    tagSlugs: [],
+  },
+];
+
 // ============================================================
 // Механика сида
 // ============================================================
@@ -583,6 +899,10 @@ function main() {
   db.delete(categories).run();
   db.delete(componentTypes).run();
   db.delete(settings).run();
+  // Блог: связи чистим раньше постов и рубрик (аналогично категориям).
+  db.delete(blogPostTags).run();
+  db.delete(blogPosts).run();
+  db.delete(blogTags).run();
 
   // сброс счётчиков AUTOINCREMENT (иначе id «плывут» после пересидов — см. stage1_3review.md §4.4).
   // Таблица sqlite_sequence создаётся SQLite сама; проверка существования — защита на всякий случай.
@@ -689,7 +1009,50 @@ function main() {
       .run();
   });
 
-  // 5. Settings
+  // 5. Рубрики блога
+  const blogTagIds = new Map<string, number>();
+  blogTagSeed.forEach((tag) => {
+    const res = db
+      .insert(blogTags)
+      .values({
+        slug: tag.slug,
+        name: JSON.stringify(tag.name),
+        sortOrder: tag.sortOrder,
+        isActive: true,
+      })
+      .run();
+    blogTagIds.set(tag.slug, Number(res.lastInsertRowid));
+  });
+
+  // 6. Записи блога. Дата публикации — из данных сида, чтобы демо-витрина
+  // не «поехала» вместе с текущей датой; черновик даты не получает.
+  const blogNow = new Date();
+  blogPostSeed.forEach((post) => {
+    const res = db
+      .insert(blogPosts)
+      .values({
+        slug: post.slug,
+        title: JSON.stringify(post.title),
+        excerpt: JSON.stringify(post.excerpt),
+        content: JSON.stringify(post.content),
+        coverImage: post.cover,
+        status: post.status,
+        publishedAt: post.publishedAt ? new Date(post.publishedAt) : null,
+        metaTitle: null,
+        metaDescription: null,
+        createdAt: blogNow,
+        updatedAt: blogNow,
+      })
+      .run();
+    const postId = Number(res.lastInsertRowid);
+    for (const tagSlug of post.tagSlugs) {
+      db.insert(blogPostTags)
+        .values({ postId, tagId: blogTagIds.get(tagSlug)! })
+        .run();
+    }
+  });
+
+  // 7. Settings
   for (const [key, value] of Object.entries(settingsSeed)) {
     db.insert(settings).values({ key, value }).run();
   }
@@ -698,7 +1061,9 @@ function main() {
     `Seed готов: ${categorySeed.length} категорий, ${slotCount} слотов, ` +
       `${componentTypeSeed.length} типов, ` +
       `${componentSeed.length} комплектующих (SVG в public/uploads/components/), ` +
-      `${productSeed.length} товаров, ${Object.keys(settingsSeed).length} ключей settings`,
+      `${productSeed.length} товаров, ` +
+      `${blogTagSeed.length} рубрик блога, ${blogPostSeed.length} записей блога, ` +
+      `${Object.keys(settingsSeed).length} ключей settings`,
   );
 }
 

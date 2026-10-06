@@ -789,16 +789,23 @@ table.tbl { width:100%; border-collapse:collapse; min-width:840px; }
 /* дропзона (12D: dashed ink) */
 .dropzone {
   border:3px dashed var(--ink); border-radius:var(--r-item); background:var(--white);
-  padding:32px 20px; text-align:center; cursor:pointer; transition:.2s;
+  padding:28px 20px; cursor:pointer; transition:.2s;
+  /* по умолчанию — вертикальный столбец: иконка, заголовок, подсказка,
+     кнопки идут на отдельных строках и не сливаются. У товаров дропзона
+     переключается в строку через .dropzone.has-photo (миниатюра сбоку). */
+  display:flex; flex-direction:column; align-items:center; gap:10px;
 }
 .dropzone:hover, .dropzone.is-drag { background:var(--bg); }
 .dropzone .dz-icon {
-  width:52px; height:52px; margin:0 auto 12px; border-radius:50%; background:var(--c1);
+  width:52px; height:52px; border-radius:50%; background:var(--c1);
   border:3px solid var(--ink); display:flex; align-items:center; justify-content:center;
+  margin:0 auto;
 }
 .dropzone .dz-icon svg { width:26px; height:26px; }
-.dropzone b { font-family:var(--font-display); font-weight:700; font-size:.85rem; display:block; margin-bottom:4px; }
-.dropzone small { color:var(--muted); font-size:.7rem; font-weight:600; }
+.dropzone b { font-family:var(--font-display); font-weight:700; font-size:.85rem; display:block; margin:0; text-align:center; }
+.dropzone small { color:var(--muted); font-size:.7rem; font-weight:600; display:block; text-align:center; }
+.dropzone .dz-stack__actions { margin-top:4px; text-align:center; }
+.dropzone .dz-stack__actions .btn { margin:0 auto; }
 .dropzone .dz-example { margin-top:14px; display:flex; gap:10px; justify-content:center; align-items:flex-end; flex-wrap:wrap; }
 .dropzone .dz-example .thumb {
   width:44px; height:44px; border:2.5px solid var(--ink); border-radius:10px;
@@ -962,4 +969,91 @@ footer.footer { padding:0 0 44px; }
 
 @media (prefers-reduced-motion: reduce){
   * { transition:none !important; animation:none !important; }
+}
+
+/* ---------- 19. Блог: текст записи (MarkdownBody) ---------- */
+/* Блоки скопированы из mockup/blog-post.html (раздел «текст записи»)
+   без изменений и одинаковы в обоих скинах (D-B13). Токены объявлены
+   в каждом скине, значения совпадают. */
+
+/* --- текст записи (результат MarkdownBody) --- */
+.prose { max-width:74ch; }
+.prose h2 { font-size:clamp(1.3rem,2.6vw,1.75rem); color:var(--brown); margin:34px 0 12px; font-weight:700; }
+.prose h3 { font-size:1.12rem; color:var(--rust); margin:26px 0 10px; font-weight:700; }
+.prose p { margin:0 0 16px; font-size:.95rem; font-weight:600; }
+.prose ul, .prose ol { padding-left:24px; margin:0 0 18px; font-size:.92rem; font-weight:600; }
+.prose li { margin-bottom:7px; }
+.prose li::marker { color:var(--rust); font-weight:800; }
+.prose ul.contains-task-list { list-style:none; padding-left:4px; }
+.prose li.task-list-item { margin-left:-20px; }
+.prose blockquote { margin:0 0 22px; padding:14px 18px; background:var(--paper); border-left:6px solid var(--mustard); border-radius:0 var(--r-form) var(--r-form) 0; }
+.prose blockquote p:last-child { margin-bottom:0; }
+.prose code { font-family:var(--font-mono); background:var(--paper); border:2px solid var(--dot); border-radius:6px; padding:1px 6px; font-size:.84em; }
+.prose pre { background:var(--paper); border:3px solid var(--brown); border-radius:var(--r-item); padding:16px 18px; overflow-x:auto; margin:0 0 22px; box-shadow:var(--shadow-chip); }
+.prose pre code { background:none; border:none; padding:0; font-size:.82rem; }
+.prose img { width:100%; border-radius:var(--r-item); border:3px solid var(--brown); box-shadow:var(--shadow-item); margin:6px 0 24px; }
+.prose a { color:var(--rust); text-decoration:underline; text-underline-offset:3px; font-weight:700; }
+.prose a:hover { color:var(--brown); }
+.prose table { width:100%; border-collapse:collapse; margin:0 0 24px; font-size:.86rem; font-weight:600; }
+.prose th, .prose td { border:2px solid var(--dot); padding:9px 12px; text-align:left; }
+.prose th { background:var(--paper); color:var(--brown); font-weight:800; }
+.prose hr { border:none; border-top:3px dashed var(--dot); margin:36px 0; }
+.prose strong { font-weight:800; }
+.prose del { opacity:.72; }
+
+/* ============================================================
+   Блог — редактор записи (mockup/admin/blog-editor.html).
+   Копия блоков макета без изменений; новые правила дописываются в
+   конец файла, существующие не трогаются (как .prose на этапе 2).
+   ============================================================ */
+.blog-editor-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+.md-toolbar { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; padding-bottom:12px; border-bottom:3px dashed var(--dot); }
+.md-btn { border:2.5px solid var(--brown); border-radius:8px; background:var(--paper); color:var(--brown); padding:5px 11px; font-size:.72rem; font-weight:800; cursor:pointer; }
+.md-btn:hover { background:var(--mustard); transform:rotate(-1deg); }
+.md-pane { background:var(--paper); border:3px solid var(--brown); border-radius:var(--r-form); padding:14px 16px; }
+.md-pane textarea { width:100%; min-height:400px; border:none; background:none; font-family:var(--font-mono); font-size:.82rem; line-height:1.7; color:var(--brown); resize:vertical; outline:none; }
+.md-pane .prose { max-width:none; font-size:.84rem; }
+.md-pane .prose h2 { font-size:1.05rem; margin:22px 0 8px; }
+.md-pane .prose h3 { font-size:.95rem; margin:18px 0 6px; }
+.md-pane .prose p { font-size:.84rem; margin-bottom:12px; }
+.md-pane .prose ul, .md-pane .prose ol { font-size:.82rem; margin-bottom:14px; }
+.md-pane .prose img { box-shadow:none; }
+.md-pane .prose table { font-size:.78rem; }
+.md-foot { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:.68rem; color:var(--muted); font-weight:700; }
+.md-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:8px; }
+.md-head b { font-family:var(--font-display); font-size:.9rem; color:var(--brown); font-weight:700; }
+.md-head small { font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:800; }
+.blog-cover-prev { display:flex; gap:16px; align-items:flex-start; }
+.blog-cover-prev .bc-thumb { width:620px; height:231px; border-radius:10px; overflow:hidden; border:2.5px solid var(--brown); flex:none; background:var(--white); display:flex; align-items:center; justify-content:center; }
+.blog-cover-prev .bc-thumb img { width:100%; height:100%; object-fit:scale-down; }
+.blog-cover-prev .bc-thumb svg { width:30px; height:30px; opacity:.35; }
+.blog-cover-prev .bc-side { flex:1; min-width:0; }
+.tag-pick { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.tag-pick .chip { cursor:pointer; text-decoration:none; }
+.tag-pick .chip.is-on { outline:3px solid var(--brown); outline-offset:2px; }
+.blog-status-line { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+@media (max-width:1080px){ .blog-editor-grid { grid-template-columns:1fr; } }
+
+/* --- обложка записи (post-cover, [slug]/page.tsx) ---
+   Изображение показывается в родном разрешении, центрированное, без
+   растяжки: если оно уже — оставляется как есть, если шире статьи —
+   уменьшается до max-width:100% с сохранением пропорций. Обычный <img>
+   (не next/image) — без фиксированных width/height, иначе CSS не может
+   вернуть естественный размер (D-B10).
+   D-B13: токены и стили identical в обоих скинах. */
+.post-cover {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 26px 0 18px;
+  border: 3px solid var(--ink);
+  border-radius: var(--r-item);
+  overflow: hidden;
+  box-shadow: var(--shadow-item);
+  background: var(--white);
+}
+.post-cover__img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }

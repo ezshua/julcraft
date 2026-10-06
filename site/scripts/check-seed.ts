@@ -1,13 +1,17 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { db, sqlite } from "../lib/db";
 import {
+  blogPostTags,
+  blogPosts,
+  blogTags,
   categories,
   components,
   products,
   settings,
   slotTemplates,
 } from "../drizzle/schema";
+import { getPublishedPosts } from "../lib/blog";
 import { getSettings } from "../lib/get-settings";
 import { firstLocale } from "../lib/localize";
 
@@ -142,6 +146,97 @@ console.log("--- Сэмплы товаров ---");
 for (const p of allProducts) {
   const cat = allCategories.find((c) => c.id === p.categoryId);
    console.log(`  ${p.slug} [${cat?.slug}] ${(p.price / 100).toFixed(2)} ${p.priceCurrency} · ${p.availability}${p.orderDays ? ` · ${p.orderDays} дн` : ""}${p.isNew ? " · NEW" : ""}${p.isFeatured ? " · FEAT" : ""}`);
+}
+
+console.log("--- Записи блога ---");
+const allPosts = db.select().from(blogPosts).all();
+const allTags = db.select().from(blogTags).orderBy(blogTags.sortOrder).all();
+const allPostTags = db.select().from(blogPostTags).all();
+console.log(`записей блога: ${allPosts.length}`);
+console.log(`рубрик блога: ${allTags.length}`);
+console.log(`связей запись↔рубрика: ${allPostTags.length}`);
+for (const tag of allTags) {
+  const n = allPostTags.filter((l) => l.tagId === tag.id).length;
+  console.log(`  ${tag.slug}: ${n} записей`);
+}
+
+assert(allTags.length === 3, `рубрик блога: 3 (найдено ${allTags.length})`);
+assert(allPosts.length === 5, `записей блога: 5 (найдено ${allPosts.length})`);
+
+// Черновик есть в базе, но витрина его не отдаёт (D-B2/D-B3).
+const drafts = allPosts.filter((p) => p.status === "draft");
+assert(drafts.length === 1, "в базе ровно один черновик");
+const publishedList = getPublishedPosts({ perPage: 50 });
+console.log(`опубликованных на витрине: ${publishedList.total}`);
+assert(
+  publishedList.total === allPosts.length - drafts.length,
+  "getPublishedPosts() отдаёт только опубликованные",
+);
+assert(
+  drafts.every((d) => !publishedList.posts.some((p) => p.id === d.id)),
+  "черновика нет в списке витрины",
+);
+assert(
+  publishedList.posts.every((p) => p.publishedAt !== null),
+  "у всех опубликованных записей есть дата публикации",
+);
+
+// Группы по датам: записи разложились по месяцам.
+console.log(
+  publishedList.groups.map((g) => `${g.month}/${g.year}: ${g.posts.length}`).join(", "),
+);
+assert(publishedList.groups.length >= 2, "записи разложены минимум по двум месяцам");
+
+// Связи blogPostTags целы: каждая указывает на существующие запись и рубрику.
+const postIds = new Set(allPosts.map((p) => p.id));
+const tagIds = new Set(allTags.map((t) => t.id));
+assert(
+  allPostTags.every((l) => postIds.has(l.postId) && tagIds.has(l.tagId)),
+  "все связи запись↔рубрика указывают на существующие строки",
+);
+const taggedPosts = allPostTags.map((l) => l.postId);
+assert(new Set(taggedPosts).size === taggedPosts.length, "дублей связей нет");
+for (const tag of allTags) {
+  const postsWithTag = allPosts.filter((p) => allPostTags.some((l) => l.tagId === tag.id && l.postId === p.id));
+  console.log(`  ${tag.slug}: ${postsWithTag.map((p) => p.slug).join(", ")}`);
+}
+
+// Обложки — существующие файлы (демо берёт фото товаров).
+console.log("--- Обложки блога ---");
+for (const p of allPosts) {
+  if (p.coverImage === null) {
+    console.log(`  ${p.slug}: без обложки`);
+    continue;
+  }
+  console.log(`  ${p.slug}: ${p.coverImage}`);
+}
+assert(
+  allPosts
+    .filter((p) => p.coverImage !== null)
+    .every((p) => existsSync(resolve(process.cwd(), "public", p.coverImage!.slice(1)))),
+  "все coverImage — существующие файлы",
+);
+assert(
+  allPosts.filter((p) => p.coverImage === null).length === 1,
+  "ровно одна запись без обложки (плейсхолдер на витрине)",
+);
+
+// EN/UK есть минимум у двух записей — остальные проверяют фолбэк RU.
+const withEn = allPosts.filter((p) => p.title.includes('"en"'));
+const withUk = allPosts.filter((p) => p.title.includes('"uk"'));
+console.log(`записей с EN: ${withEn.length}, с UK: ${withUk.length}`);
+assert(withEn.length >= 2 && withUk.length >= 2, "EN и UK заполнены минимум у двух записей");
+
+console.log("--- Сэмплы записей блога ---");
+for (const p of allPosts) {
+  const tags = allPostTags
+    .filter((l) => l.postId === p.id)
+    .map((l) => allTags.find((t) => t.id === l.tagId)?.slug)
+    .filter(Boolean)
+    .join(" + ");
+  console.log(
+    `  ${p.slug} [${p.status}]${p.publishedAt ? " · " + p.publishedAt.toISOString().slice(0, 10) : ""}${tags ? " · " + tags : ""}`,
+  );
 }
 
 console.log("Проверка завершена.");

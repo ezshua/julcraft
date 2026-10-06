@@ -3,10 +3,10 @@
 import { useRef, useState } from "react";
 
 type Props = {
-  kind: "products" | "components" | "categories";
-  /** Limit from the mockup: products — 5 MB, components — 2 MB */
+  kind: "products" | "components" | "categories" | "blog";
+  /** Limit from the mockup: products — 5 MB, blog — 5 MB, components — 2 MB */
   maxMB: number;
-  /** MIME types: products — jpeg/png/webp, components — png */
+  /** MIME types: products и blog — jpeg/png/webp, components — png */
   accept: string;
   /** Dropzone label text (from the mockup, set by the parent) */
   title: string;
@@ -65,6 +65,7 @@ export default function ImageUploader({
   return (
     <div
       className={drag ? "dropzone is-drag" : "dropzone"}
+      style={{ cursor: "pointer" }}
       onClick={() => inputRef.current?.click()}
       onDragOver={(e) => {
         e.preventDefault();
@@ -76,27 +77,33 @@ export default function ImageUploader({
         setDrag(false);
         void upload(e.dataTransfer.files?.[0]);
       }}
-      style={{ cursor: "pointer" }}
     >
-      <div className="dz-icon">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#22242a"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-        </svg>
+      <div className="dz-stack">
+        <div className="dz-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#22242a"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+          </svg>
+        </div>
+        <b className="dz-stack__title">{busy ? d.photoUploading : title}</b>
+        <small className="dz-stack__hint">{hint}</small>
+        {error && (
+          <small className="dz-stack__error" style={{ color: "var(--rust)" }}>
+            {error}
+          </small>
+        )}
+        {children && (
+          <div className="dz-stack__actions" onClick={(e) => e.stopPropagation()}>
+            {children}
+          </div>
+        )}
       </div>
-      <b>{busy ? d.photoUploading : title}</b>
-      <small>{hint}</small>
-      {error && (
-        <small style={{ color: "var(--rust)", display: "block", marginTop: "6px" }}>
-          {error}
-        </small>
-      )}
       <input
         ref={inputRef}
         type="file"
@@ -107,7 +114,6 @@ export default function ImageUploader({
           e.target.value = "";
         }}
       />
-      {children}
     </div>
   );
 }

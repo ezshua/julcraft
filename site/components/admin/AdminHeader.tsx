@@ -12,6 +12,7 @@ const ADMIN_LINKS = [
   { href: "/admin/products", key: "navProducts" },
   { href: "/admin/components", key: "navComponents" },
   { href: "/admin/categories", key: "navCategories" },
+  { href: "/admin/blog", key: "navBlog" },
   { href: "/admin/settings", key: "navSettings" },
 ] as const;
 

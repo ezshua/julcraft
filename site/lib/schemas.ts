@@ -49,6 +49,11 @@ export function localizedDescriptionSchema(errors: Record<string, string>) {
 export function localizedProductDescriptionSchema(errors: Record<string, string>) {
   return localizedText(true, errors.hintDescription);
 }
+// Текст записи блога: markdown. RU обязателен и не может быть пустым —
+// публиковать пост без текста нельзя (plan-5-blog.md §6).
+export function localizedContentSchema(errors: Record<string, string>) {
+  return localizedText(true, errors.hintContent);
+}
 // SEO-поля: nullable + localized (D-i18n-2: ручной ввод хранится как введён).
 export const localizedNullableString = z.preprocess((v) => {
   if (v === null || v === undefined) return null;
@@ -181,6 +186,62 @@ export const orderStatusSchema = z.object({
   status: z.enum(["new", "in_progress", "done", "cancelled"]),
 });
 
+// Запись блога (направление 5, plan-5-blog.md §6).
+// status и publishedAt здесь НЕ принимаются: их меняет отдельный эндпоинт
+// публикации (D-B14), поэтому обычное сохранение не может случайно
+// опубликовать черновик или подменить дату.
+export function blogPostSchema(errors: Record<string, string>) {
+  return z.object({
+    title: localizedNameSchema(errors),
+    slug: z
+      .string()
+      .trim()
+      .min(1, errors.hintSlug)
+      .regex(/^[a-z0-9-]+$/, errors.hintSlugFormat),
+    excerpt: localizedDescriptionSchema(errors),
+    content: localizedContentSchema(errors),
+    coverImage: nullableString,
+    metaTitle: localizedNullableString,
+    metaDescription: localizedNullableString,
+    tagIds: z.array(z.number().int().positive()).max(10, errors.tooManyTags).default([]),
+  });
+}
+
+// Публикация/снятие с публикации. Дата от клиента не приходит: она ставится
+// один раз при первой публикации и дальше сохраняется (D-B8; отложенной
+// публикации в v1 нет — решение B6).
+export const blogPublishSchema = z.object({
+  action: z.enum(["publish", "unpublish"]),
+});
+
+// Рубрика (тег) блога. slug — стабильный идентификатор: он выводится из
+// названия при создании и дальше не меняется (как code у componentTypes).
+export function blogTagCreateSchema(errors: Record<string, string>) {
+  return z.object({
+    name: localizedNameSchema(errors),
+    slug: z
+      .string()
+      .trim()
+      .min(1, errors.hintTagSlugFormat)
+      .regex(/^[a-z0-9-]+$/, errors.hintTagSlugFormat),
+    sortOrder: z.number().int().min(0).default(0),
+    isActive: z.boolean().default(true),
+  });
+}
+
+// Точечные правки рубрики: UI шлёт только изменившееся поле, поэтому схема
+// БЕЗ default-ов — иначе патч затирал бы sortOrder/isActive.
+export function blogTagUpdateSchema(errors: Record<string, string>) {
+  return z.object({
+    name: localizedNameSchema(errors).optional(),
+    sortOrder: z.number().int().min(0).optional(),
+    isActive: z.boolean().optional(),
+  });
+}
+
 export type ProductInput = z.infer<ReturnType<typeof productSchema>>;
 export type ComponentInput = z.infer<ReturnType<typeof componentSchema>>;
 export type CategoryInput = z.infer<ReturnType<typeof categorySchema>>;
+export type BlogPostInput = z.infer<ReturnType<typeof blogPostSchema>>;
+export type BlogTagCreateInput = z.infer<ReturnType<typeof blogTagCreateSchema>>;
+export type BlogTagUpdateInput = z.infer<ReturnType<typeof blogTagUpdateSchema>>;

@@ -1,8 +1,23 @@
 import type { MetadataRoute } from "next";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { categories, products } from "@/drizzle/schema";
+import { categories, products, type BlogPost } from "@/drizzle/schema";
+import { getPublishedPosts } from "@/lib/blog";
 import { siteUrl } from "@/lib/site-url";
+
+// Сколько записей забираем за один проход к blog.ts.
+const BLOG_BATCH = 500;
+
+// Все опубликованные записи: blog.ts отдаёт их постранично и только
+// опубликованные (D-B2), поэтому черновик в карту не попадает по построению.
+function allPublishedPosts(): BlogPost[] {
+  const first = getPublishedPosts({ perPage: BLOG_BATCH });
+  const posts = [...first.posts];
+  for (let page = 2; page <= first.pages; page += 1) {
+    posts.push(...getPublishedPosts({ perPage: BLOG_BATCH, page }).posts);
+  }
+  return posts;
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteUrl();
@@ -43,5 +58,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     }));
 
-  return [...staticPages, ...categoryEntries, ...productEntries];
+  const blogEntries: MetadataRoute.Sitemap = [
+    { url: `${base}/blog`, changeFrequency: "weekly", priority: 0.7 },
+    ...allPublishedPosts().map((post) => ({
+      url: `${base}/blog/${post.slug}`,
+      lastModified: post.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+  ];
+
+  return [...staticPages, ...categoryEntries, ...productEntries, ...blogEntries];
 }

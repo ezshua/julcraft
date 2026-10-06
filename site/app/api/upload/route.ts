@@ -18,6 +18,10 @@ const LIMITS: Record<string, { mime: string[]; max: number; ext: string }> = {
   },
   // Форма обратной связи: иллюстрация к сообщению (как у комплектующих — PNG).
   contacts: { mime: ["image/png", "image/jpeg", "image/webp"], max: 2 * 1024 * 1024, ext: "auto" },
+  // Записи блога: обложка и картинки внутри markdown — те же три формата
+  // и тот же лимит 5 МБ, что у товаров (mockup/admin/blog-editor.html:
+  // «jpeg, png, webp до 5 МБ»). Расширение — по фактическому MIME файла.
+  blog: { mime: ["image/jpeg", "image/png", "image/webp"], max: 5 * 1024 * 1024, ext: "auto" },
 };
 
 const EXT_BY_MIME: Record<string, string> = {
@@ -27,7 +31,7 @@ const EXT_BY_MIME: Record<string, string> = {
   "image/jpeg": "jpg",
 };
 
-// Загрузка изображений (товары/комплектующие). Лимиты — из макетов.
+// Загрузка изображений (товары/комплектующие/категории/блог). Лимиты — из макетов.
 export async function POST(request: Request) {
   const dict = getDictionary(await getLocale());
 
@@ -39,7 +43,7 @@ export async function POST(request: Request) {
   }
 
   const kind = String(form.get("kind") ?? "");
-  // Админские загрузки (products/components/categories) требуют сессии.
+  // Админские загрузки (products/components/categories/blog) требуют сессии.
   // Форма обратной связи (contacts) — публичная, без авторизации.
   if (kind !== "contacts" && !(await requireAdmin())) {
     return Response.json({ error: t(dict, "api.upload.unauthorized") }, { status: 401 });

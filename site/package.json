@@ -18,6 +18,8 @@
     "check:user-settings:http": "npm run build && node scripts/check-user-settings-http.mjs",
     "check:skin-switcher": "node scripts/check-skin-switcher.mjs",
     "check:product-image": "tsx scripts/check-product-image.ts",
+    "check:markdown": "tsx scripts/check-markdown.ts",
+    "check:blog": "tsx scripts/check-blog.ts",
     "snapshot:capture": "tsx scripts/snapshot-capture.ts",
     "snapshot:restore": "tsx scripts/snapshot-restore.ts",
     "snapshot:check": "tsx scripts/check-snapshot.ts",
@@ -34,6 +36,8 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-konva": "^19.2.5",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
     "zod": "^4.4.3"
   },

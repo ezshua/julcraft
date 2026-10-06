@@ -18,7 +18,7 @@ import { getDbPath } from "../lib/db-path";
 // Снимает согласованный слепок боевого состояния:
 //   - БД: безопасная согласованная копия через sqlite.backup()
 //     (побайтовое копирование файла при активном WAL опасно);
-//   - каталог public/uploads/ целиком;
+//   - каталог public/uploads/ целиком; счётчики папок — по UPLOAD_FOLDERS;
 //   - manifest.json со счётчиками, sha256 и предупреждениями.
 // Артефакт julcraft-snapshot-YYYY-MM-DD-HHmm.zip создаётся в cwd
 // (= site/), в git не попадает (site/*.zip в корневом .gitignore).
@@ -35,8 +35,11 @@ const TABLES = [
   "products",
   "orders",
   "settings",
+  "blogPosts",
+  "blogTags",
+  "blogPostTags",
 ] as const;
-const UPLOAD_FOLDERS = ["products", "components", "categories", "collages"] as const;
+const UPLOAD_FOLDERS = ["products", "components", "categories", "collages", "blog"] as const;
 
 function fail(message: string): never {
   console.error(`ОШИБКА: ${message}`);

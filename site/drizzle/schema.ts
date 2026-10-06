@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index, primaryKey } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 // i18n-2: текстовые поля контента (categories.name/description, products.name/
@@ -111,6 +111,56 @@ export const components = sqliteTable("components", {
   isActive: integer("isActive", { mode: "boolean" }).notNull(),
 });
 
+// Направление 5 — блог мастера (plan-5-blog.md §4).
+// Статусы только draft/published: отложенной публикации в v1 нет (решение B6),
+// а «запланированность» вычисляется из publishedAt > now.
+// Черновик не должен попадать на витрину — за это отвечает lib/blog.ts
+// (PUBLISHED_FILTER), прямых выборок blogPosts в публичных страницах нет.
+export const BLOG_POST_STATUSES = ["draft", "published"] as const;
+export type BlogPostStatus = (typeof BLOG_POST_STATUSES)[number];
+
+export const blogPosts = sqliteTable(
+  "blogPosts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    slug: text("slug").notNull().unique(),
+    title: text("title").notNull(),                 // LocalizedString (JSON {ru,en,uk})
+    excerpt: text("excerpt").notNull().default(""),  // LocalizedString
+    content: text("content").notNull().default(""),  // LocalizedString, markdown
+    coverImage: text("coverImage"),                  // "/uploads/blog/…" | null
+    status: text("status").$type<BlogPostStatus>().notNull().default("draft"),
+    publishedAt: integer("publishedAt", { mode: "timestamp" }),
+    metaTitle: text("metaTitle"),                    // LocalizedString | null
+    metaDescription: text("metaDescription"),        // LocalizedString | null
+    createdAt: integer("createdAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+    updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  },
+  // Сортировка витрины «свежие сверху» + фильтр по статусу — под этот индекс.
+  (t) => [index("blogPosts_status_publishedAt_idx").on(t.status, t.publishedAt)],
+);
+
+// Рубрики (теги) блога. slug — стабильный идентификатор, после создания
+// не меняется (как code у componentTypes); название локализовано.
+export const blogTags = sqliteTable("blogTags", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  slug: text("slug").notNull().unique(),
+  name: text("name").notNull(),                      // LocalizedString
+  sortOrder: integer("sortOrder").notNull().default(0),
+  isActive: integer("isActive", { mode: "boolean" }).notNull().default(true),
+});
+
+// Связь запись ↔ рубрика. ON DELETE CASCADE здесь НЕ используется:
+// better-sqlite3 не включает PRAGMA foreign_keys, поэтому каскад не сработает —
+// связи чистим в коде (setPostTags и обработчики удаления).
+export const blogPostTags = sqliteTable(
+  "blogPostTags",
+  {
+    postId: integer("postId").notNull().references(() => blogPosts.id),
+    tagId: integer("tagId").notNull().references(() => blogTags.id),
+  },
+  (t) => [primaryKey({ columns: [t.postId, t.tagId] })],
+);
+
 export const orders = sqliteTable("orders", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   type: text("type").$type<OrderType>().notNull(),
@@ -156,6 +206,11 @@ export type NewComponent = typeof components.$inferInsert;
 
 export type Order = typeof orders.$inferSelect;
 export type NewOrder = typeof orders.$inferInsert;
+
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type NewBlogPost = typeof blogPosts.$inferInsert;
+export type BlogTag = typeof blogTags.$inferSelect;
+export type NewBlogTag = typeof blogTags.$inferInsert;
 
 export type Setting = typeof settings.$inferSelect;
 export type NewSetting = typeof settings.$inferInsert;

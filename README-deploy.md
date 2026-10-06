@@ -96,6 +96,11 @@ bash deploy/setup-app.sh https://github.com/<owner>/julcraft.git /tmp/julcraft-s
 (`chgrp www-data`, setgid + `g+rwX` на `site/public/uploads`, `site/.next`)
 → `npm ci` → **остановится на .env** (первый раз).
 
+Права на подпапки `uploads` (`products`, `components`, `categories`,
+`collages`, `blog`) наследуются от `site/public/uploads`: отдельные биты
+ставить не нужно — `uploads/blog` создаётся на лету при первой загрузке
+картинки записи и сразу получает группу `www-data` и права на запись.
+
 ### 2.2 `.env` (первый запуск создаёт заглушку — заполните и перезапустите)
 
 ```bash
